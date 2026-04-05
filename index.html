@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MUTV Playlist • Gêneros | Tela Cheia</title>
+    <title>MUTV Playlist • Gêneros | Toca com tela bloqueada</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { min-height: 100vh; background-color: #000000; overflow: hidden; position: fixed; width: 100%; height: 100%; }
         body.theme-red { --primary-color: #e63946; --primary-dark: #b71c1c; }
-        body { --primary-color: #e63946; --primary-dark: #b71c1c; --text-primary: #ffffff; --text-secondary: #cccccc; --border-color: #333333; }
+        body { --primary-color: #e63946; --primary-dark: #b71c1c; }
         
         .app { width: 100%; height: 100vh; background: #000000; position: relative; overflow: hidden; }
         .fullscreen-video-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1; }
@@ -40,17 +40,11 @@
             border-left: 3px solid var(--primary-color);
         }
         
-        /* Menu superior com botão SAIR DA TELA CHEIA */
-        .top-menu {
+        /* Menu simplificado (sem botão de tela cheia) */
+        .menu-button {
             position: absolute;
             top: 12px;
             right: 12px;
-            display: flex;
-            gap: 10px;
-            z-index: 31;
-            pointer-events: auto;
-        }
-        .menu-button, .exit-fullscreen-btn {
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(8px);
             color: white;
@@ -63,9 +57,11 @@
             justify-content: center;
             font-size: 1.4rem;
             cursor: pointer;
+            z-index: 31;
+            pointer-events: auto;
             transition: 0.2s;
         }
-        .menu-button:active, .exit-fullscreen-btn:active { transform: scale(0.9); background: var(--primary-color); color: #000; }
+        .menu-button:active { transform: scale(0.9); background: var(--primary-color); color: #000; }
         
         .menu-popup {
             position: absolute;
@@ -98,34 +94,34 @@
         }
         .menu-popup button:active { background: var(--primary-color); color: #000; }
         
-        /* BOTÕES DE GÊNERO - na mesma posição do botão laranja original (bottom: 28%) */
-        .genre-bar {
+        /* GÊNEROS NO TOPO, LADO DIREITO */
+        .genre-top-right {
             position: absolute;
-            bottom: 28%;
-            left: 0;
-            right: 0;
+            top: 70px;
+            right: 12px;
             display: flex;
-            justify-content: center;
-            gap: 12px;
+            flex-direction: column;
+            gap: 10px;
             z-index: 25;
             pointer-events: auto;
-            padding: 0 16px;
         }
         .genre-btn {
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.7);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.3);
             color: white;
             border-radius: 40px;
-            padding: 10px 20px;
-            font-size: 0.85rem;
+            padding: 8px 16px;
+            font-size: 0.8rem;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             transition: 0.1s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            min-width: 90px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .genre-btn:active { transform: scale(0.95); background: var(--primary-color); color: #000; }
         .genre-btn.active {
@@ -135,50 +131,31 @@
             box-shadow: 0 0 10px var(--primary-color);
         }
         
-        /* Botão ativar áudio (agora no canto inferior esquerdo) */
-        .audio-activate-btn {
+        /* Botão CTA ORÇAMENTO (canto inferior esquerdo) */
+        .cta-button {
             position: absolute;
-            bottom: 20%;
+            bottom: 20px;
             left: 15px;
-            background: linear-gradient(135deg, #ff7700, #ff4400);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.25);
             color: white;
-            border: none;
             border-radius: 40px;
-            padding: 8px 16px;
-            font-size: 0.75rem;
+            padding: 10px 20px;
+            font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
             z-index: 25;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             pointer-events: auto;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+            transition: 0.1s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-        .audio-activate-btn:active { transform: scale(0.95); }
+        .cta-button:active { transform: scale(0.95); background: var(--primary-color); color: #000; border-color: var(--primary-color); }
         
-        /* Botão CTA */
-        .cta-button {
-            position: absolute;
-            bottom: 14%;
-            left: 15px;
-            background: rgba(0,0,0,0.65);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.25);
-            color: white;
-            border-radius: 40px;
-            padding: 8px 16px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 25;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            pointer-events: auto;
-        }
-        .cta-button:active { transform: scale(0.95); background: var(--primary-color); color: #000; }
-        
+        /* Barra de controles inferior (opcional, pode ser ocultada) */
         .bottom-controls {
             position: absolute;
             bottom: 0;
@@ -194,15 +171,15 @@
         }
         .bottom-controls.hide { transform: translateY(100%); opacity: 0; pointer-events: none; }
         .track-info { text-align: center; margin-bottom: 8px; }
-        .track-info p { font-size: 0.85rem; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-info p { font-size: 0.8rem; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .progress-area { margin-bottom: 8px; }
-        .progress-time { display: flex; justify-content: space-between; font-size: 0.7rem; color: #ccc; margin-bottom: 4px; }
+        .progress-time { display: flex; justify-content: space-between; font-size: 0.65rem; color: #ccc; margin-bottom: 4px; }
         .progress-bar { height: 3px; background: rgba(255,255,255,0.3); cursor: pointer; border-radius: 3px; }
         .progress-fill { height: 100%; background: var(--primary-color); width: 0%; border-radius: 3px; }
         .control-buttons { display: flex; align-items: center; justify-content: center; gap: 20px; }
-        .control-btn { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.2rem; width: 44px; height: 44px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .control-btn { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.1rem; width: 40px; height: 40px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .control-btn:active { transform: scale(0.9); background: var(--primary-color); color: #000; }
-        .play-btn { font-size: 1.6rem; width: 54px; height: 54px; background: var(--primary-color); color: #000; border: none; }
+        .play-btn { font-size: 1.4rem; width: 50px; height: 50px; background: var(--primary-color); color: #000; border: none; }
         
         .feedback-modal {
             position: fixed;
@@ -238,7 +215,7 @@
             transform: translateX(-50%);
             background: linear-gradient(135deg, #ff6600, #ff3300);
             color: white;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 50px;
             font-weight: bold;
             font-size: 1rem;
@@ -250,18 +227,20 @@
             pointer-events: auto;
             gap: 10px;
             border: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.03); } 100% { transform: translateX(-50%) scale(1); } }
         
         @media (max-width: 480px) {
-            .genre-btn { padding: 6px 12px; font-size: 0.7rem; gap: 4px; }
-            .control-btn { width: 40px; height: 40px; }
-            .play-btn { width: 48px; height: 48px; }
+            .genre-btn { padding: 6px 12px; font-size: 0.7rem; min-width: 75px; }
+            .cta-button { padding: 8px 16px; font-size: 0.75rem; }
+            .control-btn { width: 36px; height: 36px; font-size: 1rem; }
+            .play-btn { width: 46px; height: 46px; font-size: 1.3rem; }
         }
     </style>
 </head>
 <body class="theme-red">
-    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>MUTV Playlist</h1><p>Carregando...</p></div></div>
+    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>MUTV Playlist</h1><p>Toque no botão para ativar</p></div></div>
     <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
     
     <div class="app">
@@ -271,16 +250,16 @@
             </video>
         </div>
         
-        <!-- BOTÕES DE GÊNERO NA MESMA POSIÇÃO DO BOTÃO LARANJA ORIGINAL -->
-        <div class="genre-bar">
+        <!-- GÊNEROS NO TOPO, LADO DIREITO -->
+        <div class="genre-top-right">
             <button class="genre-btn" data-genre="sertanejo"><i class="fas fa-guitar"></i> Sert.</button>
             <button class="genre-btn" data-genre="forro"><i class="fas fa-drum"></i> Forró</button>
             <button class="genre-btn" data-genre="samba"><i class="fas fa-music"></i> Samba</button>
             <button class="genre-btn" data-genre="vgm"><i class="fas fa-gamepad"></i> Vgm</button>
         </div>
         
-        <button class="audio-activate-btn" id="compactAudioBtn"><i class="fas fa-volume-up"></i> ATIVAR ÁUDIO</button>
-        <button class="cta-button" id="ctaButton"><i class="fas fa-shopping-cart"></i> <span id="ctaText">PEÇA AGORA!</span></button>
+        <!-- Botão CTA ORÇAMENTO -->
+        <button class="cta-button" id="ctaButton"><i class="fas fa-file-invoice-dollar"></i> ORÇAMENTO</button>
         
         <div id="notificationTop" class="notification-top">
             <div class="message" id="notificationMessage"></div>
@@ -288,7 +267,7 @@
         
         <div class="controls-overlay">
             <div class="bottom-controls" id="bottomControls">
-                <div class="track-info"><p id="trackArtist">🎵 Clique em ATIVAR ÁUDIO</p></div>
+                <div class="track-info"><p id="trackArtist">🎵 Escolha um gênero e ative o áudio</p></div>
                 <div class="progress-area">
                     <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
                     <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
@@ -303,13 +282,9 @@
         </div>
     </div>
     
-    <!-- Menu superior com botão SAIR DA TELA CHEIA -->
-    <div class="top-menu">
-        <button class="exit-fullscreen-btn" id="exitFullscreenBtn"><i class="fas fa-compress"></i></button>
-        <button class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
-    </div>
+    <!-- Menu simplificado (sem botão de tela cheia) -->
+    <div class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></div>
     <div class="menu-popup" id="menuPopup">
-        <button id="fullscreenMenuBtn"><i class="fas fa-expand"></i> Tela cheia</button>
         <button id="shareMenuBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
     </div>
@@ -343,9 +318,7 @@
         ];
         
         const videosList = [
-            { src: "play.mp4", nome: "Destaque", link: "https://wa.me/5512988461978?text=Olá,%20quero%20mais%20informações!", botaoTexto: "📞 INFORMAÇÕES", icone: "fas fa-headset" },
-            { src: "Cazé_20260404_200357_0000.mp4", nome: "MUTV", link: "https://wa.me/5512988461978?text=Gostaria%20de%20um%20orçamento", botaoTexto: "💰 ORÇAMENTO", icone: "fas fa-file-invoice-dollar" },
-            { src: "play.mp4", nome: "Promoção", link: "https://wa.me/5512988461978?text=Quero%20aproveitar%20a%20oferta!", botaoTexto: "🎁 SAIBA MAIS", icone: "fas fa-gift" }
+            { src: "play.mp4", nome: "Destaque", link: "https://wa.me/5512988461978?text=Olá,%20quero%20um%20orçamento!", botaoTexto: "💰 ORÇAMENTO", icone: "fas fa-file-invoice-dollar" }
         ];
         
         let currentGenre = "sertanejo";
@@ -370,9 +343,8 @@
         const menuPopup = document.getElementById('menuPopup');
         const notificationTop = document.getElementById('notificationTop');
         const notificationMessage = document.getElementById('notificationMessage');
-        const compactAudioBtn = document.getElementById('compactAudioBtn');
         const genreButtons = document.querySelectorAll('.genre-btn');
-        const exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
+        const ctaBtn = document.getElementById('ctaButton');
         
         function showNotification(msg, duration = 3000) {
             if (window.notifTimeout) clearTimeout(window.notifTimeout);
@@ -448,7 +420,7 @@
                     } else { nextFiltered = (currentIndex + 1) % filteredPlaylist.length; }
                     currentIndex = nextFiltered;
                     loadTrackUI(currentIndex);
-                    setTimeout(async () => { if (!isPlaying) await playMusic(); }, 80);
+                    setTimeout(async () => { if (isPlaying) await playMusic(); }, 80);
                 };
                 musicPlayer.ontimeupdate = () => { if (musicPlayer.duration) { progressFill.style.width = (musicPlayer.currentTime/musicPlayer.duration)*100+'%'; currentTimeEl.textContent = formatTime(musicPlayer.currentTime); } };
             });
@@ -499,26 +471,6 @@
             }
         }
         
-        // FULLSCREEN: entra automaticamente e tem botão pra sair
-        function enterFullscreen() {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(e => console.log);
-            }
-        }
-        function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(e => console.log);
-            }
-        }
-        function updateFullscreenUI() {
-            if (document.fullscreenElement) {
-                exitFullscreenBtn.style.display = 'flex';
-            } else {
-                exitFullscreenBtn.style.display = 'none';
-            }
-        }
-        document.addEventListener('fullscreenchange', updateFullscreenUI);
-        
         // Eventos
         genreButtons.forEach(btn => { btn.addEventListener('click', () => changeGenre(btn.dataset.genre)); });
         playBtn.addEventListener('click', () => { if(!audioActive) showNotification('⚠️ Clique em ATIVAR ÁUDIO!', 2000); else togglePlayPause(); resetHideTimer(); });
@@ -526,35 +478,25 @@
         nextBtn.addEventListener('click', () => { nextTrack(); resetHideTimer(); });
         shuffleBtn.addEventListener('click', () => { shuffle = !shuffle; showNotification(shuffle ? '🔀 Aleatório ON' : '➡️ Sequencial', 1500); });
         document.getElementById('progressBar').addEventListener('click', (e) => { const rect = e.currentTarget.getBoundingClientRect(); const percent = (e.clientX - rect.left) / rect.width; if(musicPlayer.duration) musicPlayer.currentTime = percent * musicPlayer.duration; });
-        compactAudioBtn.addEventListener('click', activateAudioAndPlay);
         tapToStart.addEventListener('click', activateAudioAndPlay);
-        document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { enterFullscreen(); menuPopup.classList.remove('open'); });
-        exitFullscreenBtn.addEventListener('click', () => { exitFullscreen(); });
+        
         menuButton.addEventListener('click', (e) => { e.stopPropagation(); menuPopup.classList.toggle('open'); });
         document.addEventListener('click', (e) => { if (!menuButton.contains(e.target) && !menuPopup.contains(e.target)) menuPopup.classList.remove('open'); });
         document.getElementById('shareMenuBtn').addEventListener('click', () => { if (navigator.share) navigator.share({ title: 'MUTV Playlist' }); else { navigator.clipboard.writeText(location.href); showNotification('Link copiado!'); } menuPopup.classList.remove('open'); });
         document.getElementById('feedbackMenuBtn').addEventListener('click', () => { document.getElementById('feedbackModal').classList.toggle('open'); menuPopup.classList.remove('open'); });
         
-        // Vídeo rotativo
-        let currentVideoIndex = 0;
-        const ctaBtn = document.getElementById('ctaButton');
-        const ctaSpan = document.getElementById('ctaText');
-        function updateVideoAndButton(index) {
-            const video = videosList[index];
-            const vidEl = document.getElementById('mainVideo');
-            if (vidEl) {
-                vidEl.pause();
-                vidEl.src = video.src;
-                vidEl.load();
-                vidEl.play().catch(e => console.log);
-                ctaSpan.innerText = video.botaoTexto;
-                const iconElem = ctaBtn.querySelector('i');
-                if(iconElem) iconElem.className = video.icone;
-                ctaBtn.onclick = () => window.open(video.link, '_blank');
-            }
+        // Botão ORÇAMENTO fixo
+        ctaBtn.addEventListener('click', () => {
+            window.open('https://wa.me/5512988461978?text=Olá,%20quero%20um%20orçamento!', '_blank');
+        });
+        
+        // Vídeo (apenas um vídeo fixo)
+        const vidEl = document.getElementById('mainVideo');
+        if (vidEl) {
+            vidEl.src = "Cazé_20260404_200357_0000.mp4";
+            vidEl.load();
+            vidEl.play().catch(e => console.log);
         }
-        updateVideoAndButton(0);
-        setInterval(() => { currentVideoIndex = (currentVideoIndex + 1) % videosList.length; updateVideoAndButton(currentVideoIndex); }, 20000);
         
         // Auto-hide barra inferior
         const bottomControls = document.getElementById('bottomControls');
@@ -562,23 +504,22 @@
         function showControls() { bottomControls.classList.remove('hide'); clearTimeout(hideTimeout); hideTimeout = setTimeout(() => bottomControls.classList.add('hide'), 3000); }
         function resetHideTimer() { if (bottomControls.classList.contains('hide')) showControls(); else { clearTimeout(hideTimeout); hideTimeout = setTimeout(() => bottomControls.classList.add('hide'), 3000); } }
         document.addEventListener('touchstart', resetHideTimer);
+        document.addEventListener('click', resetHideTimer);
         showControls();
         
-        // Rating feedback
+        // Feedback rating
         let currentRating = 0;
         document.querySelectorAll('#ratingStars .star').forEach(star => { star.addEventListener('click', () => { currentRating = parseInt(star.dataset.rating); document.querySelectorAll('#ratingStars .star').forEach((s,i) => { if(i < currentRating) { s.classList.add('fas','active'); s.classList.remove('far'); } else { s.classList.remove('fas','active'); s.classList.add('far'); } }); }); });
-        document.getElementById('cancelFeedback').addEventListener('click', () => { document.getElementById('feedbackModal').classList.remove('open'); document.getElementById('feedbackText').value = ''; currentRating = 0; });
-        document.getElementById('sendFeedback').addEventListener('click', () => { if(currentRating === 0) { showNotification('⭐ Selecione uma nota', 2000); return; } let msg = `🎵 MUTV Playlist\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5-currentRating)}\n`; if(document.getElementById('feedbackText').value.trim()) msg += `💬 ${document.getElementById('feedbackText').value.trim()}\n`; window.open(`https://wa.me/5512988461978?text=${encodeURIComponent(msg)}`, '_blank'); showNotification('✅ Feedback enviado', 1500); document.getElementById('feedbackModal').classList.remove('open'); document.getElementById('feedbackText').value = ''; currentRating = 0; });
+        document.getElementById('cancelFeedback').addEventListener('click', () => { document.getElementById('feedbackModal').classList.remove('open'); document.getElementById('feedbackText').value = ''; currentRating = 0; document.querySelectorAll('#ratingStars .star').forEach(s => { s.classList.remove('fas','active'); s.classList.add('far'); }); });
+        document.getElementById('sendFeedback').addEventListener('click', () => { if(currentRating === 0) { showNotification('⭐ Selecione uma nota', 2000); return; } let msg = `🎵 MUTV Playlist\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5-currentRating)}\n`; if(document.getElementById('feedbackText').value.trim()) msg += `💬 ${document.getElementById('feedbackText').value.trim()}\n`; window.open(`https://wa.me/5512988461978?text=${encodeURIComponent(msg)}`, '_blank'); showNotification('✅ Feedback enviado', 1500); document.getElementById('feedbackModal').classList.remove('open'); document.getElementById('feedbackText').value = ''; currentRating = 0; document.querySelectorAll('#ratingStars .star').forEach(s => { s.classList.remove('fas','active'); s.classList.add('far'); }); });
         
-        // INICIALIZAÇÃO: entra em tela cheia automaticamente
+        // INICIALIZAÇÃO
         window.addEventListener('load', () => {
             filteredPlaylist = musicas.filter(m => m.genre === currentGenre);
             currentIndex = 0;
             loadTrackUI(currentIndex);
             tapToStart.style.display = 'block';
             document.querySelector('.genre-btn[data-genre="sertanejo"]').classList.add('active');
-            // Entrar em tela cheia automaticamente
-            setTimeout(() => { enterFullscreen(); }, 500);
         });
     </script>
 </body>
