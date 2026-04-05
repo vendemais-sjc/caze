@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MUTV Playlist • Gêneros | Toca com tela bloqueada</title>
+    <title>MUTV Playlist • Gêneros | Tela Cheia</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
         body { min-height: 100vh; background-color: #000000; overflow: hidden; position: fixed; width: 100%; height: 100%; }
         body.theme-red { --primary-color: #e63946; --primary-dark: #b71c1c; }
-        body.theme-orange { --primary-color: #ff7700; --primary-dark: #cc5500; }
         body { --primary-color: #e63946; --primary-dark: #b71c1c; --text-primary: #ffffff; --text-secondary: #cccccc; --border-color: #333333; }
         
         .app { width: 100%; height: 100vh; background: #000000; position: relative; overflow: hidden; }
@@ -39,10 +38,9 @@
             font-size: 0.85rem;
             color: #fff;
             border-left: 3px solid var(--primary-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         
-        /* Menu superior */
+        /* Menu superior com botão SAIR DA TELA CHEIA */
         .top-menu {
             position: absolute;
             top: 12px;
@@ -68,7 +66,6 @@
             transition: 0.2s;
         }
         .menu-button:active, .exit-fullscreen-btn:active { transform: scale(0.9); background: var(--primary-color); color: #000; }
-        .exit-fullscreen-btn { display: none; } /* só aparece quando fullscreen ativo */
         
         .menu-popup {
             position: absolute;
@@ -98,84 +95,80 @@
             gap: 10px;
             cursor: pointer;
             white-space: nowrap;
-            transition: 0.1s;
         }
         .menu-popup button:active { background: var(--primary-color); color: #000; }
-        .menu-popup i { width: 24px; text-align: center; }
         
-        /* BOTÕES DE GÊNERO FLUTUANTES - onde ficava o botão laranja (posição bottom: 28%) */
-        .genre-float-bar {
+        /* BOTÕES DE GÊNERO - na mesma posição do botão laranja original (bottom: 28%) */
+        .genre-bar {
             position: absolute;
             bottom: 28%;
-            right: 15px;
+            left: 0;
+            right: 0;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            justify-content: center;
+            gap: 12px;
             z-index: 25;
             pointer-events: auto;
+            padding: 0 16px;
         }
-        .genre-btn-float {
+        .genre-btn {
             background: rgba(0,0,0,0.75);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.3);
             color: white;
             border-radius: 40px;
-            padding: 8px 16px;
-            font-size: 0.8rem;
+            padding: 10px 20px;
+            font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
             transition: 0.1s;
-            width: 100px;
-            text-align: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.4);
         }
-        .genre-btn-float:active { transform: scale(0.94); background: var(--primary-color); color: #000; border-color: var(--primary-color); }
-        .genre-btn-float.active {
+        .genre-btn:active { transform: scale(0.95); background: var(--primary-color); color: #000; }
+        .genre-btn.active {
             background: var(--primary-color);
             color: #000;
             border-color: var(--primary-color);
-            box-shadow: 0 0 8px var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
         }
-        .genre-btn-float i { font-size: 0.9rem; }
         
-        /* Botão ativar áudio (agora menor e no canto esquerdo inferior) */
+        /* Botão ativar áudio (agora no canto inferior esquerdo) */
         .audio-activate-btn {
             position: absolute;
-            bottom: 22%;
+            bottom: 20%;
             left: 15px;
             background: linear-gradient(135deg, #ff7700, #ff4400);
             color: white;
             border: none;
             border-radius: 40px;
-            padding: 6px 14px;
-            font-size: 0.7rem;
+            padding: 8px 16px;
+            font-size: 0.75rem;
             font-weight: bold;
             cursor: pointer;
             z-index: 25;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             pointer-events: auto;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.5);
         }
-        .audio-activate-btn:active { transform: scale(0.92); }
+        .audio-activate-btn:active { transform: scale(0.95); }
         
-        /* Botão CTA (Saiba Mais) */
+        /* Botão CTA */
         .cta-button {
             position: absolute;
-            bottom: 16%;
+            bottom: 14%;
             left: 15px;
             background: rgba(0,0,0,0.65);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.25);
             color: white;
             border-radius: 40px;
-            padding: 6px 14px;
-            font-size: 0.7rem;
+            padding: 8px 16px;
+            font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             z-index: 25;
@@ -225,11 +218,10 @@
             display: none;
         }
         .feedback-modal.open { display: block; }
-        .feedback-modal h3 { color: #fff; margin-bottom: 8px; }
         .rating { display: flex; gap: 6px; margin: 8px 0; justify-content: center; }
         .star { color: #555; font-size: 1.3rem; cursor: pointer; }
         .star.active, .star.fas { color: #ffd700; }
-        .feedback-modal textarea { width: 100%; height: 60px; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; padding: 8px; color: #fff; margin-bottom: 8px; resize: none; }
+        .feedback-modal textarea { width: 100%; height: 60px; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; padding: 8px; color: #fff; resize: none; }
         .modal-btn { padding: 6px 12px; border-radius: 20px; cursor: pointer; background: #333; color: white; border: none; margin: 2px; }
         .modal-btn.send { background: #25D366; color: #000; font-weight: bold; }
         
@@ -246,29 +238,30 @@
             transform: translateX(-50%);
             background: linear-gradient(135deg, #ff6600, #ff3300);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 1rem;
             z-index: 10000;
             cursor: pointer;
             display: none;
             animation: btnPulse 1.5s infinite;
             white-space: nowrap;
             pointer-events: auto;
-            gap: 8px;
+            gap: 10px;
+            border: none;
         }
-        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.02); } 100% { transform: translateX(-50%) scale(1); } }
+        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.03); } 100% { transform: translateX(-50%) scale(1); } }
         
         @media (max-width: 480px) {
-            .genre-btn-float { padding: 6px 12px; font-size: 0.7rem; width: 85px; }
+            .genre-btn { padding: 6px 12px; font-size: 0.7rem; gap: 4px; }
             .control-btn { width: 40px; height: 40px; }
             .play-btn { width: 48px; height: 48px; }
         }
     </style>
 </head>
 <body class="theme-red">
-    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>MUTV Playlist</h1><p>Escolha seu gênero</p></div></div>
+    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>MUTV Playlist</h1><p>Carregando...</p></div></div>
     <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
     
     <div class="app">
@@ -278,19 +271,16 @@
             </video>
         </div>
         
-        <!-- Botão ativar áudio (laranja menor, lado esquerdo) -->
-        <button class="audio-activate-btn" id="compactAudioBtn"><i class="fas fa-volume-up"></i> ATIVAR ÁUDIO</button>
-        
-        <!-- Botão CTA -->
-        <button class="cta-button" id="ctaButton"><i class="fas fa-info-circle"></i> <span id="ctaText">SAIBA MAIS</span></button>
-        
-        <!-- GÊNEROS FLUTUANTES NA POSIÇÃO DO ANTIGO BOTÃO LARANJA (lado direito, empilhados) -->
-        <div class="genre-float-bar" id="genreFloatBar">
-            <button class="genre-btn-float" data-genre="sertanejo"><i class="fas fa-guitar"></i> Sert.</button>
-            <button class="genre-btn-float" data-genre="forro"><i class="fas fa-drum"></i> Forró</button>
-            <button class="genre-btn-float" data-genre="samba"><i class="fas fa-music"></i> Samba</button>
-            <button class="genre-btn-float" data-genre="vgm"><i class="fas fa-gamepad"></i> Vgm</button>
+        <!-- BOTÕES DE GÊNERO NA MESMA POSIÇÃO DO BOTÃO LARANJA ORIGINAL -->
+        <div class="genre-bar">
+            <button class="genre-btn" data-genre="sertanejo"><i class="fas fa-guitar"></i> Sert.</button>
+            <button class="genre-btn" data-genre="forro"><i class="fas fa-drum"></i> Forró</button>
+            <button class="genre-btn" data-genre="samba"><i class="fas fa-music"></i> Samba</button>
+            <button class="genre-btn" data-genre="vgm"><i class="fas fa-gamepad"></i> Vgm</button>
         </div>
+        
+        <button class="audio-activate-btn" id="compactAudioBtn"><i class="fas fa-volume-up"></i> ATIVAR ÁUDIO</button>
+        <button class="cta-button" id="ctaButton"><i class="fas fa-shopping-cart"></i> <span id="ctaText">PEÇA AGORA!</span></button>
         
         <div id="notificationTop" class="notification-top">
             <div class="message" id="notificationMessage"></div>
@@ -313,7 +303,7 @@
         </div>
     </div>
     
-    <!-- Menu superior com botão de sair da tela cheia -->
+    <!-- Menu superior com botão SAIR DA TELA CHEIA -->
     <div class="top-menu">
         <button class="exit-fullscreen-btn" id="exitFullscreenBtn"><i class="fas fa-compress"></i></button>
         <button class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></button>
@@ -336,31 +326,21 @@
     </div>
     
     <script>
-        // ==================== PLAYLIST POR GÊNERO ====================
+        // PLAYLIST POR GÊNERO
         const musicas = [
-            // SERTANEJO
             { id: 1, title: "Ficar por Ficar", artist: "Zé Vaqueiro", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genre: "sertanejo" },
             { id: 2, title: "Coração Partido", artist: "Luan Estilizado", src: "16 - Coracao Partido - Luan Estilizado.mp3", genre: "sertanejo" },
             { id: 3, title: "Porsche Azul", artist: "Cláudio Ney", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genre: "sertanejo" },
-            // FORRÓ
             { id: 4, title: "Xote da Alegria", artist: "Forró do Bom", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genre: "forro" },
             { id: 5, title: "Forró de Verdade", artist: "Banda Forró", src: "16 - Coracao Partido - Luan Estilizado.mp3", genre: "forro" },
             { id: 6, title: "Sanfona Sentimental", artist: "Forró das Antigas", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genre: "forro" },
-            // SAMBA
             { id: 7, title: "Samba de Roda", artist: "Grupo Samba", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genre: "samba" },
             { id: 8, title: "Pagode do Bom", artist: "Pagodeiros", src: "16 - Coracao Partido - Luan Estilizado.mp3", genre: "samba" },
             { id: 9, title: "Cidade do Samba", artist: "Samba Brasil", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genre: "samba" },
-            // VGM (Video Game Music / Eletrônica)
             { id: 10, title: "8bit Journey", artist: "ChipTune", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genre: "vgm" },
             { id: 11, title: "Retro Gauntlet", artist: "PixelSound", src: "16 - Coracao Partido - Luan Estilizado.mp3", genre: "vgm" },
             { id: 12, title: "Final Stage", artist: "VGM Orchestra", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genre: "vgm" }
         ];
-        
-        let currentGenre = "sertanejo";
-        let filteredPlaylist = musicas.filter(m => m.genre === currentGenre);
-        let currentIndex = 0;
-        let isPlaying = false;
-        let shuffle = false;
         
         const videosList = [
             { src: "play.mp4", nome: "Destaque", link: "https://wa.me/5512988461978?text=Olá,%20quero%20mais%20informações!", botaoTexto: "📞 INFORMAÇÕES", icone: "fas fa-headset" },
@@ -368,7 +348,13 @@
             { src: "play.mp4", nome: "Promoção", link: "https://wa.me/5512988461978?text=Quero%20aproveitar%20a%20oferta!", botaoTexto: "🎁 SAIBA MAIS", icone: "fas fa-gift" }
         ];
         
-        // DOM elements
+        let currentGenre = "sertanejo";
+        let filteredPlaylist = musicas.filter(m => m.genre === currentGenre);
+        let currentIndex = 0, isPlaying = false, shuffle = false;
+        let audioActive = false, audioCtx = null, silentSourceNode = null, musicSourceNode = null, musicGain = null, keepAliveInterval = null;
+        let timerInterval = null;
+        
+        // DOM
         const musicPlayer = document.getElementById('musicPlayer');
         const playBtn = document.getElementById('playPauseBtn');
         const prevBtn = document.getElementById('prevBtn');
@@ -385,61 +371,32 @@
         const notificationTop = document.getElementById('notificationTop');
         const notificationMessage = document.getElementById('notificationMessage');
         const compactAudioBtn = document.getElementById('compactAudioBtn');
-        const genreButtons = document.querySelectorAll('.genre-btn-float');
+        const genreButtons = document.querySelectorAll('.genre-btn');
         const exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
         
-        let timerInterval = null;
-        let audioActive = false;
-        let audioCtx = null;
-        let silentSourceNode = null;
-        let musicSourceNode = null;
-        let musicGain = null;
-        let keepAliveInterval = null;
-        let isFullscreen = false;
-        
         function showNotification(msg, duration = 3000) {
-            if (notificationTimeout) clearTimeout(notificationTimeout);
+            if (window.notifTimeout) clearTimeout(window.notifTimeout);
             notificationMessage.innerText = msg;
             notificationTop.classList.add('show');
-            notificationTimeout = setTimeout(() => notificationTop.classList.remove('show'), duration);
+            window.notifTimeout = setTimeout(() => notificationTop.classList.remove('show'), duration);
         }
-        let notificationTimeout = null;
         
-        // ==================== FUNÇÃO PARA MUDAR DE GÊNERO ====================
         function changeGenre(genre) {
             if (genre === currentGenre) return;
-            
             currentGenre = genre;
             filteredPlaylist = musicas.filter(m => m.genre === currentGenre);
+            if (filteredPlaylist.length === 0) return;
             
-            if (filteredPlaylist.length === 0) {
-                showNotification(`⚠️ Nenhuma música para ${genre}`, 2000);
-                return;
-            }
-            
-            // Atualizar UI dos botões flutuantes
             genreButtons.forEach(btn => {
-                if (btn.dataset.genre === genre) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
+                if (btn.dataset.genre === genre) btn.classList.add('active');
+                else btn.classList.remove('active');
             });
             
-            // Resetar índice
             currentIndex = 0;
             loadTrackUI(currentIndex);
-            
-            let genreName = "";
-            if (genre === "sertanejo") genreName = "Sertanejo";
-            else if (genre === "forro") genreName = "Forró";
-            else if (genre === "samba") genreName = "Samba";
-            else if (genre === "vgm") genreName = "VGM";
+            let genreName = { sertanejo: "Sertanejo", forro: "Forró", samba: "Samba", vgm: "VGM" }[genre];
             showNotification(`🎵 ${genreName} ativado`, 1500);
-            
-            if (isPlaying && audioActive) {
-                playMusic();
-            }
+            if (isPlaying && audioActive) playMusic();
         }
         
         function formatTime(sec) { if (isNaN(sec)) return "0:00"; const m = Math.floor(sec / 60), s = Math.floor(sec % 60); return `${m}:${s<10?'0':''}${s}`; }
@@ -452,11 +409,7 @@
             currentIndex = index;
             const t = filteredPlaylist[currentIndex];
             if (t) {
-                let generoDisplay = "";
-                if (t.genre === "sertanejo") generoDisplay = "Sertanejo";
-                else if (t.genre === "forro") generoDisplay = "Forró";
-                else if (t.genre === "samba") generoDisplay = "Samba";
-                else if (t.genre === "vgm") generoDisplay = "VGM";
+                let generoDisplay = { sertanejo: "Sertanejo", forro: "Forró", samba: "Samba", vgm: "VGM" }[t.genre];
                 trackArtist.textContent = `${t.title} - ${t.artist} • ${generoDisplay}`;
                 currentTimeEl.textContent = '0:00';
                 totalTimeEl.textContent = '0:00';
@@ -467,14 +420,11 @@
         async function playMusic() {
             if (!audioActive) { showNotification('⚠️ Clique em ATIVAR ÁUDIO primeiro!', 2500); return false; }
             if (filteredPlaylist.length === 0) return false;
-            
             const track = filteredPlaylist[currentIndex];
             if (!track || !track.src) return false;
-            
             musicPlayer.pause();
             musicPlayer.src = track.src;
             musicPlayer.load();
-            
             return new Promise((resolve) => {
                 musicPlayer.oncanplaythrough = async () => {
                     try {
@@ -488,19 +438,17 @@
                         splash.classList.add('hidden'); setTimeout(() => splash.style.display = 'none', 500);
                         tapToStart.style.display = 'none';
                         resolve(true);
-                    } catch(e) { console.error(e); isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; resolve(false); }
+                    } catch(e) { isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; resolve(false); }
                 };
                 musicPlayer.onended = () => {
                     stopTimer();
                     let nextFiltered;
                     if (shuffle && filteredPlaylist.length > 1) {
                         do { nextFiltered = Math.floor(Math.random() * filteredPlaylist.length); } while (nextFiltered === currentIndex);
-                    } else {
-                        nextFiltered = (currentIndex + 1) % filteredPlaylist.length;
-                    }
+                    } else { nextFiltered = (currentIndex + 1) % filteredPlaylist.length; }
                     currentIndex = nextFiltered;
                     loadTrackUI(currentIndex);
-                    setTimeout(async () => { await playMusic(); }, 80);
+                    setTimeout(async () => { if (!isPlaying) await playMusic(); }, 80);
                 };
                 musicPlayer.ontimeupdate = () => { if (musicPlayer.duration) { progressFill.style.width = (musicPlayer.currentTime/musicPlayer.duration)*100+'%'; currentTimeEl.textContent = formatTime(musicPlayer.currentTime); } };
             });
@@ -508,38 +456,33 @@
         
         function pauseMusic() { musicPlayer.pause(); isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; stopTimer(); }
         function togglePlayPause() { isPlaying ? pauseMusic() : playMusic(); }
-        async function nextTrack() { stopTimer(); let nextFiltered; if (shuffle && filteredPlaylist.length > 1) { do { nextFiltered = Math.floor(Math.random() * filteredPlaylist.length); } while (nextFiltered === currentIndex); } else { nextFiltered = (currentIndex + 1) % filteredPlaylist.length; } currentIndex = nextFiltered; loadTrackUI(currentIndex); if (isPlaying) await playMusic(); }
-        async function prevTrack() { stopTimer(); let prevFiltered; if (shuffle && filteredPlaylist.length > 1) { do { prevFiltered = Math.floor(Math.random() * filteredPlaylist.length); } while (prevFiltered === currentIndex); } else { prevFiltered = (currentIndex - 1 + filteredPlaylist.length) % filteredPlaylist.length; } currentIndex = prevFiltered; loadTrackUI(currentIndex); if (isPlaying) await playMusic(); }
+        async function nextTrack() { stopTimer(); let n; if (shuffle && filteredPlaylist.length > 1) { do { n = Math.floor(Math.random() * filteredPlaylist.length); } while (n === currentIndex); } else { n = (currentIndex + 1) % filteredPlaylist.length; } currentIndex = n; loadTrackUI(currentIndex); if (isPlaying) await playMusic(); }
+        async function prevTrack() { stopTimer(); let n; if (shuffle && filteredPlaylist.length > 1) { do { n = Math.floor(Math.random() * filteredPlaylist.length); } while (n === currentIndex); } else { n = (currentIndex - 1 + filteredPlaylist.length) % filteredPlaylist.length; } currentIndex = n; loadTrackUI(currentIndex); if (isPlaying) await playMusic(); }
         
-        // AudioContext (tela bloqueada)
         async function initAudioContext() {
             if (audioActive && audioCtx && audioCtx.state === 'running') return true;
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === 'suspended') await audioCtx.resume();
-                
                 const sampleRate = audioCtx.sampleRate;
                 const bufferLen = sampleRate * 4;
                 const silentBuffer = audioCtx.createBuffer(1, bufferLen, sampleRate);
                 for (let i = 0; i < bufferLen; i++) silentBuffer.getChannelData(0)[i] = 0;
-                
                 if (silentSourceNode) { try { silentSourceNode.stop(); silentSourceNode.disconnect(); } catch(e) {} }
                 silentSourceNode = audioCtx.createBufferSource();
                 silentSourceNode.buffer = silentBuffer;
                 silentSourceNode.loop = true;
                 silentSourceNode.connect(audioCtx.destination);
                 silentSourceNode.start();
-                
                 if (musicSourceNode) { try { musicSourceNode.disconnect(); } catch(e) {} }
                 musicSourceNode = audioCtx.createMediaElementSource(musicPlayer);
                 musicGain = audioCtx.createGain();
                 musicGain.gain.value = 0.9;
                 musicSourceNode.connect(musicGain);
                 musicGain.connect(audioCtx.destination);
-                
                 audioActive = true;
                 return true;
-            } catch (err) { console.error(err); return false; }
+            } catch (err) { return false; }
         }
         
         function startKeepAlive() { keepAliveInterval = setInterval(async () => { if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume(); if (isPlaying && musicPlayer.paused && audioActive) await musicPlayer.play().catch(e => console.log); }, 4000); }
@@ -556,45 +499,35 @@
             }
         }
         
-        // Controle de fullscreen com botão de sair
+        // FULLSCREEN: entra automaticamente e tem botão pra sair
+        function enterFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(e => console.log);
+            }
+        }
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(e => console.log);
+            }
+        }
         function updateFullscreenUI() {
-            isFullscreen = !!document.fullscreenElement;
-            if (isFullscreen) {
+            if (document.fullscreenElement) {
                 exitFullscreenBtn.style.display = 'flex';
             } else {
                 exitFullscreenBtn.style.display = 'none';
             }
         }
-        
-        function enterFullscreen() {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().then(() => updateFullscreenUI()).catch(e => console.log);
-            }
-        }
-        
-        function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen().then(() => updateFullscreenUI()).catch(e => console.log);
-            }
-        }
-        
         document.addEventListener('fullscreenchange', updateFullscreenUI);
         
-        // Eventos dos botões de gênero flutuantes
-        genreButtons.forEach(btn => {
-            btn.addEventListener('click', () => changeGenre(btn.dataset.genre));
-        });
-        
+        // Eventos
+        genreButtons.forEach(btn => { btn.addEventListener('click', () => changeGenre(btn.dataset.genre)); });
         playBtn.addEventListener('click', () => { if(!audioActive) showNotification('⚠️ Clique em ATIVAR ÁUDIO!', 2000); else togglePlayPause(); resetHideTimer(); });
         prevBtn.addEventListener('click', () => { prevTrack(); resetHideTimer(); });
         nextBtn.addEventListener('click', () => { nextTrack(); resetHideTimer(); });
         shuffleBtn.addEventListener('click', () => { shuffle = !shuffle; showNotification(shuffle ? '🔀 Aleatório ON' : '➡️ Sequencial', 1500); });
         document.getElementById('progressBar').addEventListener('click', (e) => { const rect = e.currentTarget.getBoundingClientRect(); const percent = (e.clientX - rect.left) / rect.width; if(musicPlayer.duration) musicPlayer.currentTime = percent * musicPlayer.duration; });
-        
         compactAudioBtn.addEventListener('click', activateAudioAndPlay);
         tapToStart.addEventListener('click', activateAudioAndPlay);
-        
-        // Menu e fullscreen
         document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { enterFullscreen(); menuPopup.classList.remove('open'); });
         exitFullscreenBtn.addEventListener('click', () => { exitFullscreen(); });
         menuButton.addEventListener('click', (e) => { e.stopPropagation(); menuPopup.classList.toggle('open'); });
@@ -631,19 +564,21 @@
         document.addEventListener('touchstart', resetHideTimer);
         showControls();
         
-        // Feedback rating
+        // Rating feedback
         let currentRating = 0;
         document.querySelectorAll('#ratingStars .star').forEach(star => { star.addEventListener('click', () => { currentRating = parseInt(star.dataset.rating); document.querySelectorAll('#ratingStars .star').forEach((s,i) => { if(i < currentRating) { s.classList.add('fas','active'); s.classList.remove('far'); } else { s.classList.remove('fas','active'); s.classList.add('far'); } }); }); });
         document.getElementById('cancelFeedback').addEventListener('click', () => { document.getElementById('feedbackModal').classList.remove('open'); document.getElementById('feedbackText').value = ''; currentRating = 0; });
         document.getElementById('sendFeedback').addEventListener('click', () => { if(currentRating === 0) { showNotification('⭐ Selecione uma nota', 2000); return; } let msg = `🎵 MUTV Playlist\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5-currentRating)}\n`; if(document.getElementById('feedbackText').value.trim()) msg += `💬 ${document.getElementById('feedbackText').value.trim()}\n`; window.open(`https://wa.me/5512988461978?text=${encodeURIComponent(msg)}`, '_blank'); showNotification('✅ Feedback enviado', 1500); document.getElementById('feedbackModal').classList.remove('open'); document.getElementById('feedbackText').value = ''; currentRating = 0; });
         
+        // INICIALIZAÇÃO: entra em tela cheia automaticamente
         window.addEventListener('load', () => {
             filteredPlaylist = musicas.filter(m => m.genre === currentGenre);
             currentIndex = 0;
             loadTrackUI(currentIndex);
             tapToStart.style.display = 'block';
-            document.querySelector('.genre-btn-float[data-genre="sertanejo"]').classList.add('active');
-            updateFullscreenUI();
+            document.querySelector('.genre-btn[data-genre="sertanejo"]').classList.add('active');
+            // Entrar em tela cheia automaticamente
+            setTimeout(() => { enterFullscreen(); }, 500);
         });
     </script>
 </body>
