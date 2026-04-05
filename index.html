@@ -105,6 +105,83 @@
         .menu-popup button:active { background: var(--primary-color); color: #000; }
         .menu-popup i { width: 24px; text-align: center; }
         
+        /* Botão Gêneros - novo */
+        .genre-button {
+            position: absolute;
+            bottom: 120px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 25;
+            pointer-events: auto;
+            transition: 0.2s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .genre-button:active { transform: scale(0.9); background: var(--primary-color); color: #000; }
+        
+        /* Modal de Gêneros */
+        .genres-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 30px 30px 0 0;
+            padding: 20px;
+            z-index: 2000;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            pointer-events: auto;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .genres-modal.open { transform: translateY(0); }
+        .genres-modal h3 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        .genres-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .genre-card {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .genre-card:active { transform: scale(0.95); background: var(--primary-color); }
+        .genre-card i { font-size: 2rem; display: block; margin-bottom: 8px; }
+        .genre-card span { font-size: 0.9rem; font-weight: bold; color: white; }
+        .genre-card.active { background: var(--primary-color); border-color: var(--primary-color); }
+        .close-genres {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
         .cta-button {
             position: absolute;
             bottom: 25%;
@@ -113,8 +190,8 @@
             color: white;
             border: none;
             border-radius: 50px;
-            padding: 8px 16px;
-            font-size: 0.8rem;
+            padding: 6px 12px;
+            font-size: 0.7rem;
             font-weight: bold;
             cursor: pointer;
             z-index: 25;
@@ -122,7 +199,7 @@
             animation: pulse-cta 1.5s infinite;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             pointer-events: auto;
         }
         @keyframes pulse-cta { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
@@ -230,7 +307,8 @@
             </video>
         </div>
         <div class="genre-badge" id="genreBadge"><i class="fas fa-music"></i> SERTANEJO</div>
-        <button class="cta-button" id="ctaButton"><i class="fas fa-shopping-cart"></i> PEÇA AGORA!</button>
+        <button class="cta-button" id="ctaButton"><i class="fas fa-headset"></i> INFORMAÇÕES</button>
+        <button class="genre-button" id="genreButton"><i class="fas fa-guitar"></i></button>
         
         <div id="notificationTop" class="notification-top">
             <div class="message" id="notificationMessage"></div>
@@ -260,6 +338,34 @@
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
     </div>
     
+    <!-- Modal de Gêneros -->
+    <div class="genres-modal" id="genresModal">
+        <h3><i class="fas fa-music"></i> Escolha o Gênero</h3>
+        <div class="genres-grid">
+            <div class="genre-card" data-genero="SERTANEJO">
+                <i class="fas fa-guitar"></i>
+                <span>SERTANEJO</span>
+            </div>
+            <div class="genre-card" data-genero="FORRÓ">
+                <i class="fas fa-drum"></i>
+                <span>FORRÓ</span>
+            </div>
+            <div class="genre-card" data-genero="SAMBA">
+                <i class="fas fa-drumstick-bite"></i>
+                <span>SAMBA</span>
+            </div>
+            <div class="genre-card" data-genero="VGM">
+                <i class="fas fa-gamepad"></i>
+                <span>VGM</span>
+            </div>
+            <div class="genre-card" data-genero="TODOS">
+                <i class="fas fa-list"></i>
+                <span>TODOS</span>
+            </div>
+        </div>
+        <button class="close-genres" id="closeGenresBtn"><i class="fas fa-times"></i> Fechar</button>
+    </div>
+    
     <audio id="musicPlayer" preload="auto" crossorigin="anonymous"></audio>
     <audio id="adPlayer" preload="auto" crossorigin="anonymous"></audio>
     <audio id="silentAudio" loop crossorigin="anonymous" style="display: none;"></audio>
@@ -273,39 +379,34 @@
     
     <script>
         // ==================== PLAYLIST COM MÚLTIPLOS GÊNEROS ====================
-        // SERTANEJO, FORRÓ, SAMBA, VGM (Video Game Music)
         const musicas = [
             // SERTANEJO
-            { id: 1, title: "Chora Me Liga", artist: "Sertanejo", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "SERTANEJO" },
-            { id: 2, title: "Coração Cachorro", artist: "Sertanejo", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "SERTANEJO" },
-            { id: 3, title: "Avisa Que Eu Cheguei", artist: "Sertanejo", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genero: "SERTANEJO" },
+            { id: 1, title: "Chora Me Liga", artist: "Jorge & Mateus", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "SERTANEJO" },
+            { id: 2, title: "Coração Cachorro", artist: "Matheus & Kauan", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "SERTANEJO" },
+            { id: 3, title: "Avisa Que Eu Cheguei", artist: "Zé Neto & Cristiano", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genero: "SERTANEJO" },
             
             // FORRÓ
-            { id: 4, title: "Vaqueiro Apaixonado", artist: "Forró", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "FORRÓ" },
-            { id: 5, title: "Forró do Miudinho", artist: "Forró", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "FORRÓ" },
-            { id: 6, title: "Piseiro da Hora", artist: "Forró", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genero: "FORRÓ" },
+            { id: 4, title: "Vaqueiro Apaixonado", artist: "Zé Vaqueiro", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "FORRÓ" },
+            { id: 5, title: "Forró do Miudinho", artist: "Wesley Safadão", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "FORRÓ" },
+            { id: 6, title: "Piseiro da Hora", artist: "Tarcísio do Acordeon", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genero: "FORRÓ" },
             
             // SAMBA
-            { id: 7, title: "Pagode do Arrasta", artist: "Samba", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "SAMBA" },
-            { id: 8, title: "Samba de Raiz", artist: "Samba", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "SAMBA" },
-            { id: 9, title: "Partido Alto", artist: "Samba", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genero: "SAMBA" },
+            { id: 7, title: "Pagode do Arrasta", artist: "Thiaguinho", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "SAMBA" },
+            { id: 8, title: "Samba de Raiz", artist: "Zeca Pagodinho", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "SAMBA" },
+            { id: 9, title: "Partido Alto", artist: "Martinho da Vila", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genero: "SAMBA" },
             
             // VGM (Video Game Music)
-            { id: 10, title: "Theme of Ryu", artist: "Street Fighter", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "VGM" },
-            { id: 11, title: "Mario Theme", artist: "Super Mario", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "VGM" },
+            { id: 10, title: "Theme of Ryu", artist: "Street Fighter II", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "VGM" },
+            { id: 11, title: "Super Mario Theme", artist: "Nintendo", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "VGM" },
             { id: 12, title: "Zelda's Lullaby", artist: "The Legend of Zelda", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genero: "VGM" }
         ];
         
-        // Anúncio funcional
-        const anunciosAudio = [
-            { src: "zzc", nome: "Oferta Especial" }
-        ];
+        const anunciosAudio = [{ src: "zzc", nome: "Oferta Especial" }];
         
-        // Vídeos públicos com textos e links personalizados
         const videosList = [
-            { src: "play.mp4", nome: "Principal", link: "https://wa.me/5512988461978?text=Olá,%20quero%20mais%20informações!", botaoTexto: "Informações!" },
-            { src: "Cazé_20260404_200357_0000.mp4", nome: "MUTV", link: "https://wa.me/5512988461978?text=Gostaria%20de%20um%20orçamento", botaoTexto: "ORÇAMENTO" },
-            { src: "play.mp4", nome: "Diversão", link: "https://seusite.com/informacoes", botaoTexto: "SAIBA MAIS" }
+            { src: "play.mp4", nome: "Principal", link: "https://wa.me/5512988461978?text=Olá,%20quero%20mais%20informações!", botaoTexto: "INFORMAÇÕES", icone: "fa-headset" },
+            { src: "Cazé_20260404_200357_0000.mp4", nome: "MUTV", link: "https://wa.me/5512988461978?text=Gostaria%20de%20um%20orçamento", botaoTexto: "ORÇAMENTO", icone: "fa-file-invoice" },
+            { src: "play.mp4", nome: "Diversão", link: "https://seusite.com/informacoes", botaoTexto: "SAIBA MAIS", icone: "fa-info-circle" }
         ];
         
         // DOM elements
@@ -326,6 +427,8 @@
         const notificationTop = document.getElementById('notificationTop');
         const notificationMessage = document.getElementById('notificationMessage');
         const genreBadge = document.getElementById('genreBadge');
+        const genreButton = document.getElementById('genreButton');
+        const genresModal = document.getElementById('genresModal');
         
         let currentIndex = 0, isPlaying = false, shuffle = false;
         let timerInterval = null, isAdPlaying = false, adsEnabled = true, adInterval = 30, currentAdIndex = 0, shouldResumeMusic = false, musicPausedTime = 0;
@@ -343,19 +446,71 @@
         function updateGenreBadge(genero) {
             currentGenre = genero;
             let icon = "fa-music";
-            let color = "";
             switch(genero) {
-                case "SERTANEJO": icon = "fa-guitar"; color = "#ff6b6b"; break;
-                case "FORRÓ": icon = "fa-drum"; color = "#ff9f43"; break;
-                case "SAMBA": icon = "fa-drumstick-bite"; color = "#feca57"; break;
-                case "VGM": icon = "fa-gamepad"; color = "#5f27cd"; break;
+                case "SERTANEJO": icon = "fa-guitar"; break;
+                case "FORRÓ": icon = "fa-drum"; break;
+                case "SAMBA": icon = "fa-drumstick-bite"; break;
+                case "VGM": icon = "fa-gamepad"; break;
                 default: icon = "fa-headphones";
             }
             genreBadge.innerHTML = `<i class="fas ${icon}"></i> ${genero}`;
-            genreBadge.style.borderLeftColor = color || "var(--primary-color)";
         }
         
-        // ==================== AUDIO CONTEXT (BACKGROUND LOCK) ====================
+        function filterByGenre(genero) {
+            if (genero === "TODOS") {
+                filteredPlaylist = [...musicas];
+                showNotification("🎵 Tocando todos os gêneros!", 2000);
+            } else {
+                filteredPlaylist = musicas.filter(m => m.genero === genero);
+                if (filteredPlaylist.length === 0) {
+                    showNotification(`⚠️ Nenhuma música encontrada para ${genero}`, 2000);
+                    return false;
+                }
+                showNotification(`🎵 Gênero alterado para ${genero}`, 2000);
+            }
+            
+            // Encontra a primeira música do novo filtro
+            const firstTrack = filteredPlaylist[0];
+            currentIndex = musicas.findIndex(m => m.id === firstTrack.id);
+            if (currentIndex === -1) currentIndex = 0;
+            loadTrackUI(currentIndex);
+            if (isPlaying) {
+                playMusic();
+            }
+            updateGenreBadge(genero === "TODOS" ? "MIX" : genero);
+            return true;
+        }
+        
+        // Gerenciar Modal de Gêneros
+        function openGenresModal() {
+            genresModal.classList.add('open');
+        }
+        
+        function closeGenresModal() {
+            genresModal.classList.remove('open');
+        }
+        
+        genreButton.addEventListener('click', () => {
+            openGenresModal();
+            resetHideTimer();
+        });
+        
+        document.querySelectorAll('.genre-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const genero = card.dataset.genero;
+                filterByGenre(genero);
+                closeGenresModal();
+            });
+        });
+        
+        document.getElementById('closeGenresBtn').addEventListener('click', closeGenresModal);
+        
+        // Fechar modal clicando fora
+        genresModal.addEventListener('click', (e) => {
+            if (e.target === genresModal) closeGenresModal();
+        });
+        
+        // ==================== AUDIO CONTEXT ====================
         let audioCtx = null;
         let silentSourceNode = null;
         let musicSourceNode = null;
@@ -484,7 +639,7 @@
         async function playMusic() {
             if (!audioActive) { showNotification('⚠️ Clique no botão "ATIVAR ÁUDIO" primeiro!', 3000); return false; }
             if (isAdPlaying) { showNotification('Aguarde o anúncio terminar', 2000); return false; }
-            const track = musicas[currentIndex];
+            const track = filteredPlaylist[currentIndex];
             if (!track || !track.src) return false;
             musicPlayer.pause();
             musicPlayer.src = track.src;
@@ -533,7 +688,7 @@
         
         function pauseMusic() { musicPlayer.pause(); isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; stopTimer(); }
         function togglePlayPause() { isPlaying ? pauseMusic() : playMusic(); }
-        function loadTrackUI(index) { if (index >= musicas.length) index = 0; if (index < 0) index = musicas.length-1; currentIndex = index; const t = musicas[currentIndex]; trackArtist.textContent = `${t.title} - ${t.artist} [${t.genero}]`; currentTimeEl.textContent = '0:00'; totalTimeEl.textContent = '0:00'; progressFill.style.width = '0%'; updateGenreBadge(t.genero); }
+        function loadTrackUI(index) { if (index >= filteredPlaylist.length) index = 0; if (index < 0) index = filteredPlaylist.length-1; currentIndex = index; const t = filteredPlaylist[currentIndex]; trackArtist.textContent = `${t.title} - ${t.artist} [${t.genero}]`; currentTimeEl.textContent = '0:00'; totalTimeEl.textContent = '0:00'; progressFill.style.width = '0%'; updateGenreBadge(t.genero); }
         
         async function nextTrack() { if (isAdPlaying) return; stopTimer(); let nextFiltered; if (shuffle && filteredPlaylist.length > 1) { do { nextFiltered = Math.floor(Math.random() * filteredPlaylist.length); } while (nextFiltered === currentIndex); } else { nextFiltered = (currentIndex + 1) % filteredPlaylist.length; } currentIndex = nextFiltered; loadTrackUI(currentIndex); if (isPlaying) await playMusic(); }
         async function prevTrack() { if (isAdPlaying) return; stopTimer(); let prevFiltered; if (shuffle && filteredPlaylist.length > 1) { do { prevFiltered = Math.floor(Math.random() * filteredPlaylist.length); } while (prevFiltered === currentIndex); } else { prevFiltered = (currentIndex - 1 + filteredPlaylist.length) % filteredPlaylist.length; } currentIndex = prevFiltered; loadTrackUI(currentIndex); if (isPlaying) await playMusic(); }
@@ -588,7 +743,7 @@
                 vidEl.src = video.src;
                 vidEl.load();
                 vidEl.play().catch(e => console.log("Vídeo autoplay bloqueado:", e));
-                ctaBtn.innerHTML = `<i class="fas fa-shopping-cart"></i> ${video.botaoTexto}`;
+                ctaBtn.innerHTML = `<i class="fas ${video.icone}"></i> ${video.botaoTexto}`;
                 ctaBtn.onclick = () => window.open(video.link, '_blank');
             }
         }
@@ -617,7 +772,7 @@
                 setupVisibilityHandler();
                 setupSilentAudioWorkaround();
                 const randomTrack = filteredPlaylist[Math.floor(Math.random()*filteredPlaylist.length)];
-                currentIndex = musicas.findIndex(m => m.id === randomTrack.id);
+                currentIndex = filteredPlaylist.findIndex(m => m.id === randomTrack.id);
                 if(currentIndex === -1) currentIndex = 0;
                 loadTrackUI(currentIndex);
                 await playMusic();
@@ -630,7 +785,7 @@
             const savedTheme = localStorage.getItem('radioTheme') || 'theme-red';
             document.body.className = savedTheme;
             const rand = filteredPlaylist[Math.floor(Math.random()*filteredPlaylist.length)];
-            currentIndex = musicas.findIndex(m => m.id === rand.id);
+            currentIndex = filteredPlaylist.findIndex(m => m.id === rand.id);
             if(currentIndex === -1) currentIndex = 0;
             loadTrackUI(currentIndex);
             startAdTimer();
