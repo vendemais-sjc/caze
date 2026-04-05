@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MUTV Playlist • Toca com tela bloqueada</title>
+    <title>Cazé Playlist • Toca com tela bloqueada</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -258,7 +258,6 @@
         .splash-content i { font-size: 3rem; color: #e63946; margin-bottom: 1rem; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.6; transform: scale(1); } }
         
-        /* Botão ATIVAR ÁUDIO - MENOR */
         #tap-to-start {
             position: fixed;
             bottom: 20%;
@@ -266,10 +265,10 @@
             transform: translateX(-50%);
             background: linear-gradient(135deg, #ff6600, #ff3300);
             color: white;
-            padding: 8px 20px;
+            padding: 10px 24px;
             border-radius: 40px;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             z-index: 10000;
             cursor: pointer;
             display: none;
@@ -320,7 +319,7 @@
 </head>
 <body>
     <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>Cazé Playlist</h1><p>🔊 Toque com tela bloqueada!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão para ativar</p></div></div>
-    <div id="tap-to-start"><i class="fas fa-play-circle"></i> ATIVAR ÁUDIO</div>
+    <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
     
     <div class="app">
         <div class="fullscreen-video-container">
@@ -373,7 +372,9 @@
         <button class="close-genres" id="closeGenresBtn"><i class="fas fa-times-circle"></i> FECHAR</button>
     </div>
     
+    <!-- MÚLTIPLOS ÁUDIOS PARA GARANTIR BACKGROUND -->
     <audio id="musicPlayer" preload="auto" crossorigin="anonymous"></audio>
+    <audio id="backgroundAudio" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
     
     <div class="feedback-modal" id="feedbackModal">
         <h3>Sua opinião</h3>
@@ -383,6 +384,7 @@
     </div>
     
     <script>
+        // PLAYLIST COM MÚLTIPLAS MÚSICAS
         const musicas = [
          { id: 1, title: "Panda_Corpo_Nu_muzzik.m4a", artist: "Panda", src: "Panda_Corpo_Nu_muzzik.m4a", genero: "SERTANEJO" },
             { id: 2, title: "Diego_Victor_Hugo_Infarto_muzzik.m4a", artist: "Diego_Victor_Hugo", src: "Diego_Victor_Hugo_Infarto_muzzik.m4a", genero: "SERTANEJO" },
@@ -405,13 +407,14 @@
         ];
         
         const videosList = [
-            { src: "Pla.mp4", nome: "Principal", link: "https://wa.me/5512988461978?text=Olá,%20quero%20mais%20informações!", botaoTexto: "INFORMAÇÕES", icone: "fa-headset" },
+            { src: "Play.mp4", nome: "Principal", link: "https://wa.me/5512988461978?text=Olá,%20quero%20mais%20informações!", botaoTexto: "INFORMAÇÕES", icone: "fa-headset" },
             { src: "Cazé_20260404_200357_0000.mp4", nome: "MUTV", link: "https://wa.me/5512988461978?text=Gostaria%20de%20um%20orçamento", botaoTexto: "ORÇAMENTO", icone: "fa-file-invoice" },
-            { src: "Pla.mp4", nome: "Diversão", link: "https://seusite.com/informacoes", botaoTexto: "SAIBA MAIS", icone: "fa-info-circle" }
+            { src: "play.mp4", nome: "Diversão", link: "https://seusite.com/informacoes", botaoTexto: "SAIBA MAIS", icone: "fa-info-circle" }
         ];
         
         // DOM Elements
         const musicPlayer = document.getElementById('musicPlayer');
+        const backgroundAudio = document.getElementById('backgroundAudio');
         const playBtn = document.getElementById('playPauseBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -435,89 +438,138 @@
         let timerInterval = null;
         let filteredPlaylist = [...musicas];
         let notificationTimeout = null;
-        
-        // ==================== AUDIO CONTEXT OTIMIZADO PARA TELA BLOQUEADA ====================
-        let audioCtx = null;
-        let gainNode = null;
-        let isAudioActive = false;
         let backgroundInterval = null;
+        let isBackgroundActive = false;
         
-        // Função principal para ativar áudio em segundo plano
+        // Embaralhar playlist no início
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        
+        // Começar com música aleatória
+        function iniciarMusicaAleatoria() {
+            const randomIndex = Math.floor(Math.random() * filteredPlaylist.length);
+            currentIndex = randomIndex;
+            loadTrackUI(currentIndex);
+        }
+        
+        // ==================== SOLUÇÃO DEFINITIVA PARA TELA BLOQUEADA ====================
+        // Estratégia: Usar um "áudio fantasma" que toca silenciosamente em loop
+        // para manter o processo de áudio vivo no iOS/Android
+        
         async function ativarAudioBackground() {
             try {
-                // Criar AudioContext
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                // Criar um blob de áudio silencioso (WAV)
+                const createSilentAudio = () => {
+                    const sampleRate = 44100;
+                    const duration = 5;
+                    const numSamples = sampleRate * duration;
+                    const buffer = new ArrayBuffer(44 + numSamples * 2);
+                    const view = new DataView(buffer);
+                    
+                    const writeString = (view, offset, str) => {
+                        for (let i = 0; i < str.length; i++) {
+                            view.setUint8(offset + i, str.charCodeAt(i));
+                        }
+                    };
+                    
+                    writeString(view, 0, 'RIFF');
+                    view.setUint32(4, 36 + numSamples * 2, true);
+                    writeString(view, 8, 'WAVE');
+                    writeString(view, 12, 'fmt ');
+                    view.setUint32(16, 16, true);
+                    view.setUint16(20, 1, true);
+                    view.setUint16(22, 1, true);
+                    view.setUint32(24, sampleRate, true);
+                    view.setUint32(28, sampleRate * 2, true);
+                    view.setUint16(32, 2, true);
+                    view.setUint16(34, 16, true);
+                    writeString(view, 36, 'data');
+                    view.setUint32(40, numSamples * 2, true);
+                    
+                    let offset = 44;
+                    for (let i = 0; i < numSamples; i++) {
+                        view.setInt16(offset, 0, true);
+                        offset += 2;
+                    }
+                    
+                    return new Blob([buffer], { type: 'audio/wav' });
+                };
                 
-                // Criar nó de ganho
-                gainNode = audioCtx.createGain();
-                gainNode.gain.value = 1;
-                gainNode.connect(audioCtx.destination);
+                const silentBlob = createSilentAudio();
+                const silentUrl = URL.createObjectURL(silentBlob);
                 
-                // Conectar o elemento de áudio
-                const source = audioCtx.createMediaElementSource(musicPlayer);
-                source.connect(gainNode);
+                // Configurar áudio de fundo silencioso
+                backgroundAudio.src = silentUrl;
+                backgroundAudio.loop = true;
+                backgroundAudio.volume = 0.001;
                 
-                // Iniciar o contexto
-                await audioCtx.resume();
+                // Tentar tocar o áudio silencioso
+                await backgroundAudio.play();
                 
-                isAudioActive = true;
-                audioIndicator.innerHTML = '<i class="fas fa-circle"></i> Áudio Ativo';
+                isBackgroundActive = true;
+                audioIndicator.innerHTML = '<i class="fas fa-circle"></i> Áudio Ativo (2º plano)';
                 audioIndicator.style.color = '#4ade80';
                 
-                // Iniciar serviço de manutenção em segundo plano
-                iniciarManutencaoBackground();
+                console.log('✅ Áudio de fundo ativado!');
                 
-                // Solicitar WakeLock
+                // Iniciar manutenção contínua
+                iniciarManutencaoConstante();
+                
+                // Solicitar Wake Lock
                 await solicitarWakeLock();
                 
-                console.log('✅ AudioContext ativado com sucesso!');
                 return true;
                 
             } catch (error) {
-                console.error('Erro ao ativar AudioContext:', error);
+                console.error('Erro ao ativar áudio:', error);
                 audioIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro';
                 audioIndicator.style.color = '#ef4444';
                 return false;
             }
         }
         
-        // Manter áudio vivo em segundo plano
-        function iniciarManutencaoBackground() {
+        // Manutenção CONSTANTE para garantir áudio rodando
+        function iniciarManutencaoConstante() {
             if (backgroundInterval) clearInterval(backgroundInterval);
             
             backgroundInterval = setInterval(async () => {
                 try {
-                    // Verificar e manter AudioContext rodando
-                    if (audioCtx && audioCtx.state === 'suspended') {
-                        await audioCtx.resume();
-                        console.log('🔄 AudioContext resumido');
+                    // Verificar áudio silencioso
+                    if (backgroundAudio.paused && isBackgroundActive) {
+                        console.log('🔄 Reiniciando áudio silencioso');
+                        await backgroundAudio.play().catch(e => console.log);
                     }
                     
-                    // Se a música deveria estar tocando mas está pausada, retomar
+                    // Verificar música principal
                     if (isPlaying && musicPlayer.paused && !musicPlayer.ended) {
-                        console.log('🔄 Retomando música em segundo plano');
+                        console.log('🔄 Retomando música principal');
                         await musicPlayer.play().catch(e => console.log);
                     }
                     
-                    // Atualizar indicador
-                    if (audioCtx && audioCtx.state === 'running') {
-                        audioIndicator.style.color = '#4ade80';
+                    // Se a música acabou, tocar próxima
+                    if (musicPlayer.ended && isPlaying) {
+                        console.log('🔄 Música terminou, tocando próxima');
+                        nextTrack();
                     }
                     
                 } catch (e) {
-                    console.log('Manutenção background:', e);
+                    console.log('Manutenção:', e);
                 }
-            }, 2000);
+            }, 1500); // Verifica a cada 1.5 segundos
         }
         
-        // Solicitar Wake Lock para manter app ativo
+        // Wake Lock para manter dispositivo ativo
         async function solicitarWakeLock() {
             try {
                 if ('wakeLock' in navigator) {
                     const wakeLock = await navigator.wakeLock.request('screen');
                     console.log('✅ Wake Lock ativado');
                     
-                    // Recriar wake lock quando a página ficar visível
                     document.addEventListener('visibilitychange', async () => {
                         if (document.visibilityState === 'visible') {
                             await navigator.wakeLock.request('screen');
@@ -525,26 +577,8 @@
                     });
                 }
             } catch (err) {
-                console.log('Wake Lock não suportado:', err);
+                console.log('Wake Lock:', err);
             }
-        }
-        
-        // Monitorar visibilidade da página
-        function monitorarVisibilidade() {
-            document.addEventListener('visibilitychange', async () => {
-                if (document.hidden) {
-                    console.log('📱 App em segundo plano - mantendo áudio');
-                    // Garantir que o áudio continue
-                    if (audioCtx && audioCtx.state === 'running' && isPlaying && musicPlayer.paused) {
-                        await musicPlayer.play().catch(e => console.log);
-                    }
-                } else {
-                    console.log('📱 App em primeiro plano');
-                    if (audioCtx && audioCtx.state === 'suspended') {
-                        await audioCtx.resume();
-                    }
-                }
-            });
         }
         
         // ==================== FUNÇÕES DE ÁUDIO ====================
@@ -565,7 +599,6 @@
                 default: icon = "fa-headphones";
             }
             genreBadge.innerHTML = `<i class="fas ${icon}"></i> ${genero === "MIX" ? "TODOS" : genero}`;
-            if (genero === "MIX") genreBadge.innerHTML = `<i class="fas fa-list"></i> TODOS`;
         }
         
         function filterByGenre(genero) {
@@ -576,10 +609,10 @@
             } else {
                 filteredPlaylist = musicas.filter(m => m.genero === genero);
                 if (filteredPlaylist.length === 0) {
-                    showNotification(`⚠️ Nenhuma música encontrada para ${genero}`, 2000);
+                    showNotification(`⚠️ Nenhuma música encontrada`, 2000);
                     return false;
                 }
-                showNotification(`🎵 Gênero alterado para ${genero}`, 2000);
+                showNotification(`🎵 ${genero}`, 2000);
                 updateGenreBadge(genero);
             }
             currentIndex = 0;
@@ -612,7 +645,7 @@
         }
         
         async function playMusic() {
-            if (!isAudioActive) {
+            if (!isBackgroundActive) {
                 showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
                 return false;
             }
@@ -628,9 +661,6 @@
             return new Promise((resolve) => {
                 musicPlayer.oncanplaythrough = async () => {
                     try {
-                        if (audioCtx && audioCtx.state === 'suspended') {
-                            await audioCtx.resume();
-                        }
                         await musicPlayer.play();
                         isPlaying = true;
                         playBtn.innerHTML = '<i class="fas fa-pause"></i>';
@@ -675,11 +705,11 @@
                     let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length;
                     currentIndex = nextIndex;
                     loadTrackUI(currentIndex);
-                    setTimeout(() => playMusic(), 80);
+                    setTimeout(() => playMusic(), 100);
                 };
                 
                 musicPlayer.onerror = () => {
-                    showNotification(`⚠️ Erro ao carregar música`, 2000);
+                    showNotification(`⚠️ Erro ao carregar`, 2000);
                     setTimeout(() => nextTrack(), 1000);
                     resolve(false);
                 };
@@ -734,7 +764,7 @@
         });
         
         playBtn.addEventListener('click', () => {
-            if (!isAudioActive) {
+            if (!isBackgroundActive) {
                 showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
             } else {
                 togglePlayPause();
@@ -869,8 +899,7 @@
             
             const audioOk = await ativarAudioBackground();
             if (audioOk) {
-                monitorarVisibilidade();
-                loadTrackUI(0);
+                iniciarMusicaAleatoria();
                 await playMusic();
                 tapToStart.style.display = 'none';
                 
@@ -885,7 +914,7 @@
         });
         
         window.addEventListener('load', () => {
-            loadTrackUI(0);
+            iniciarMusicaAleatoria();
             tapToStart.style.display = 'block';
         });
     </script>
