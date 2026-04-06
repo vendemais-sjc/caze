@@ -4,24 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Cazé Playlist • Toca com tela bloqueada</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        body { min-height: 100vh; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); overflow: hidden; position: fixed; width: 100%; height: 100%; }
+        body { min-height: 100vh; background-color: #000000; overflow: hidden; position: fixed; width: 100%; height: 100%; }
         
-        .app { width: 100%; height: 100vh; background: linear-gradient(135deg, #1a1a2e, #16213e); position: relative; overflow: hidden; }
-        
-        /* Fundo com efeito */
-        .background-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(230,57,70,0.2) 0%, transparent 70%);
-            z-index: 1;
-        }
-        
+        .app { width: 100%; height: 100vh; background: #000000; position: relative; overflow: hidden; }
+        .fullscreen-video-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1; }
+        .fullscreen-video-container video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
         .controls-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
         
         .notification-top {
@@ -46,115 +37,6 @@
             color: #fff;
             border-left: 3px solid #e63946;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        
-        /* Botão flutuante de mensagens */
-        .floating-msg-btn {
-            position: absolute;
-            bottom: 120px;
-            left: 15px;
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            color: white;
-            border: none;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            cursor: pointer;
-            z-index: 25;
-            pointer-events: auto;
-            transition: 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            animation: pulse-wpp 1.5s infinite;
-        }
-        @keyframes pulse-wpp { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(37,211,102,0.6); } 100% { transform: scale(1); } }
-        .floating-msg-btn:active { transform: scale(0.9); animation: none; }
-        
-        /* Mensagem flutuante que some após 5 segundos */
-        .floating-message {
-            position: absolute;
-            bottom: 190px;
-            left: 20px;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 12px 18px;
-            max-width: 280px;
-            z-index: 26;
-            pointer-events: auto;
-            border-left: 4px solid #25D366;
-            animation: slideInLeft 0.3s ease;
-            display: none;
-        }
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .floating-message.show { display: block; }
-        .floating-message p { color: #fff; font-size: 0.85rem; margin-bottom: 8px; line-height: 1.4; }
-        .floating-message .edit-msg {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: #25D366;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        .floating-message .close-msg {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            color: #999;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-        
-        /* Modal de edição de mensagem */
-        .edit-msg-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1a1a2e;
-            border-radius: 24px;
-            padding: 20px;
-            width: 85%;
-            max-width: 350px;
-            z-index: 2002;
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-            border: 1px solid #25D366;
-        }
-        .edit-msg-modal.open { display: flex; }
-        .edit-msg-modal h4 { color: #fff; margin-bottom: 5px; }
-        .edit-msg-modal textarea {
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 12px;
-            padding: 12px;
-            color: #fff;
-            font-size: 0.9rem;
-            resize: vertical;
-            min-height: 80px;
-        }
-        .edit-msg-modal button {
-            background: #25D366;
-            border: none;
-            padding: 10px;
-            border-radius: 30px;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .edit-msg-modal .cancel-edit {
-            background: #444;
-            color: #fff;
         }
         
         .menu-button {
@@ -281,7 +163,7 @@
         .genre-card[data-genero="SERTANEJO"] { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
         .genre-card[data-genero="FORRÓ"] { background: linear-gradient(135deg, #f12711 0%, #f5af19 100%); }
         .genre-card[data-genero="SAMBA"] { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); }
-        .genre-card[data-genero="ROCK"] { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
+        .genre-card[data-genero="VGM"] { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
         .genre-card[data-genero="TODOS"] { background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); }
         
         .genre-card i { font-size: 2.8rem; display: block; margin-bottom: 12px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3)); }
@@ -348,6 +230,50 @@
         .modal-btn { padding: 6px 12px; border-radius: 20px; cursor: pointer; background: #333; color: white; border: none; margin: 2px; }
         .modal-btn.send { background: #25D366; color: #000; font-weight: bold; }
         
+        /* Botão flutuante WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2002;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            border: none;
+            color: white;
+            font-size: 2rem;
+        }
+        .whatsapp-float:active { transform: scale(0.9); }
+        
+        /* Toast para aviso personalizado */
+        .custom-toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            z-index: 2003;
+            border-left: 4px solid #25D366;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .custom-toast.show { opacity: 1; }
+        
         #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s; }
         #splash.hidden { opacity: 0; pointer-events: none; }
         .splash-content { text-align: center; color: #fff; }
@@ -356,15 +282,15 @@
         
         #tap-to-start {
             position: fixed;
-            bottom: 25%;
+            bottom: 20%;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(135deg, #ff6600, #ff3300);
             color: white;
-            padding: 12px 28px;
-            border-radius: 50px;
+            padding: 10px 24px;
+            border-radius: 40px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.9rem;
             z-index: 10000;
             cursor: pointer;
             display: none;
@@ -373,7 +299,7 @@
             pointer-events: auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             border: none;
-            gap: 10px;
+            gap: 8px;
         }
         @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.03); } 100% { transform: translateX(-50%) scale(1); } }
         
@@ -402,66 +328,37 @@
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.6rem;
-            color: #ffaa00;
+            color: #4ade80;
             z-index: 31;
             pointer-events: none;
             display: flex;
             align-items: center;
             gap: 5px;
         }
-        
-        /* Capa do player */
-        .player-cover {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 5;
-            pointer-events: none;
-        }
-        .player-cover i {
-            font-size: 80px;
-            color: rgba(255,255,255,0.3);
-            text-shadow: 0 0 30px rgba(230,57,70,0.5);
-        }
-        .player-cover h2 {
-            color: rgba(255,255,255,0.5);
-            font-size: 1rem;
-            margin-top: 10px;
-        }
+        .audio-indicator i { font-size: 0.6rem; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
-    <div id="splash">
-        <div class="splash-content">
-            <i class="fas fa-headphones-alt"></i>
-            <h1>Cazé Playlist</h1>
-            <p>🔊 Toque com tela bloqueada!</p>
-            <p style="font-size:0.8rem; margin-top:10px;">Clique no botão para ativar</p>
-        </div>
-    </div>
+    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>Cazé Playlist</h1><p>🔊 Toque com tela bloqueada!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão para ativar</p></div></div>
     <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
     
     <div class="app">
-        <div class="background-effect"></div>
-        
-        <div class="player-cover">
-            <i class="fas fa-music"></i>
-            <h2 id="musicTitle">Cazé Playlist</h2>
+        <div class="fullscreen-video-container">
+            <video id="mainVideo" autoplay loop muted playsinline>
+                <source src="Caze12.mp4" type="video/mp4">
+            </video>
         </div>
-        
         <div class="genre-badge" id="genreBadge"><i class="fas fa-guitar"></i> SERTANEJO</div>
         <div class="audio-indicator" id="audioIndicator"><i class="fas fa-circle"></i> Aguardando</div>
         
-        <!-- Botão flutuante de mensagens -->
-        <button class="floating-msg-btn" id="floatingMsgBtn"><i class="fab fa-whatsapp"></i></button>
+        <!-- Botão flutuante WhatsApp -->
+        <div class="whatsapp-float" id="whatsappFloatBtn">
+            <i class="fab fa-whatsapp"></i>
+        </div>
         
-        <!-- Mensagem flutuante que some após 5 segundos -->
-        <div class="floating-message" id="floatingMessage">
-            <span class="close-msg" id="closeFloatingMsg">&times;</span>
-            <p id="messageText">🎵 Bem-vindo à Cazé Playlist! Curta as melhores músicas com áudio ativo mesmo com tela bloqueada!</p>
-            <button class="edit-msg" id="editMsgBtn"><i class="fas fa-pen"></i> Editar mensagem</button>
+        <div id="notificationTop" class="notification-top">
+            <div class="message" id="notificationMessage"></div>
         </div>
         
         <div class="controls-overlay">
@@ -494,74 +391,76 @@
             <div class="genre-card" data-genero="SERTANEJO"><i class="fas fa-guitar"></i><span>SERTANEJO</span></div>
             <div class="genre-card" data-genero="FORRÓ"><i class="fas fa-drum"></i><span>FORRÓ</span></div>
             <div class="genre-card" data-genero="SAMBA"><i class="fas fa-drumstick-bite"></i><span>SAMBA</span></div>
-            <div class="genre-card" data-genero="ROCK"><i class="fas fa-guitar"></i><span>ROCK</span></div>
+            <div class="genre-card" data-genero="VGM"><i class="fas fa-gamepad"></i><span>VGM</span></div>
             <div class="genre-card" data-genero="TODOS"><i class="fas fa-list-ul"></i><span>TODOS OS ESTILOS</span></div>
         </div>
         <button class="close-genres" id="closeGenresBtn"><i class="fas fa-times-circle"></i> FECHAR</button>
     </div>
     
-    <!-- Modal de edição de mensagem -->
-    <div class="edit-msg-modal" id="editMsgModal">
-        <h4><i class="fas fa-edit"></i> Editar mensagem</h4>
-        <textarea id="editMsgText" rows="3">🎵 Bem-vindo à Cazé Playlist! Curta as melhores músicas com áudio ativo mesmo com tela bloqueada!</textarea>
-        <button id="saveMsgBtn">💾 Salvar mensagem</button>
-        <button id="cancelEditMsg" class="cancel-edit">Cancelar</button>
-    </div>
-    
-    <!-- ÁUDIO PRINCIPAL -->
+    <!-- Áudios principais e anúncio -->
     <audio id="musicPlayer" preload="auto" crossorigin="anonymous"></audio>
     <audio id="backgroundAudio" preload="auto" crossorigin="anonymous" style="display: none;"></audio>
-    <audio id="voiceAdAudio" preload="auto" style="display: none;"></audio>
+    <audio id="adAudio" preload="auto" src="anuncio.mp3"></audio>
+    
+    <!-- Toast personalizado para aviso -->
+    <div id="customToast" class="custom-toast"></div>
     
     <div class="feedback-modal" id="feedbackModal">
         <h3>Sua opinião</h3>
-        <div class="rating" id="ratingStars">
-            <i class="far fa-star star" data-rating="1"></i>
-            <i class="far fa-star star" data-rating="2"></i>
-            <i class="far fa-star star" data-rating="3"></i>
-            <i class="far fa-star star" data-rating="4"></i>
-            <i class="far fa-star star" data-rating="5"></i>
-        </div>
+        <div class="rating" id="ratingStars"><i class="far fa-star star" data-rating="1"></i><i class="far fa-star star" data-rating="2"></i><i class="far fa-star star" data-rating="3"></i><i class="far fa-star star" data-rating="4"></i><i class="far fa-star star" data-rating="5"></i></div>
         <textarea id="feedbackText" placeholder="Escreva sua sugestão..."></textarea>
-        <div class="modal-buttons">
-            <button class="modal-btn cancel" id="cancelFeedback">Cancelar</button>
-            <button class="modal-btn send" id="sendFeedback"><i class="fab fa-whatsapp"></i> Enviar</button>
-        </div>
+        <div class="modal-buttons"><button class="modal-btn cancel" id="cancelFeedback">Cancelar</button><button class="modal-btn send" id="sendFeedback"><i class="fab fa-whatsapp"></i> Enviar</button></div>
     </div>
     
     <script>
-        // ==================== PLAYLIST COM MÚSICAS DEMO (ÁUDIO GERADO POR TONE) ====================
-        // Como não temos arquivos de áudio reais, vamos gerar tons usando Web Audio API
+        // ========== CONFIGURAÇÕES EDITÁVEIS ==========
+        // Configuração do botão WhatsApp (você pode editar número e mensagem)
+        const WHATSAPP_NUMBER = "5512988461978";  // Número do WhatsApp (com DDD, sem +)
+        const WHATSAPP_MESSAGE = "Olá! Gostaria de mais informações sobre a playlist Cazé!";
         
-        let currentIndex = 0;
-        let isPlaying = false;
-        let shuffleMode = false;
-        let timerInterval = null;
-        let isBackgroundActive = false;
-        let backgroundInterval = null;
-        let voiceAdInterval = null;
-        let audioContext = null;
-        let currentSource = null;
-        let currentGain = null;
+        // Texto do aviso que aparece ao clicar no WhatsApp
+        const WHATSAPP_TOAST_MESSAGE = "💬 Enviando mensagem via WhatsApp...";
         
-        // Playlist de demonstração
+        // ========== PLAYLIST ==========
         const musicas = [
-            { id: 1, title: "Fundo do Poço", artist: "Victor & Leo", genero: "SERTANEJO", duration: 180 },
-            { id: 2, title: "Coração Cachorro", artist: "Matheus & Kauan", genero: "SERTANEJO", duration: 210 },
-            { id: 3, title: "Vaqueiro Apaixonado", artist: "Zé Vaqueiro", genero: "FORRÓ", duration: 195 },
-            { id: 4, title: "Piseiro da Hora", artist: "Tarcísio do Acordeon", genero: "FORRÓ", duration: 185 },
-            { id: 5, title: "Pagode do Arrasta", artist: "Thiaguinho", genero: "SAMBA", duration: 200 },
-            { id: 6, title: "Samba de Raiz", artist: "Grupo Fundo de Quintal", genero: "SAMBA", duration: 190 },
-            { id: 7, title: "Easy", artist: "Commodores", genero: "ROCK", duration: 220 },
-            { id: 8, title: "Dona da Minha Cabeça", artist: "Geraldo Azevedo", genero: "ROCK", duration: 175 }
+            { id: 1, title: "Panda_Corpo_Nu_muzzik.m4a", artist: "Panda", src: "Panda_Corpo_Nu_muzzik.m4a", genero: "SERTANEJO" },
+            { id: 2, title: "Diego_Victor_Hugo_Infarto_muzzik.m4a", artist: "Diego_Victor_Hugo", src: "Diego_Victor_Hugo_Infarto_muzzik.m4a", genero: "SERTANEJO" },
+            { id: 3, title: "Esde", artist: "Bruno_Marrone_e_Henrique_Diego_Esqueci_Você", src: "Bruno_Marrone_e_Henrique_Diego_Esqueci_Voc__muzzik.m4a", genero: "SERTANEJO" },
+            { id: 4, title: "Vaqueiro Apaixonado", artist: "Zé Vaqueiro", src: "Zé-Vaqueiro-Ficar-por-Ficar.m4a", genero: "FORRÓ" },
+            { id: 5, title: "Forró do Miudinho", artist: "Wesley Safadão", src: "16 - Coracao Partido - Luan Estilizado.mp3", genero: "FORRÓ" },
+            { id: 6, title: "Piseiro da Hora", artist: "Tarcísio do Acordeon", src: "Claudio_Ney_e_Juliana_Porsche_Azul_.m4a", genero: "FORRÓ" },
+            { id: 7, title: "Pagode do Arrasta", artist: "Thiaguinho", src: "Kamisa 10 - Lance Livre _ NA VIBE DO K10(MP3_160K).mp3", genero: "SAMBA" },
+            { id: 8, title: "Samba de Raiz", artist: "Pa", src: "Grupo Menos é Mais e João Gomes - Foi Bom_ Mas Foi Ontem (Clipe Oficial)(MP3_160K).mp3", genero: "SAMBA" },
+            { id: 9, title: "Pout-pourri", artist: "KIiko no Pagode.m4a", src: "KIiko no Pagode.m4a", genero: "SAMBA" },
+            { id: 10, title: "Geraldo_Azevedo", artist: "", src: "Geraldo_Azevedo_Dona_da_Minha_Cabe_a_muzzik (1).m4a", genero: "VGM" },
+            { id: 11, title: "Commodores_Easy_6.m4a", artist: "Commodores", src: "Commodores_Easy_6.m4a", genero: "VGM" },
+            { id: 12, title: "Mordida_de_Amor", artist: "SPC", src: "Mordida_de_Amor_Dvd_Produto_Nacional_Vol_SPC_muzzik.m4a", genero: "SAMBA" },
+            { id: 13, title: "Retrovisor", artist: "Gustavo Lima", src: "Gusttavo_Lima_Retrovisor_DVD_muzzik.m4a", genero: "SERTANEJO" },
+            { id: 14, title: "Rer", artist: "Xand", src: "Patrick_Costa_Henrique_e_Juliano_Xand_Avi_o_Diga_Pra_Mim_Fiquei_Sabendo_FarraDoPatrick_muzzik (1).m4a", genero: "FORRÓ" },
+            { id: 15, title: "Variadas", artist: "ASD", src: "VH_e_Alexandre_Pe_o_Apaixonado_Saudade_Pulou_no_Peito_Mexe_que_Bom_ParadaObrigat_ria_muzzik.m4a", genero: "SERTANEJO" },
+            { id: 16, title: "To_Bebendo_To_Pagando", artist: "Mano_Walter_Sirano_Sirino", src: "Mano_Walter_Sirano_Sirino_To_Bebendo_To_Pagando_muzzik.m4a", genero: "FORRÓ" },
+            { id: 17, title: "Catedral", artist: "LAUANA_PRADO", src: "LAUANA_PRADO_CATEDRAL_TUDO_DE_NOVO_AMOR_I_LOVE_YOU_muzzik (1).m4a", genero: "SERTANEJO"}, 
+            { id: 18, title: "Primeiro Passo", artist: "Márcia Felipe", src: "Peruanno_M_rcia_Fellipe_Primeiro_Passo_muzzik.m4a", genero: "FORRÓ" },
+            { id: 19, title: "Ainda é Tempo", artist: "Limão com mel", src: "Ainda_Ainda_Tempo__muzzik.m4a", genero: "FORRÓ" },
+            { id: 20, title: "ARDE_DEMAIS", artist: "A Vontade", src: "_Vontade_TARDE_DEMAIS_.m4a", genero: "VGM" },
+            { id: 21, title: "Ao Vivo e a Cores ", artist: "02 - De Bar em Bar 9", src: "02 - Ao Vivo e a Cores - De Bar em Bar 9.mp3", genero: "FORRÓ" },
+            { id: 22, title: "Moura-Desejo-de-Menina.mp3", artist: "Moura", src: "Moura-Desejo-de-Menina.mp3", genero: "FORRÓ" },
+            { id: 23, title: "VOCÊ VIROU MINHA CABEÇA", artist: "FERRO NA BONECA", src: "VOCÊ VIROU MINHA CABEÇA - FERRO NA BONECA.mp3", genero: "FORRÓ" },
+            { id: 24, title: "P DO PECADO ", artist: "FERRO NA BONECA", src: "P DO PECADO - FERRO NA BONECA.mp3", genero: "FORRÓ" },
+            { id: 25, title: "03 - Nova Namorada ", artist: "Natãzinho Lima", src: "03 - Nova Namorada - De Bar em Bar 9.mp3", genero: "FORRÓ" },
         ];
         
-        let filteredPlaylist = [...musicas];
+        // Vídeos (apenas visual, sem botão de orçamento/informações)
+        const videosList = [
+            { src: "Pla.mp4" },
+            { src: "caze12.mp4" },
+            { src: "Pla.mp4" }
+        ];
         
         // DOM Elements
         const musicPlayer = document.getElementById('musicPlayer');
         const backgroundAudio = document.getElementById('backgroundAudio');
-        const voiceAdAudio = document.getElementById('voiceAdAudio');
+        const adAudio = document.getElementById('adAudio');
         const playBtn = document.getElementById('playPauseBtn');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -580,87 +479,309 @@
         const genreButton = document.getElementById('genreButton');
         const genresModal = document.getElementById('genresModal');
         const audioIndicator = document.getElementById('audioIndicator');
-        const musicTitle = document.getElementById('musicTitle');
+        const whatsappFloatBtn = document.getElementById('whatsappFloatBtn');
+        const customToast = document.getElementById('customToast');
         
-        let currentTrackDuration = 0;
-        let currentTrackStartTime = 0;
-        let progressInterval = null;
+        let currentIndex = 0, isPlaying = false, shuffleMode = false;
+        let timerInterval = null;
+        let filteredPlaylist = [...musicas];
+        let notificationTimeout = null;
+        let backgroundInterval = null;
+        let isBackgroundActive = false;
+        let wasPlayingBeforeAd = false; // Para retomar música após anúncio
         
-        // Volume 90%
+        // ========== VOLUME 90% ==========
         musicPlayer.volume = 0.9;
-        backgroundAudio.volume = 0.001;
-        voiceAdAudio.volume = 0.9;
+        backgroundAudio.volume = 0.001; // mantém silencioso para manter o áudio vivo
+        adAudio.volume = 0.9;
         
-        // ==================== GERAR TOM MUSICAL (DEMO) ====================
-        function initAudioContext() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                currentGain = audioContext.createGain();
-                currentGain.gain.value = 0.9;
-                currentGain.connect(audioContext.destination);
-            }
-            return audioContext;
-        }
-        
-        function playTone(frequency, duration, type = 'sine') {
-            const ctx = initAudioContext();
-            if (ctx.state === 'suspended') {
-                ctx.resume();
-            }
-            
-            if (currentSource) {
-                try { currentSource.stop(); } catch(e) {}
-            }
-            
-            currentSource = ctx.createOscillator();
-            const gainNode = ctx.createGain();
-            
-            currentSource.type = type;
-            currentSource.frequency.value = frequency;
-            currentSource.connect(gainNode);
-            gainNode.connect(ctx.destination);
-            gainNode.gain.value = 0.7;
-            
-            currentSource.start();
-            
-            // Fade out
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
-            
+        // ========== FUNÇÕES DE AVISO/TOAST ==========
+        function showCustomToast(message, duration = 5000) {
+            customToast.textContent = message;
+            customToast.classList.add('show');
             setTimeout(() => {
-                try { currentSource.stop(); } catch(e) {}
-                if (isPlaying) {
-                    // Próxima música
-                    nextTrack();
-                }
-            }, duration * 1000);
+                customToast.classList.remove('show');
+            }, duration);
+        }
+        
+        function showNotification(msg, duration = 3000) {
+            if (notificationTimeout) clearTimeout(notificationTimeout);
+            notificationMessage.innerText = msg;
+            notificationTop.classList.add('show');
+            notificationTimeout = setTimeout(() => notificationTop.classList.remove('show'), duration);
+        }
+        
+        // ========== ANÚNCIO DE VOZ A CADA 30 MINUTOS ==========
+        let adInterval = null;
+        
+        async function playVoiceAd() {
+            // Só toca se o áudio de fundo estiver ativo e o anúncio existir
+            if (!isBackgroundActive) return;
             
-            currentTrackDuration = duration;
-            currentTrackStartTime = Date.now();
-            startProgressTimer();
-        }
-        
-        function startProgressTimer() {
-            if (progressInterval) clearInterval(progressInterval);
-            progressInterval = setInterval(() => {
-                if (isPlaying && currentTrackDuration) {
-                    const elapsed = (Date.now() - currentTrackStartTime) / 1000;
-                    const percent = (elapsed / currentTrackDuration) * 100;
-                    progressFill.style.width = Math.min(percent, 100) + '%';
-                    currentTimeEl.textContent = formatTime(Math.min(elapsed, currentTrackDuration));
-                    
-                    if (elapsed >= currentTrackDuration) {
-                        clearInterval(progressInterval);
-                    }
+            // Verificar se o arquivo de anúncio existe (evitar erro)
+            if (!adAudio.src || adAudio.src === window.location.href || adAudio.src === "") {
+                console.warn("Arquivo de anúncio não configurado: coloque um arquivo 'anuncio.mp3' no mesmo diretório");
+                return;
+            }
+            
+            // Salvar estado atual da música
+            wasPlayingBeforeAd = isPlaying;
+            
+            // Pausar a música se estiver tocando
+            if (isPlaying) {
+                musicPlayer.pause();
+            }
+            
+            // Configurar evento de término do anúncio
+            const onAdEnded = () => {
+                adAudio.removeEventListener('ended', onAdEnded);
+                adAudio.removeEventListener('error', onAdError);
+                // Retomar música se estava tocando antes
+                if (wasPlayingBeforeAd) {
+                    musicPlayer.play().catch(e => console.log("Erro ao retomar música:", e));
                 }
-            }, 200);
+            };
+            
+            const onAdError = () => {
+                console.error("Erro ao tocar anúncio");
+                adAudio.removeEventListener('ended', onAdEnded);
+                adAudio.removeEventListener('error', onAdError);
+                if (wasPlayingBeforeAd) {
+                    musicPlayer.play().catch(e => console.log("Erro ao retomar após erro:", e));
+                }
+            };
+            
+            adAudio.addEventListener('ended', onAdEnded);
+            adAudio.addEventListener('error', onAdError);
+            
+            try {
+                adAudio.currentTime = 0;
+                await adAudio.play();
+                showNotification("📢 Anúncio especial!", 2000);
+            } catch (err) {
+                console.error("Falha ao tocar anúncio:", err);
+                if (wasPlayingBeforeAd) {
+                    musicPlayer.play().catch(e => console.log);
+                }
+            }
         }
         
-        // ==================== FUNÇÕES DO PLAYER ====================
+        function iniciarAnuncioPeriodico() {
+            if (adInterval) clearInterval(adInterval);
+            // 30 minutos = 30 * 60 * 1000 = 1800000 ms
+            adInterval = setInterval(() => {
+                playVoiceAd();
+            }, 1800000);
+            console.log("✅ Anúncio programado a cada 30 minutos");
+        }
+        
+        // ========== FUNÇÃO DE VÍDEO ROTATIVO (SEM BOTÃO CTA) ==========
+        let currentVideoIndex = 0;
+        function updateVideoOnly(index) {
+            const video = videosList[index];
+            const vidEl = document.getElementById('mainVideo');
+            if (vidEl && video && video.src) {
+                vidEl.pause();
+                vidEl.src = video.src;
+                vidEl.load();
+                vidEl.play().catch(e => console.log("Vídeo:", e));
+            }
+        }
+        updateVideoOnly(0);
+        setInterval(() => {
+            currentVideoIndex = (currentVideoIndex + 1) % videosList.length;
+            updateVideoOnly(currentVideoIndex);
+        }, 20000);
+        
+        // ========== FUNÇÕES DE ÁUDIO (MANTER TELA BLOQUEADA) ==========
+        async function ativarAudioBackground() {
+            try {
+                const createSilentAudio = () => {
+                    const sampleRate = 44100;
+                    const duration = 5;
+                    const numSamples = sampleRate * duration;
+                    const buffer = new ArrayBuffer(44 + numSamples * 2);
+                    const view = new DataView(buffer);
+                    const writeString = (view, offset, str) => {
+                        for (let i = 0; i < str.length; i++) {
+                            view.setUint8(offset + i, str.charCodeAt(i));
+                        }
+                    };
+                    writeString(view, 0, 'RIFF');
+                    view.setUint32(4, 36 + numSamples * 2, true);
+                    writeString(view, 8, 'WAVE');
+                    writeString(view, 12, 'fmt ');
+                    view.setUint32(16, 16, true);
+                    view.setUint16(20, 1, true);
+                    view.setUint16(22, 1, true);
+                    view.setUint32(24, sampleRate, true);
+                    view.setUint32(28, sampleRate * 2, true);
+                    view.setUint16(32, 2, true);
+                    view.setUint16(34, 16, true);
+                    writeString(view, 36, 'data');
+                    view.setUint32(40, numSamples * 2, true);
+                    let offset = 44;
+                    for (let i = 0; i < numSamples; i++) {
+                        view.setInt16(offset, 0, true);
+                        offset += 2;
+                    }
+                    return new Blob([buffer], { type: 'audio/wav' });
+                };
+                const silentBlob = createSilentAudio();
+                const silentUrl = URL.createObjectURL(silentBlob);
+                backgroundAudio.src = silentUrl;
+                backgroundAudio.loop = true;
+                backgroundAudio.volume = 0.001;
+                await backgroundAudio.play();
+                isBackgroundActive = true;
+                audioIndicator.innerHTML = '<i class="fas fa-circle"></i> Áudio Ativo (2º plano)';
+                audioIndicator.style.color = '#4ade80';
+                console.log('✅ Áudio de fundo ativado!');
+                iniciarManutencaoConstante();
+                await solicitarWakeLock();
+                return true;
+            } catch (error) {
+                console.error('Erro ao ativar áudio:', error);
+                audioIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro';
+                audioIndicator.style.color = '#ef4444';
+                return false;
+            }
+        }
+        
+        function iniciarManutencaoConstante() {
+            if (backgroundInterval) clearInterval(backgroundInterval);
+            backgroundInterval = setInterval(async () => {
+                try {
+                    if (backgroundAudio.paused && isBackgroundActive) {
+                        await backgroundAudio.play().catch(e => console.log);
+                    }
+                    if (isPlaying && musicPlayer.paused && !musicPlayer.ended) {
+                        await musicPlayer.play().catch(e => console.log);
+                    }
+                    if (musicPlayer.ended && isPlaying) {
+                        nextTrack();
+                    }
+                } catch (e) { console.log('Manutenção:', e); }
+            }, 1500);
+        }
+        
+        async function solicitarWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    const wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('✅ Wake Lock ativado');
+                    document.addEventListener('visibilitychange', async () => {
+                        if (document.visibilityState === 'visible') {
+                            await navigator.wakeLock.request('screen');
+                        }
+                    });
+                }
+            } catch (err) { console.log('Wake Lock:', err); }
+        }
+        
+        // ========== FUNÇÕES DE REPRODUÇÃO ==========
         function formatTime(sec) {
             if (isNaN(sec)) return "0:00";
             const m = Math.floor(sec / 60);
             const s = Math.floor(sec % 60);
             return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+        
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        
+        function startTimer() {
+            stopTimer();
+            timerInterval = setInterval(() => {
+                if (isPlaying && musicPlayer.duration && !musicPlayer.paused) {
+                    const percent = (musicPlayer.currentTime / musicPlayer.duration) * 100;
+                    progressFill.style.width = percent + '%';
+                    currentTimeEl.textContent = formatTime(musicPlayer.currentTime);
+                }
+            }, 200);
+        }
+        
+        async function playMusic() {
+            if (!isBackgroundActive) {
+                showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
+                return false;
+            }
+            const track = filteredPlaylist[currentIndex];
+            if (!track || !track.src) return false;
+            musicPlayer.pause();
+            musicPlayer.src = track.src;
+            musicPlayer.load();
+            updateGenreBadge(track.genero);
+            return new Promise((resolve) => {
+                musicPlayer.oncanplaythrough = async () => {
+                    try {
+                        await musicPlayer.play();
+                        isPlaying = true;
+                        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                        startTimer();
+                        if (musicPlayer.duration) totalTimeEl.textContent = formatTime(musicPlayer.duration);
+                        else musicPlayer.addEventListener('loadedmetadata', () => { totalTimeEl.textContent = formatTime(musicPlayer.duration); }, { once: true });
+                        splash.classList.add('hidden');
+                        setTimeout(() => splash.style.display = 'none', 500);
+                        tapToStart.style.display = 'none';
+                        if ('mediaSession' in navigator) {
+                            navigator.mediaSession.metadata = new MediaMetadata({ title: track.title, artist: track.artist + ' • ' + track.genero, album: 'Cazé Playlist' });
+                            navigator.mediaSession.setActionHandler('play', () => playMusic());
+                            navigator.mediaSession.setActionHandler('pause', () => pauseMusic());
+                            navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
+                            navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
+                        }
+                        resolve(true);
+                    } catch(e) { console.error(e); isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; resolve(false); }
+                };
+                musicPlayer.onended = () => {
+                    stopTimer();
+                    let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length;
+                    currentIndex = nextIndex;
+                    loadTrackUI(currentIndex);
+                    setTimeout(() => playMusic(), 100);
+                };
+                musicPlayer.onerror = () => { showNotification(`⚠️ Erro ao carregar`, 2000); setTimeout(() => nextTrack(), 1000); resolve(false); };
+            });
+        }
+        
+        function pauseMusic() {
+            musicPlayer.pause();
+            isPlaying = false;
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+            stopTimer();
+        }
+        
+        function togglePlayPause() { isPlaying ? pauseMusic() : playMusic(); }
+        
+        function loadTrackUI(index) {
+            if (index >= filteredPlaylist.length) index = 0;
+            if (index < 0) index = filteredPlaylist.length - 1;
+            currentIndex = index;
+            const track = filteredPlaylist[currentIndex];
+            trackArtist.textContent = `${track.title} - ${track.artist} [${track.genero}]`;
+            currentTimeEl.textContent = '0:00';
+            totalTimeEl.textContent = '0:00';
+            progressFill.style.width = '0%';
+            updateGenreBadge(track.genero);
+        }
+        
+        async function nextTrack() {
+            stopTimer();
+            let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length;
+            currentIndex = nextIndex;
+            loadTrackUI(currentIndex);
+            if (isPlaying) await playMusic();
+        }
+        
+        async function prevTrack() {
+            stopTimer();
+            let prevIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex - 1 + filteredPlaylist.length) % filteredPlaylist.length;
+            currentIndex = prevIndex;
+            loadTrackUI(currentIndex);
+            if (isPlaying) await playMusic();
         }
         
         function updateGenreBadge(genero) {
@@ -669,7 +790,7 @@
                 case "SERTANEJO": icon = "fa-guitar"; break;
                 case "FORRÓ": icon = "fa-drum"; break;
                 case "SAMBA": icon = "fa-drumstick-bite"; break;
-                case "ROCK": icon = "fa-guitar"; break;
+                case "VGM": icon = "fa-gamepad"; break;
                 default: icon = "fa-headphones";
             }
             genreBadge.innerHTML = `<i class="fas ${icon}"></i> ${genero === "MIX" ? "TODOS" : genero}`;
@@ -682,10 +803,7 @@
                 updateGenreBadge("MIX");
             } else {
                 filteredPlaylist = musicas.filter(m => m.genero === genero);
-                if (filteredPlaylist.length === 0) {
-                    showNotification(`⚠️ Nenhuma música encontrada`, 2000);
-                    return false;
-                }
+                if (filteredPlaylist.length === 0) { showNotification(`⚠️ Nenhuma música encontrada`, 2000); return false; }
                 showNotification(`🎵 ${genero}`, 2000);
                 updateGenreBadge(genero);
             }
@@ -695,364 +813,57 @@
             return true;
         }
         
-        function loadTrackUI(index) {
-            if (index >= filteredPlaylist.length) index = 0;
-            if (index < 0) index = filteredPlaylist.length - 1;
-            currentIndex = index;
-            const track = filteredPlaylist[currentIndex];
-            trackArtist.textContent = `${track.title} - ${track.artist} [${track.genero}]`;
-            musicTitle.textContent = track.title;
-            totalTimeEl.textContent = formatTime(track.duration);
-            currentTimeEl.textContent = '0:00';
-            progressFill.style.width = '0%';
-            updateGenreBadge(track.genero);
-        }
-        
-        async function playMusic() {
-            if (!isBackgroundActive) {
-                showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
-                return false;
-            }
-            
-            const track = filteredPlaylist[currentIndex];
-            if (!track) return false;
-            
-            // Parar som atual
-            if (currentSource) {
-                try { currentSource.stop(); } catch(e) {}
-            }
-            
-            isPlaying = true;
-            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            
-            // Tocar tom musical baseado no gênero
-            let frequency = 440;
-            let duration = track.duration;
-            
-            switch(track.genero) {
-                case "SERTANEJO": frequency = 392; break; // Sol
-                case "FORRÓ": frequency = 349; break; // Fá
-                case "SAMBA": frequency = 293; break; // Ré
-                case "ROCK": frequency = 440; break; // Lá
-                default: frequency = 440;
-            }
-            
-            playTone(frequency, duration, 'sine');
-            
-            splash.classList.add('hidden');
-            setTimeout(() => splash.style.display = 'none', 500);
-            tapToStart.style.display = 'none';
-            
-            return true;
-        }
-        
-        function pauseMusic() {
-            if (currentSource) {
-                try { currentSource.stop(); } catch(e) {}
-            }
-            isPlaying = false;
-            playBtn.innerHTML = '<i class="fas fa-play"></i>';
-            if (progressInterval) clearInterval(progressInterval);
-        }
-        
-        function togglePlayPause() {
-            isPlaying ? pauseMusic() : playMusic();
-        }
-        
-        async function nextTrack() {
-            if (progressInterval) clearInterval(progressInterval);
-            let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length;
-            currentIndex = nextIndex;
+        function iniciarMusicaAleatoria() {
+            const randomIndex = Math.floor(Math.random() * filteredPlaylist.length);
+            currentIndex = randomIndex;
             loadTrackUI(currentIndex);
-            if (isPlaying) await playMusic();
         }
         
-        async function prevTrack() {
-            if (progressInterval) clearInterval(progressInterval);
-            let prevIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex - 1 + filteredPlaylist.length) % filteredPlaylist.length;
-            currentIndex = prevIndex;
-            loadTrackUI(currentIndex);
-            if (isPlaying) await playMusic();
-        }
-        
-        // ==================== MENSAGEM FLUTUANTE ====================
-        const floatingMsg = document.getElementById('floatingMessage');
-        const floatingMsgBtn = document.getElementById('floatingMsgBtn');
-        const messageText = document.getElementById('messageText');
-        const closeFloatingMsg = document.getElementById('closeFloatingMsg');
-        const editMsgBtn = document.getElementById('editMsgBtn');
-        const editMsgModal = document.getElementById('editMsgModal');
-        const editMsgText = document.getElementById('editMsgText');
-        const saveMsgBtn = document.getElementById('saveMsgBtn');
-        const cancelEditMsg = document.getElementById('cancelEditMsg');
-        
-        let msgHideTimeout = null;
-        
-        function showFloatingMessage() {
-            floatingMsg.classList.add('show');
-            if (msgHideTimeout) clearTimeout(msgHideTimeout);
-            msgHideTimeout = setTimeout(() => {
-                floatingMsg.classList.remove('show');
-            }, 5000);
-        }
-        
-        function hideFloatingMessage() {
-            floatingMsg.classList.remove('show');
-            if (msgHideTimeout) clearTimeout(msgHideTimeout);
-        }
-        
-        const savedMessage = localStorage.getItem('caze_floating_message');
-        if (savedMessage) {
-            messageText.innerText = savedMessage;
-        }
-        
-        floatingMsgBtn.addEventListener('click', () => {
-            showFloatingMessage();
-            resetHideTimer();
-        });
-        
-        closeFloatingMsg.addEventListener('click', (e) => {
-            e.stopPropagation();
-            hideFloatingMessage();
-        });
-        
-        editMsgBtn.addEventListener('click', () => {
-            editMsgText.value = messageText.innerText;
-            editMsgModal.classList.add('open');
-        });
-        
-        saveMsgBtn.addEventListener('click', () => {
-            const newMsg = editMsgText.value.trim();
-            if (newMsg) {
-                messageText.innerText = newMsg;
-                localStorage.setItem('caze_floating_message', newMsg);
-                showNotification('✅ Mensagem salva!', 2000);
-            }
-            editMsgModal.classList.remove('open');
-        });
-        
-        cancelEditMsg.addEventListener('click', () => {
-            editMsgModal.classList.remove('open');
-        });
-        
-        editMsgModal.addEventListener('click', (e) => {
-            if (e.target === editMsgModal) editMsgModal.classList.remove('open');
-        });
-        
-        // ==================== ANÚNCIO DE VOZ (30 MINUTOS) ====================
-        function tocarAnuncioVoz() {
-            if (!isBackgroundActive) return;
-            
-            // Usar TTS como fallback (já que não temos arquivo MP3)
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance("🎵 Aviso importante! Esta é uma demonstração da Cazé Playlist. Adicione suas próprias músicas na playlist!");
-                utterance.lang = 'pt-BR';
-                utterance.rate = 0.9;
-                speechSynthesis.speak(utterance);
-                console.log('🔊 Tocando anúncio de voz (TTS)');
-                showNotification('🔊 Anúncio de voz reproduzido!', 3000);
-            } else {
-                console.log('⚠️ TTS não suportado');
-            }
-        }
-        
-        function iniciarAnuncioVoz() {
-            if (voiceAdInterval) clearInterval(voiceAdInterval);
-            voiceAdInterval = setInterval(() => {
-                if (isBackgroundActive) {
-                    tocarAnuncioVoz();
-                }
-            }, 1800000); // 30 minutos
-            console.log('✅ Anúncio de voz programado a cada 30 minutos');
-            
-            // Primeiro anúncio após 5 segundos (para teste)
-            setTimeout(() => {
-                if (isBackgroundActive) tocarAnuncioVoz();
-            }, 5000);
-        }
-        
-        // ==================== ÁUDIO BACKGROUND (TELA BLOQUEADA) ====================
-        function createSilentAudio() {
-            const sampleRate = 44100;
-            const duration = 5;
-            const numSamples = sampleRate * duration;
-            const buffer = new ArrayBuffer(44 + numSamples * 2);
-            const view = new DataView(buffer);
-            
-            const writeString = (view, offset, str) => {
-                for (let i = 0; i < str.length; i++) {
-                    view.setUint8(offset + i, str.charCodeAt(i));
-                }
-            };
-            
-            writeString(view, 0, 'RIFF');
-            view.setUint32(4, 36 + numSamples * 2, true);
-            writeString(view, 8, 'WAVE');
-            writeString(view, 12, 'fmt ');
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, 1, true);
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);
-            view.setUint16(34, 16, true);
-            writeString(view, 36, 'data');
-            view.setUint32(40, numSamples * 2, true);
-            
-            let offset = 44;
-            for (let i = 0; i < numSamples; i++) {
-                view.setInt16(offset, 0, true);
-                offset += 2;
-            }
-            
-            return new Blob([buffer], { type: 'audio/wav' });
-        }
-        
-        async function ativarAudioBackground() {
-            try {
-                const silentBlob = createSilentAudio();
-                const silentUrl = URL.createObjectURL(silentBlob);
-                
-                backgroundAudio.src = silentUrl;
-                backgroundAudio.loop = true;
-                backgroundAudio.volume = 0.001;
-                
-                await backgroundAudio.play();
-                
-                // Inicializar AudioContext para os tons
-                initAudioContext();
-                
-                isBackgroundActive = true;
-                audioIndicator.innerHTML = '<i class="fas fa-circle"></i> Áudio Ativo (2º plano)';
-                audioIndicator.style.color = '#4ade80';
-                
-                console.log('✅ Áudio de fundo ativado!');
-                
-                iniciarManutencaoConstante();
-                await solicitarWakeLock();
-                iniciarAnuncioVoz();
-                
-                return true;
-            } catch (error) {
-                console.error('Erro ao ativar áudio:', error);
-                audioIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro';
-                audioIndicator.style.color = '#ef4444';
-                return false;
-            }
-        }
-        
-        function iniciarManutencaoConstante() {
-            if (backgroundInterval) clearInterval(backgroundInterval);
-            
-            backgroundInterval = setInterval(async () => {
-                try {
-                    if (backgroundAudio.paused && isBackgroundActive) {
-                        await backgroundAudio.play().catch(e => console.log);
-                    }
-                    
-                    if (isPlaying && (!currentSource || !audioContext)) {
-                        console.log('🔄 Retomando música principal');
-                        await playMusic();
-                    }
-                } catch (e) {
-                    console.log('Manutenção:', e);
-                }
-            }, 1500);
-        }
-        
-        async function solicitarWakeLock() {
-            try {
-                if ('wakeLock' in navigator) {
-                    const wakeLock = await navigator.wakeLock.request('screen');
-                    console.log('✅ Wake Lock ativado');
-                    
-                    document.addEventListener('visibilitychange', async () => {
-                        if (document.visibilityState === 'visible') {
-                            await navigator.wakeLock.request('screen');
-                        }
-                    });
-                }
-            } catch (err) {
-                console.log('Wake Lock:', err);
-            }
-        }
-        
-        // ==================== NOTIFICAÇÕES ====================
-        function showNotification(msg, duration = 3000) {
-            if (notificationTimeout) clearTimeout(notificationTimeout);
-            notificationMessage.innerText = msg;
-            notificationTop.classList.add('show');
-            notificationTimeout = setTimeout(() => notificationTop.classList.remove('show'), duration);
-        }
-        
-        // ==================== EVENTOS ====================
+        // ========== EVENTOS ==========
         document.getElementById('progressBar').addEventListener('click', (e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const percent = (e.clientX - rect.left) / rect.width;
-            if (currentTrackDuration) {
-                const newTime = percent * currentTrackDuration;
-                currentTrackStartTime = Date.now() - (newTime * 1000);
-            }
+            if (musicPlayer.duration) musicPlayer.currentTime = percent * musicPlayer.duration;
             resetHideTimer();
         });
-        
         playBtn.addEventListener('click', () => {
-            if (!isBackgroundActive) {
-                showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
-            } else {
-                togglePlayPause();
-            }
+            if (!isBackgroundActive) showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
+            else togglePlayPause();
             resetHideTimer();
         });
-        
         prevBtn.addEventListener('click', () => { prevTrack(); resetHideTimer(); });
         nextBtn.addEventListener('click', () => { nextTrack(); resetHideTimer(); });
-        shuffleBtn.addEventListener('click', () => {
-            shuffleMode = !shuffleMode;
-            showNotification(shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial', 1500);
-            resetHideTimer();
-        });
+        shuffleBtn.addEventListener('click', () => { shuffleMode = !shuffleMode; showNotification(shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial', 1500); resetHideTimer(); });
         
-        function openGenresModal() { genresModal.classList.add('open'); }
-        function closeGenresModal() { genresModal.classList.remove('open'); }
-        
-        genreButton.addEventListener('click', () => { openGenresModal(); resetHideTimer(); });
+        genreButton.addEventListener('click', () => { genresModal.classList.add('open'); resetHideTimer(); });
         document.querySelectorAll('.genre-card').forEach(card => {
-            card.addEventListener('click', () => {
-                filterByGenre(card.dataset.genero);
-                closeGenresModal();
-            });
+            card.addEventListener('click', () => { filterByGenre(card.dataset.genero); genresModal.classList.remove('open'); });
         });
-        document.getElementById('closeGenresBtn').addEventListener('click', closeGenresModal);
-        genresModal.addEventListener('click', (e) => { if (e.target === genresModal) closeGenresModal(); });
+        document.getElementById('closeGenresBtn').addEventListener('click', () => genresModal.classList.remove('open'));
+        genresModal.addEventListener('click', (e) => { if (e.target === genresModal) genresModal.classList.remove('open'); });
         
         function toggleMenu() { menuPopup.classList.toggle('open'); }
-        function closeMenu() { menuPopup.classList.remove('open'); }
         menuButton.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
-        document.addEventListener('click', (e) => { if (!menuButton.contains(e.target) && !menuPopup.contains(e.target)) closeMenu(); });
-        document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { document.documentElement.requestFullscreen(); closeMenu(); });
+        document.addEventListener('click', (e) => { if (!menuButton.contains(e.target) && !menuPopup.contains(e.target)) menuPopup.classList.remove('open'); });
+        document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { document.documentElement.requestFullscreen(); menuPopup.classList.remove('open'); });
         document.getElementById('shareMenuBtn').addEventListener('click', () => {
             if (navigator.share) navigator.share({ title: 'Cazé Playlist' });
             else { navigator.clipboard.writeText(location.href); showNotification('Link copiado!', 2000); }
-            closeMenu();
+            menuPopup.classList.remove('open');
         });
         document.getElementById('feedbackMenuBtn').addEventListener('click', () => {
             document.getElementById('feedbackModal').classList.toggle('open');
-            closeMenu();
+            menuPopup.classList.remove('open');
         });
         
+        // Feedback
         let currentRating = 0;
         document.querySelectorAll('#ratingStars .star').forEach(star => {
             star.addEventListener('click', () => {
                 currentRating = parseInt(star.dataset.rating);
                 document.querySelectorAll('#ratingStars .star').forEach((s, i) => {
-                    if (i < currentRating) {
-                        s.classList.add('fas', 'active');
-                        s.classList.remove('far');
-                    } else {
-                        s.classList.remove('fas', 'active');
-                        s.classList.add('far');
-                    }
+                    if (i < currentRating) { s.classList.add('fas', 'active'); s.classList.remove('far'); }
+                    else { s.classList.remove('fas', 'active'); s.classList.add('far'); }
                 });
             });
         });
@@ -1060,39 +871,31 @@
             document.getElementById('feedbackModal').classList.remove('open');
             document.getElementById('feedbackText').value = '';
             currentRating = 0;
-            document.querySelectorAll('#ratingStars .star').forEach(s => {
-                s.classList.remove('fas', 'active');
-                s.classList.add('far');
-            });
+            document.querySelectorAll('#ratingStars .star').forEach(s => { s.classList.remove('fas', 'active'); s.classList.add('far'); });
         });
         document.getElementById('sendFeedback').addEventListener('click', () => {
-            if (currentRating === 0) {
-                showNotification('⭐ Selecione uma nota', 2000);
-                return;
-            }
+            if (currentRating === 0) { showNotification('⭐ Selecione uma nota', 2000); return; }
             let msg = `🎵 *Cazé Playlist*\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5 - currentRating)}\n`;
-            if (document.getElementById('feedbackText').value.trim()) {
-                msg += `💬 ${document.getElementById('feedbackText').value.trim()}\n`;
-            }
-            window.open(`https://wa.me/5512988461978?text=${encodeURIComponent(msg)}`, '_blank');
+            if (document.getElementById('feedbackText').value.trim()) msg += `💬 ${document.getElementById('feedbackText').value.trim()}\n`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
             showNotification('✅ WhatsApp aberto!', 2000);
             document.getElementById('feedbackModal').classList.remove('open');
             document.getElementById('feedbackText').value = '';
             currentRating = 0;
-            document.querySelectorAll('#ratingStars .star').forEach(s => {
-                s.classList.remove('fas', 'active');
-                s.classList.add('far');
-            });
+            document.querySelectorAll('#ratingStars .star').forEach(s => { s.classList.remove('fas', 'active'); s.classList.add('far'); });
         });
         
-        // Auto-hide dos controles
+        // Botão flutuante WhatsApp com aviso de 5 segundos
+        whatsappFloatBtn.addEventListener('click', () => {
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+            window.open(url, '_blank');
+            showCustomToast(WHATSAPP_TOAST_MESSAGE, 5000);
+        });
+        
+        // Auto-hide controles
         const bottomControls = document.getElementById('bottomControls');
         let hideTimeout;
-        function showControls() {
-            bottomControls.classList.remove('hide');
-            clearTimeout(hideTimeout);
-            hideTimeout = setTimeout(() => bottomControls.classList.add('hide'), 3000);
-        }
+        function showControls() { bottomControls.classList.remove('hide'); clearTimeout(hideTimeout); hideTimeout = setTimeout(() => bottomControls.classList.add('hide'), 3000); }
         function resetHideTimer() {
             if (bottomControls.classList.contains('hide')) showControls();
             else { clearTimeout(hideTimeout); hideTimeout = setTimeout(() => bottomControls.classList.add('hide'), 3000); }
@@ -1101,37 +904,28 @@
         document.addEventListener('click', resetHideTimer);
         showControls();
         
-        // ==================== INICIALIZAÇÃO ====================
-        function iniciarMusicaAleatoria() {
-            const randomIndex = Math.floor(Math.random() * filteredPlaylist.length);
-            currentIndex = randomIndex;
-            loadTrackUI(currentIndex);
-        }
-        
+        // ========== INICIALIZAÇÃO ==========
         tapToStart.addEventListener('click', async (e) => {
             e.stopPropagation();
             showNotification('🔊 Ativando áudio em segundo plano...', 2000);
-            
             const audioOk = await ativarAudioBackground();
             if (audioOk) {
                 iniciarMusicaAleatoria();
                 await playMusic();
                 tapToStart.style.display = 'none';
-                
-                try {
-                    await document.documentElement.requestFullscreen();
-                } catch(err) {}
-                
+                try { await document.documentElement.requestFullscreen(); } catch(err) {}
                 showNotification('✅ Áudio ativado! Toque com tela bloqueada ✅', 3000);
-                showFloatingMessage();
-            } else {
-                showNotification('❌ Falha ao ativar áudio. Tente novamente.', 3000);
-            }
+                iniciarAnuncioPeriodico(); // Inicia anúncio a cada 30 min
+            } else showNotification('❌ Falha ao ativar áudio. Tente novamente.', 3000);
         });
         
         window.addEventListener('load', () => {
             iniciarMusicaAleatoria();
             tapToStart.style.display = 'block';
+            // Pré-carregar anúncio
+            if (adAudio.src && adAudio.src !== window.location.href) {
+                adAudio.load();
+            }
         });
     </script>
 </body>
