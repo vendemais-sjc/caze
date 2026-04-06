@@ -39,7 +39,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         
-        /* Botão flutuante do vídeo (editável) */
+        /* Botão flutuante do vídeo (dinâmico) */
         .video-float-btn {
             position: absolute;
             bottom: 120px;
@@ -47,165 +47,23 @@
             background: linear-gradient(135deg, #FF512F, #DD2475);
             color: white;
             border: none;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
+            padding: 10px 18px;
+            border-radius: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 26;
-            pointer-events: auto;
-            transition: 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            animation: pulse-video 1.5s infinite;
-        }
-        @keyframes pulse-video { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,81,47,0.6); } 100% { transform: scale(1); } }
-        .video-float-btn:active { transform: scale(0.9); animation: none; }
-        
-        /* Botão WhatsApp flutuante */
-        .floating-wpp {
-            position: absolute;
-            bottom: 120px;
-            left: 15px;
-            background: #25D366;
-            color: white;
-            border: none;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            cursor: pointer;
-            z-index: 25;
-            pointer-events: auto;
-            transition: 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            animation: pulse-wpp 1.5s infinite;
-        }
-        @keyframes pulse-wpp { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(37,211,102,0.6); } 100% { transform: scale(1); } }
-        .floating-wpp:active { transform: scale(0.9); animation: none; }
-        
-        /* Mensagem flutuante (aparece automaticamente) */
-        .floating-msg {
-            position: absolute;
-            bottom: 190px;
-            left: 20px;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 16px;
-            padding: 12px 16px;
-            max-width: 280px;
-            z-index: 26;
-            pointer-events: auto;
-            border-left: 4px solid #25D366;
-            display: none;
-            animation: slideInLeft 0.3s ease;
-        }
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .floating-msg.show { display: block; }
-        .floating-msg p { color: white; font-size: 0.8rem; margin-bottom: 8px; }
-        .floating-msg .edit-msg {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: #25D366;
-            font-size: 0.7rem;
-            cursor: pointer;
-        }
-        .floating-msg .close-msg {
-            float: right;
-            color: #999;
-            cursor: pointer;
+            gap: 8px;
             font-size: 0.8rem;
-        }
-        
-        /* Modal de edição da mensagem */
-        .edit-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1a1a2e;
-            border-radius: 20px;
-            padding: 20px;
-            width: 85%;
-            max-width: 300px;
-            z-index: 2002;
-            display: none;
-            border: 1px solid #25D366;
-        }
-        .edit-modal.open { display: block; }
-        .edit-modal h4 { color: white; margin-bottom: 10px; }
-        .edit-modal textarea {
-            width: 100%;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 10px;
-            padding: 10px;
-            color: white;
-            resize: vertical;
-            margin-bottom: 10px;
-        }
-        .edit-modal button {
-            background: #25D366;
-            border: none;
-            padding: 8px;
-            border-radius: 20px;
-            color: black;
             font-weight: bold;
-            width: 100%;
             cursor: pointer;
+            z-index: 26;
+            pointer-events: auto;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            white-space: nowrap;
         }
-        .edit-modal .cancel {
-            background: #444;
-            color: white;
-            margin-top: 8px;
-        }
-        
-        /* Modal de edição do botão do vídeo */
-        .edit-video-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1a1a2e;
-            border-radius: 20px;
-            padding: 20px;
-            width: 85%;
-            max-width: 300px;
-            z-index: 2003;
-            display: none;
-            border: 1px solid #FF512F;
-        }
-        .edit-video-modal.open { display: block; }
-        .edit-video-modal h4 { color: white; margin-bottom: 10px; }
-        .edit-video-modal input, .edit-video-modal select {
-            width: 100%;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 10px;
-            padding: 10px;
-            color: white;
-            margin-bottom: 10px;
-        }
-        .edit-video-modal button {
-            background: #FF512F;
-            border: none;
-            padding: 8px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-        }
+        .video-float-btn:active { transform: scale(0.95); background: #ff3300; }
+        .video-float-btn i { font-size: 1rem; }
         
         .menu-button {
             position: absolute;
@@ -265,22 +123,22 @@
         .genre-button {
             position: absolute;
             bottom: 120px;
-            right: 85px;
+            left: 15px;
             background: linear-gradient(135deg, #8E2DE2, #4A00E0);
             color: white;
             border: none;
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             cursor: pointer;
             z-index: 25;
             pointer-events: auto;
             transition: 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         .genre-button:active { transform: scale(0.9); }
         
@@ -474,50 +332,10 @@
         <div class="genre-badge" id="genreBadge"><i class="fas fa-guitar"></i> SERTANEJO</div>
         <div class="audio-indicator" id="audioIndicator"><i class="fas fa-circle"></i> Aguardando</div>
         
-        <!-- Botão flutuante do vídeo (editável) -->
+        <!-- Botão flutuante do vídeo (dinâmico) -->
         <button class="video-float-btn" id="videoFloatBtn">
-            <i class="fas fa-headset" id="videoFloatIcon"></i>
+            <i class="fas fa-headset"></i> <span id="videoFloatText">Peça sua Playlist</span>
         </button>
-        
-        <!-- Botão flutuante WhatsApp -->
-        <button class="floating-wpp" id="floatingWppBtn"><i class="fab fa-whatsapp"></i></button>
-        
-        <!-- Mensagem flutuante (aparece automaticamente) -->
-        <div class="floating-msg" id="floatingMsg">
-            <span class="close-msg" id="closeMsgBtn">&times;</span>
-            <p id="msgText">🎵 Bem-vindo à Cazé Playlist! Aproveite as melhores músicas!</p>
-            <button class="edit-msg" id="editMsgBtn"><i class="fas fa-pen"></i> Editar mensagem</button>
-        </div>
-        
-        <!-- Modal de edição da mensagem -->
-        <div class="edit-modal" id="editModal">
-            <h4><i class="fas fa-edit"></i> Editar mensagem</h4>
-            <textarea id="editText" rows="3">🎵 Bem-vindo à Cazé Playlist! Aproveite as melhores músicas!</textarea>
-            <button id="saveMsgBtn">💾 Salvar</button>
-            <button class="cancel" id="cancelEditBtn">Cancelar</button>
-        </div>
-        
-        <!-- Modal de edição do botão do vídeo -->
-        <div class="edit-video-modal" id="editVideoModal">
-            <h4><i class="fas fa-edit"></i> Editar botão do vídeo</h4>
-            <input type="text" id="videoLinkInput" placeholder="Link do botão">
-            <select id="videoIconSelect">
-                <option value="fa-headset">🎧 Headset (Suporte)</option>
-                <option value="fa-info-circle">ℹ️ Informações</option>
-                <option value="fa-file-invoice">📄 Orçamento</option>
-                <option value="fa-shopping-cart">🛒 Comprar</option>
-                <option value="fa-download">⬇️ Download</option>
-                <option value="fa-share-alt">📤 Compartilhar</option>
-                <option value="fa-heart">❤️ Curtir</option>
-                <option value="fa-star">⭐ Destaque</option>
-                <option value="fa-gift">🎁 Presente</option>
-                <option value="fa-whatsapp">💬 WhatsApp</option>
-                <option value="fa-instagram">📷 Instagram</option>
-                <option value="fa-youtube">▶️ YouTube</option>
-            </select>
-            <button id="saveVideoBtn">💾 Salvar</button>
-            <button class="cancel" id="cancelVideoBtn" style="background:#444; margin-top:8px;">Cancelar</button>
-        </div>
         
         <button class="genre-button" id="genreButton"><i class="fas fa-music"></i></button>
         
@@ -547,7 +365,6 @@
         <button id="fullscreenMenuBtn"><i class="fas fa-expand"></i> Tela cheia</button>
         <button id="shareMenuBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
-        <button id="editVideoMenuBtn"><i class="fas fa-video"></i> Editar botão vídeo</button>
     </div>
     
     <div class="genres-modal" id="genresModal">
@@ -605,6 +422,7 @@
             
         ];
         
+        // VIDEOS COM SEUS RESPECTIVOS BOTÕES
         const videosList = [
             { src: "Pla.mp4", nome: "Principal", link: "https://wa.me/5512988461978?text=Olá,%20quero%20mais%20informações!", botaoTexto: "Peça sua Playlist", icone: "fa-headset" },
             { src: "caze12.mp4", nome: "MUTV", link: "https://wa.me/5512988461978?text=Gostaria%20de%20um%20orçamento", botaoTexto: "ORÇAMENTO", icone: "fa-file-invoice" },
@@ -636,32 +454,8 @@
         
         // Elementos do botão flutuante do vídeo
         const videoFloatBtn = document.getElementById('videoFloatBtn');
-        const videoFloatIcon = document.getElementById('videoFloatIcon');
-        const editVideoMenuBtn = document.getElementById('editVideoMenuBtn');
-        const editVideoModal = document.getElementById('editVideoModal');
-        const videoLinkInput = document.getElementById('videoLinkInput');
-        const videoIconSelect = document.getElementById('videoIconSelect');
-        const saveVideoBtn = document.getElementById('saveVideoBtn');
-        const cancelVideoBtn = document.getElementById('cancelVideoBtn');
-        
-        // Elementos do WhatsApp flutuante
-        const floatingWppBtn = document.getElementById('floatingWppBtn');
-        const floatingMsg = document.getElementById('floatingMsg');
-        const closeMsgBtn = document.getElementById('closeMsgBtn');
-        const editMsgBtn = document.getElementById('editMsgBtn');
-        const editModal = document.getElementById('editModal');
-        const editText = document.getElementById('editText');
-        const saveMsgBtn = document.getElementById('saveMsgBtn');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
-        const msgText = document.getElementById('msgText');
-        
-        // Configurações do botão do vídeo (salvas no localStorage)
-        let currentVideoLink = localStorage.getItem('videoFloatLink') || "https://wa.me/5512988461978?text=Olá,%20quero%20mais%20informações!";
-        let currentVideoIcon = localStorage.getItem('videoFloatIcon') || "fa-headset";
-        
-        // Aplicar configurações salvas do botão
-        videoFloatIcon.className = `fas ${currentVideoIcon}`;
-        videoFloatBtn.onclick = () => window.open(currentVideoLink, '_blank');
+        const videoFloatIcon = videoFloatBtn.querySelector('i');
+        const videoFloatText = document.getElementById('videoFloatText');
         
         let currentIndex = 0, isPlaying = false, shuffleMode = false;
         let timerInterval = null;
@@ -675,101 +469,6 @@
         musicPlayer.volume = 0.9;
         backgroundAudio.volume = 0.001;
         voiceAdAudio.volume = 0.9;
-        
-        // ==================== MENSAGEM FLUTUANTE (APARECE AUTOMATICAMENTE) ====================
-        let msgHideTimeout = null;
-        
-        function showFloatingMessage() {
-            floatingMsg.classList.add('show');
-            if (msgHideTimeout) clearTimeout(msgHideTimeout);
-            msgHideTimeout = setTimeout(() => {
-                floatingMsg.classList.remove('show');
-            }, 5000);
-        }
-        
-        function hideFloatingMessage() {
-            floatingMsg.classList.remove('show');
-            if (msgHideTimeout) clearTimeout(msgHideTimeout);
-        }
-        
-        // Carregar mensagem salva
-        const savedMessage = localStorage.getItem('caze_floating_message');
-        if (savedMessage) {
-            msgText.innerText = savedMessage;
-        }
-        
-        // Botão WhatsApp também mostra a mensagem
-        floatingWppBtn.addEventListener('click', () => {
-            showFloatingMessage();
-            resetHideTimer();
-        });
-        
-        closeMsgBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            hideFloatingMessage();
-        });
-        
-        editMsgBtn.addEventListener('click', () => {
-            editText.value = msgText.innerText;
-            editModal.classList.add('open');
-        });
-        
-        saveMsgBtn.addEventListener('click', () => {
-            const newMsg = editText.value.trim();
-            if (newMsg) {
-                msgText.innerText = newMsg;
-                localStorage.setItem('caze_floating_message', newMsg);
-                showNotification('✅ Mensagem salva!', 2000);
-            }
-            editModal.classList.remove('open');
-        });
-        
-        cancelEditBtn.addEventListener('click', () => {
-            editModal.classList.remove('open');
-        });
-        
-        editModal.addEventListener('click', (e) => {
-            if (e.target === editModal) editModal.classList.remove('open');
-        });
-        
-        // ==================== EDIÇÃO DO BOTÃO DO VÍDEO ====================
-        function openEditVideoModal() {
-            videoLinkInput.value = currentVideoLink;
-            videoIconSelect.value = currentVideoIcon;
-            editVideoModal.classList.add('open');
-        }
-        
-        editVideoMenuBtn.addEventListener('click', () => {
-            openEditVideoModal();
-            closeMenu();
-        });
-        
-        saveVideoBtn.addEventListener('click', () => {
-            const newLink = videoLinkInput.value.trim();
-            const newIcon = videoIconSelect.value;
-            
-            if (newLink) {
-                currentVideoLink = newLink;
-                currentVideoIcon = newIcon;
-                
-                localStorage.setItem('videoFloatLink', currentVideoLink);
-                localStorage.setItem('videoFloatIcon', currentVideoIcon);
-                
-                videoFloatIcon.className = `fas ${currentVideoIcon}`;
-                videoFloatBtn.onclick = () => window.open(currentVideoLink, '_blank');
-                
-                showNotification('✅ Botão do vídeo atualizado!', 2000);
-            }
-            editVideoModal.classList.remove('open');
-        });
-        
-        cancelVideoBtn.addEventListener('click', () => {
-            editVideoModal.classList.remove('open');
-        });
-        
-        editVideoModal.addEventListener('click', (e) => {
-            if (e.target === editVideoModal) editVideoModal.classList.remove('open');
-        });
         
         // ==================== ANÚNCIO DE VOZ MP3 (30 MINUTOS) ====================
         const VOICE_AD_URL = "anuncio.mp3";
@@ -1019,7 +718,7 @@
                             navigator.mediaSession.metadata = new MediaMetadata({
                                 title: track.title,
                                 artist: track.artist + ' • ' + track.genero,
-                                album: 'MUTV Playlist'
+                                album: 'Cazé Playlist'
                             });
                             navigator.mediaSession.setActionHandler('play', () => playMusic());
                             navigator.mediaSession.setActionHandler('pause', () => pauseMusic());
@@ -1135,7 +834,7 @@
         document.addEventListener('click', (e) => { if (!menuButton.contains(e.target) && !menuPopup.contains(e.target)) closeMenu(); });
         document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { document.documentElement.requestFullscreen(); closeMenu(); });
         document.getElementById('shareMenuBtn').addEventListener('click', () => {
-            if (navigator.share) navigator.share({ title: 'MUTV Playlist' });
+            if (navigator.share) navigator.share({ title: 'Cazé Playlist' });
             else { navigator.clipboard.writeText(location.href); showNotification('Link copiado!', 2000); }
             closeMenu();
         });
@@ -1173,7 +872,7 @@
                 showNotification('⭐ Selecione uma nota', 2000);
                 return;
             }
-            let msg = `🎵 *MUTV Playlist*\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5 - currentRating)}\n`;
+            let msg = `🎵 *Cazé Playlist*\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5 - currentRating)}\n`;
             if (document.getElementById('feedbackText').value.trim()) {
                 msg += `💬 ${document.getElementById('feedbackText').value.trim()}\n`;
             }
@@ -1188,9 +887,10 @@
             });
         });
         
-        // Vídeos em rodízio (sem botão CTA, apenas vídeos)
+        // ==================== VÍDEOS EM RODÍZIO COM BOTÃO DINÂMICO ====================
         let currentVideoIndex = 0;
-        function updateVideoOnly(index) {
+        
+        function updateVideoAndButton(index) {
             const video = videosList[index];
             const vidEl = document.getElementById('mainVideo');
             if (vidEl) {
@@ -1199,11 +899,17 @@
                 vidEl.load();
                 vidEl.play().catch(e => console.log("Vídeo:", e));
             }
+            
+            // Atualizar botão flutuante com os dados do vídeo atual
+            videoFloatIcon.className = `fas ${video.icone}`;
+            videoFloatText.innerText = video.botaoTexto;
+            videoFloatBtn.onclick = () => window.open(video.link, '_blank');
         }
-        updateVideoOnly(0);
+        
+        updateVideoAndButton(0);
         setInterval(() => {
             currentVideoIndex = (currentVideoIndex + 1) % videosList.length;
-            updateVideoOnly(currentVideoIndex);
+            updateVideoAndButton(currentVideoIndex);
         }, 20000);
         
         const bottomControls = document.getElementById('bottomControls');
@@ -1237,9 +943,6 @@
                 } catch(err) {}
                 
                 showNotification('✅ Áudio ativado! Toque com tela bloqueada ✅', 3000);
-                
-                // MENSAGEM APARECE AUTOMATICAMENTE (sem precisar de botão)
-                showFloatingMessage();
             } else {
                 showNotification('❌ Falha ao ativar áudio. Tente novamente.', 3000);
             }
