@@ -37,7 +37,7 @@
         .car-mode-active .bottom-controls {
             transform: translateY(0) !important;
             opacity: 1 !important;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
             padding: 20px 16px;
             z-index: 101;
         }
@@ -45,35 +45,58 @@
             width: 80px;
             height: 80px;
             font-size: 2rem;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
         }
         .car-mode-active .play-btn {
             width: 100px;
             height: 100px;
             font-size: 2.5rem;
+            background: rgba(230,57,70,0.7);
         }
         .car-mode-active .track-info p {
             font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         .car-mode-active .progress-time span {
             font-size: 1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
+        
+        /* Botões transparentes no modo carro */
         .car-mode-active .genre-badge {
-            display: none;
+            opacity: 0.3;
+            background: rgba(0,0,0,0.3);
         }
         .car-mode-active .video-float-btn {
-            display: none;
+            opacity: 0.2;
+            background: rgba(0,0,0,0.3);
+            transition: opacity 0.3s;
+        }
+        .car-mode-active .video-float-btn:hover {
+            opacity: 0.6;
         }
         .car-mode-active .genre-button {
-            display: none;
+            opacity: 0.2;
+            background: rgba(0,0,0,0.3);
+            transition: opacity 0.3s;
+        }
+        .car-mode-active .genre-button:hover {
+            opacity: 0.6;
+        }
+        .car-mode-active .car-mode-btn {
+            opacity: 0.2;
+            transition: opacity 0.3s;
+        }
+        .car-mode-active .car-mode-btn:hover {
+            opacity: 0.8;
         }
         .car-mode-active .menu-button {
-            display: none;
+            opacity: 0.2;
+            transition: opacity 0.3s;
         }
-        .car-mode-active .audio-indicator {
-            display: none;
-        }
-        .car-mode-active .video-ad-container {
-            display: none !important;
+        .car-mode-active .menu-button:hover {
+            opacity: 0.8;
         }
         
         /* Vídeo informativo do Modo Carro (tela cheia) */
@@ -225,7 +248,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         
-        /* Botão flutuante do vídeo (dinâmico) - some no modo carro */
+        /* Botão flutuante do vídeo (dinâmico) */
         .video-float-btn {
             position: absolute;
             bottom: 120px;
@@ -373,8 +396,9 @@
         .genre-card[data-genero="SERTANEJO"] { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
         .genre-card[data-genero="FORRÓ"] { background: linear-gradient(135deg, #f12711 0%, #f5af19 100%); }
         .genre-card[data-genero="SAMBA"] { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); }
-        .genre-card[data-genero="VGM"] { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
-        .genre-card[data-genero="TODOS"] { background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); }
+        .genre-card[data-genero="POP"] { background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); }
+        .genre-card[data-genero="VARIADAS"] { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
+        .genre-card[data-genero="TODOS"] { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         
         .genre-card i { font-size: 2.8rem; display: block; margin-bottom: 12px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3)); }
         .genre-card span { font-size: 1rem; font-weight: 800; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); letter-spacing: 1px; }
@@ -584,7 +608,8 @@
             <div class="genre-card" data-genero="SERTANEJO"><i class="fas fa-guitar"></i><span>SERTANEJO</span></div>
             <div class="genre-card" data-genero="FORRÓ"><i class="fas fa-drum"></i><span>FORRÓ</span></div>
             <div class="genre-card" data-genero="SAMBA"><i class="fas fa-drumstick-bite"></i><span>SAMBA</span></div>
-            <div class="genre-card" data-genero="VGM"><i class="fas fa-gamepad"></i><span>VGM</span></div>
+            <div class="genre-card" data-genero="POP"><i class="fas fa-microphone-alt"></i><span>POP</span></div>
+            <div class="genre-card" data-genero="VARIADAS"><i class="fas fa-random"></i><span>VARIADAS</span></div>
             <div class="genre-card" data-genero="TODOS"><i class="fas fa-list-ul"></i><span>TODOS OS ESTILOS</span></div>
         </div>
         <button class="close-genres" id="closeGenresBtn"><i class="fas fa-times-circle"></i> FECHAR</button>
@@ -614,23 +639,26 @@
             { id: 7, title: "Pagode do Arrasta", artist: "Thiaguinho", src: "Kamisa 10 - Lance Livre _ NA VIBE DO K10(MP3_160K).mp3", genero: "SAMBA" },
             { id: 8, title: "Samba de Raiz", artist: "Pa", src: "Grupo Menos é Mais e João Gomes - Foi Bom_ Mas Foi Ontem (Clipe Oficial)(MP3_160K).mp3", genero: "SAMBA" },
             { id: 9, title: "Pout-pourri", artist: "KIiko no Pagode.m4a", src: "KIiko no Pagode.m4a", genero: "SAMBA" },
-            { id: 10, title: "Geraldo_Azevedo", artist: "", src: "Geraldo_Azevedo_Dona_da_Minha_Cabe_a_muzzik (1).m4a", genero: "VGM" },
-            { id: 11, title: "Commodores_Easy_6.m4a", artist: "Commodores", src: "Commodores_Easy_6.m4a", genero: "VGM" },
+            { id: 10, title: "Geraldo_Azevedo", artist: "", src: "Geraldo_Azevedo_Dona_da_Minha_Cabe_a_muzzik (1).m4a", genero: "VARIADAS" },
+            { id: 11, title: "Commodores_Easy_6.m4a", artist: "Commodores", src: "Commodores_Easy_6.m4a", genero: "VARIADAS" },
             { id: 12, title: "Mordida_de_Amor", artist: "SPC", src: "Mordida_de_Amor_Dvd_Produto_Nacional_Vol_SPC_muzzik.m4a", genero: "SAMBA" },
-              { id: 13, title: "Retrrovisor", artist: "Gustavo Lima", src: "Gusttavo_Lima_Retrovisor_DVD_muzzik.m4a", genero: "SERTEJO." },
+              { id: 13, title: "Retrrovisor", artist: "Gustavo Lima", src: "Gusttavo_Lima_Retrovisor_DVD_muzzik.m4a", genero: "SERTANEJO" },
               { id: 14, title: "Rer", artist: "Xand", src: "Patrick_Costa_Henrique_e_Juliano_Xand_Avi_o_Diga_Pra_Mim_Fiquei_Sabendo_FarraDoPatrick_muzzik (1).m4a", genero: "FORRÓ" },
             { id: 15, title: "Variadas", artist: "ASD", src: "VH_e_Alexandre_Pe_o_Apaixonado_Saudade_Pulou_no_Peito_Mexe_que_Bom_ParadaObrigat_ria_muzzik.m4a", genero: "SERTANEJO" },
              { id: 16, title: "To_Bebendo_To_Pagando", artist: "Mano_Walter_Sirano_Sirino", src: "Mano_Walter_Sirano_Sirino_To_Bebendo_To_Pagando_muzzik.m4a", genero: "FORRÓ" },
              { id: 17, title: "Catredal", artist: "LAUANA_PRADO", src: "LAUANA_PRADO_CATEDRAL_TUDO_DE_NOVO_AMOR_I_LOVE_YOU_muzzik (1).m4a", genero: "SERTANEJO"}, 
              { id: 18, title: "Preimeiro Passo", artist: "Márcia Felipe", src: "Peruanno_M_rcia_Fellipe_Primeiro_Passo_muzzik.m4a", genero: "FORRÓ" },
              { id: 19, title: "Ainda é Tempo", artist: "Limão com mel", src: "Ainda_Ainda_Tempo__muzzik.m4a", genero: "FORRÓ" },
-             { id: 20, title: "ARDE_DEMAIS", artist: "A Vontade", src: "_Vontade_TARDE_DEMAIS_.m4a", genero: "VMG" },
+             { id: 20, title: "ARDE_DEMAIS", artist: "A Vontade", src: "_Vontade_TARDE_DEMAIS_.m4a", genero: "VARIADAS" },
              { id: 21, title: "Ao Vivo e a Cores ", artist: "02 - De Bar em Bar 9", src: "02 - Ao Vivo e a Cores - De Bar em Bar 9.mp3", genero: "FORRÓ" },
               { id: 22, title: "Moura-Desejo-de-Menina.mp3", artist: "Moura-Desejo-de-Menina.mp3", src: "Moura-Desejo-de-Menina.mp3", genero: "FORRÓ" },
-               { id: 22, title: "VOCÊ VIROU MINHA CABEÇA", artist: "FERRO NA BONECA", src: "VOCÊ VIROU MINHA CABEÇA - FERRO NA BONECA.mp3", genero: "FORRÓ" },
-                  { id: 23, title: "P DO PECADO ", artist: "FERRO NA BONECA", src: "P DO PECADO - FERRO NA BONECA.mp3", genero: "FORRÓ" },
-                   { id: 23, title: "03 - Nova Namorada ", artist: "03 - Natãzinho Lima", src: "03 - Nova Namorada - De Bar em Bar 9.mp3", genero: "FORRÓ" },
-            
+               { id: 23, title: "VOCÊ VIROU MINHA CABEÇA", artist: "FERRO NA BONECA", src: "VOCÊ VIROU MINHA CABEÇA - FERRO NA BONECA.mp3", genero: "FORRÓ" },
+                  { id: 24, title: "P DO PECADO ", artist: "FERRO NA BONECA", src: "P DO PECADO - FERRO NA BONECA.mp3", genero: "FORRÓ" },
+                   { id: 25, title: "Nova Namorada ", artist: "Natãzinho Lima", src: "03 - Nova Namorada - De Bar em Bar 9.mp3", genero: "FORRÓ" },
+            // Músicas POP adicionadas
+            { id: 26, title: "Blinding Lights", artist: "The Weeknd", src: "blinding_lights.mp3", genero: "POP" },
+            { id: 27, title: "Dance Monkey", artist: "Tones and I", src: "dance_monkey.mp3", genero: "POP" },
+            { id: 28, title: "Shape of You", artist: "Ed Sheeran", src: "shape_of_you.mp3", genero: "POP" },
         ];
         
         // VIDEOS COM SEUS RESPECTIVOS BOTÕES
@@ -702,7 +730,7 @@
                 carIndicator.classList.add('show');
                 carModeVideo.style.display = 'block';
                 carVideo.play().catch(e => console.log('Vídeo carro:', e));
-                showNotification('🚗 MODO CARRO ATIVADO! Vídeo em tela cheia.', 3000);
+                showNotification('🚗 MODO CARRO ATIVADO! Botões transparentes.', 3000);
                 // Esconder controles automaticamente após 3 segundos
                 setTimeout(() => {
                     if (isCarMode) {
@@ -945,7 +973,8 @@
                 case "SERTANEJO": icon = "fa-guitar"; break;
                 case "FORRÓ": icon = "fa-drum"; break;
                 case "SAMBA": icon = "fa-drumstick-bite"; break;
-                case "VGM": icon = "fa-gamepad"; break;
+                case "POP": icon = "fa-microphone-alt"; break;
+                case "VARIADAS": icon = "fa-random"; break;
                 default: icon = "fa-headphones";
             }
             genreBadge.innerHTML = `<i class="fas ${icon}"></i> ${genero === "MIX" ? "TODOS" : genero}`;
