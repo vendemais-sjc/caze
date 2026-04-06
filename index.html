@@ -277,6 +277,7 @@
         .splash-content i { font-size: 3rem; color: #e63946; margin-bottom: 1rem; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.6; transform: scale(1); } }
         
+        /* Botão laranja sempre visível */
         #tap-to-start {
             position: fixed;
             bottom: 20%;
@@ -284,21 +285,23 @@
             transform: translateX(-50%);
             background: linear-gradient(135deg, #ff6600, #ff3300);
             color: white;
-            padding: 10px 24px;
-            border-radius: 40px;
+            padding: 12px 28px;
+            border-radius: 50px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 1rem;
             z-index: 10000;
             cursor: pointer;
-            display: none;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border: none;
             animation: btnPulse 1.5s infinite;
             white-space: nowrap;
             pointer-events: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border: none;
-            gap: 8px;
         }
-        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.03); } 100% { transform: translateX(-50%) scale(1); } }
+        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
         
         .genre-badge {
             position: absolute;
@@ -337,8 +340,7 @@
     </style>
 </head>
 <body>
-    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>Cazé Playlist</h1><p>🔊 Toque com tela bloqueada!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão para ativar</p></div></div>
-    <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
+    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>Cazé Playlist</h1><p>🔊 Toque com tela bloqueada!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão laranja para ativar</p></div></div>
     
     <div class="app">
         <div class="fullscreen-video-container">
@@ -352,7 +354,7 @@
         <div id="notificationTop" class="notification-top"><div class="message" id="notificationMessage"></div></div>
         <div class="controls-overlay">
             <div class="bottom-controls" id="bottomControls">
-                <div class="track-info"><p id="trackArtist">🎵 Clique em ATIVAR ÁUDIO</p></div>
+                <div class="track-info"><p id="trackArtist">🎵 Clique no botão laranja</p></div>
                 <div class="progress-area">
                     <div class="progress-time"><span id="currentTime">0:00</span><span id="totalTime">0:00</span></div>
                     <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
@@ -399,6 +401,8 @@
         <div class="modal-buttons"><button class="modal-btn cancel" id="cancelFeedback">Cancelar</button><button class="modal-btn send" id="sendFeedback"><i class="fab fa-whatsapp"></i> Enviar</button></div>
     </div>
     
+    <button id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</button>
+    
     <script>
         // ========== CONFIGURAÇÕES EDITÁVEIS ==========
         const WHATSAPP_NUMBER = "5512988461978";  // Seu número com DDD
@@ -434,7 +438,7 @@
             { id: 25, title: "03 - Nova Namorada ", artist: "Natãzinho Lima", src: "03 - Nova Namorada - De Bar em Bar 9.mp3", genero: "FORRÓ" }
         ];
         
-        // ========== VÍDEOS EM RODÍZIO (apenas visual, sem botões CTA) ==========
+        // ========== VÍDEOS EM RODÍZIO (apenas visual) ==========
         const videosList = [
             { src: "Pla.mp4" },
             { src: "caze12.mp4" },
@@ -539,7 +543,7 @@
         // ========== REPRODUÇÃO DE MÚSICA ==========
         async function playMusic() {
             if (!isBackgroundActive) {
-                showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
+                showNotification('⚠️ Clique no botão laranja "ATIVAR ÁUDIO" primeiro!', 3000);
                 return false;
             }
             
@@ -569,7 +573,6 @@
                         
                         splash.classList.add('hidden');
                         setTimeout(() => splash.style.display = 'none', 500);
-                        tapToStart.style.display = 'none';
                         
                         // Media Session
                         if ('mediaSession' in navigator) {
@@ -884,11 +887,9 @@
             }
         });
         
-        window.addEventListener('load', () => {
-            iniciarMusicaAleatoria();
-            tapToStart.style.display = 'block';
-            if (adAudio.src && adAudio.src !== window.location.href) adAudio.load();
-        });
+        // Garantir que o botão laranja esteja visível
+        tapToStart.style.display = 'flex';
+        iniciarMusicaAleatoria();
     </script>
 </body>
 </html>
