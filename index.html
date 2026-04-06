@@ -15,6 +15,54 @@
         .fullscreen-video-container video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
         .controls-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
         
+        /* Anúncio em vídeo 728x90 */
+        .video-ad-container {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 728px;
+            max-width: 90vw;
+            height: auto;
+            z-index: 50;
+            pointer-events: auto;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            display: none;
+            animation: slideUpAd 0.3s ease;
+        }
+        @keyframes slideUpAd {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .video-ad-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .close-ad {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 51;
+            backdrop-filter: blur(4px);
+        }
+        .close-ad:hover {
+            background: #e63946;
+        }
+        
         .notification-top {
             position: absolute;
             top: 12px;
@@ -329,6 +377,15 @@
                 <source src="Caze12.mp4" type="video/mp4">
             </video>
         </div>
+        
+        <!-- Anúncio em vídeo 728x90 -->
+        <div class="video-ad-container" id="videoAdContainer">
+            <span class="close-ad" id="closeAdBtn">✕</span>
+            <video id="adVideo" autoplay muted playsinline>
+                <source src="anu.mp4" type="video/mp4">
+            </video>
+        </div>
+        
         <div class="genre-badge" id="genreBadge"><i class="fas fa-guitar"></i> SERTANEJO</div>
         <div class="audio-indicator" id="audioIndicator"><i class="fas fa-circle"></i> Aguardando</div>
         
@@ -452,6 +509,11 @@
         const genresModal = document.getElementById('genresModal');
         const audioIndicator = document.getElementById('audioIndicator');
         
+        // Elementos do anúncio em vídeo
+        const videoAdContainer = document.getElementById('videoAdContainer');
+        const adVideo = document.getElementById('adVideo');
+        const closeAdBtn = document.getElementById('closeAdBtn');
+        
         // Elementos do botão flutuante do vídeo
         const videoFloatBtn = document.getElementById('videoFloatBtn');
         const videoFloatIcon = videoFloatBtn.querySelector('i');
@@ -464,6 +526,49 @@
         let backgroundInterval = null;
         let isBackgroundActive = false;
         let voiceAdInterval = null;
+        let adTimeout = null;
+        let adInterval = null;
+        
+        // ==================== ANÚNCIO EM VÍDEO ====================
+        function mostrarAnuncio() {
+            if (!videoAdContainer) return;
+            
+            // Resetar o vídeo
+            adVideo.currentTime = 0;
+            videoAdContainer.style.display = 'block';
+            adVideo.play().catch(e => console.log('Erro ao tocar anúncio:', e));
+            
+            // Ocultar após 6 segundos
+            if (adTimeout) clearTimeout(adTimeout);
+            adTimeout = setTimeout(() => {
+                if (videoAdContainer) {
+                    videoAdContainer.style.display = 'none';
+                    adVideo.pause();
+                }
+            }, 6000);
+        }
+        
+        function iniciarAnuncioPeriodico() {
+            if (adInterval) clearInterval(adInterval);
+            adInterval = setInterval(() => {
+                mostrarAnuncio();
+            }, 30000); // 30 segundos
+            console.log('✅ Anúncio em vídeo programado a cada 30 segundos');
+        }
+        
+        // Fechar anúncio manualmente
+        closeAdBtn.addEventListener('click', () => {
+            videoAdContainer.style.display = 'none';
+            adVideo.pause();
+            if (adTimeout) clearTimeout(adTimeout);
+        });
+        
+        // Abrir link do WhatsApp ao clicar no anúncio
+        videoAdContainer.addEventListener('click', (e) => {
+            if (e.target !== closeAdBtn) {
+                window.open('https://wa.me/5512988461978', '_blank');
+            }
+        });
         
         // ==================== VOLUME 90% ====================
         musicPlayer.volume = 0.9;
@@ -471,7 +576,7 @@
         voiceAdAudio.volume = 0.9;
         
         // ==================== ANÚNCIO DE VOZ MP3 (30 MINUTOS) ====================
-        const VOICE_AD_URL = "zzcv.mp3";
+        const VOICE_AD_URL = "anuncio.mp3";
         
         function tocarAnuncioVoz() {
             if (!isBackgroundActive) return;
@@ -563,6 +668,7 @@
                 iniciarManutencaoConstante();
                 await solicitarWakeLock();
                 iniciarAnuncioVoz();
+                iniciarAnuncioPeriodico(); // Iniciar anúncio em vídeo
                 
                 return true;
                 
