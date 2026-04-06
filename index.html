@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Cazé Playlist • Toca com tela bloqueada</title>
+    <title>Cazé Playlist • Modo Carro</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -14,6 +14,119 @@
         .fullscreen-video-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1; }
         .fullscreen-video-container video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
         .controls-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
+        
+        /* ========== MODO CARRO ========== */
+        .car-mode-active .car-mode-video {
+            display: block !important;
+        }
+        .car-mode-active .bottom-controls {
+            transform: translateY(0) !important;
+            opacity: 1 !important;
+            background: rgba(0,0,0,0.85);
+            padding: 20px 16px;
+        }
+        .car-mode-active .control-btn {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+        }
+        .car-mode-active .play-btn {
+            width: 100px;
+            height: 100px;
+            font-size: 2.5rem;
+        }
+        .car-mode-active .track-info p {
+            font-size: 1.2rem;
+        }
+        .car-mode-active .progress-time span {
+            font-size: 1rem;
+        }
+        .car-mode-active .genre-badge {
+            font-size: 1rem;
+            padding: 8px 18px;
+        }
+        .car-mode-active .video-float-btn {
+            padding: 15px 25px;
+            font-size: 1.1rem;
+        }
+        .car-mode-active .video-float-btn i {
+            font-size: 1.3rem;
+        }
+        .car-mode-active .genre-button {
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+        }
+        
+        /* Vídeo informativo do Modo Carro */
+        .car-mode-video {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            z-index: 15;
+            display: none;
+            pointer-events: none;
+        }
+        .car-mode-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Botão ativar Modo Carro */
+        .car-mode-btn {
+            position: absolute;
+            bottom: 120px;
+            left: 15px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            z-index: 27;
+            pointer-events: auto;
+            transition: 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .car-mode-btn.active {
+            background: linear-gradient(135deg, #e63946, #ff6b6b);
+            animation: pulseCar 1s infinite;
+        }
+        @keyframes pulseCar {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(230,57,70,0.6); }
+        }
+        .car-mode-btn:active { transform: scale(0.9); }
+        
+        /* Indicador Modo Carro */
+        .car-indicator {
+            position: absolute;
+            top: 12px;
+            right: 130px;
+            background: rgba(230,57,70,0.8);
+            backdrop-filter: blur(8px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: white;
+            z-index: 31;
+            pointer-events: none;
+            display: none;
+            font-weight: bold;
+        }
+        .car-indicator.show {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
         
         /* Anúncio em vídeo 728x90 */
         .video-ad-container {
@@ -32,6 +145,9 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             display: none;
             animation: slideUpAd 0.3s ease;
+        }
+        .car-mode-active .video-ad-container {
+            bottom: 200px;
         }
         @keyframes slideUpAd {
             from { opacity: 0; transform: translateX(-50%) translateY(20px); }
@@ -171,7 +287,7 @@
         .genre-button {
             position: absolute;
             bottom: 120px;
-            left: 15px;
+            left: 80px;
             background: linear-gradient(135deg, #8E2DE2, #4A00E0);
             color: white;
             border: none;
@@ -371,10 +487,17 @@
     <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>Cazé Playlist</h1><p>🔊 Toque com tela bloqueada!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão para ativar</p></div></div>
     <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
     
-    <div class="app">
+    <div class="app" id="app">
         <div class="fullscreen-video-container">
             <video id="mainVideo" autoplay loop muted playsinline>
                 <source src="Caze12.mp4" type="video/mp4">
+            </video>
+        </div>
+        
+        <!-- Vídeo informativo do Modo Carro -->
+        <div class="car-mode-video" id="carModeVideo">
+            <video id="carVideo" autoplay loop muted playsinline>
+                <source src="carro.mp4" type="video/mp4">
             </video>
         </div>
         
@@ -388,6 +511,12 @@
         
         <div class="genre-badge" id="genreBadge"><i class="fas fa-guitar"></i> SERTANEJO</div>
         <div class="audio-indicator" id="audioIndicator"><i class="fas fa-circle"></i> Aguardando</div>
+        <div class="car-indicator" id="carIndicator"><i class="fas fa-car"></i> MODO CARRO ATIVO</div>
+        
+        <!-- Botão Modo Carro -->
+        <button class="car-mode-btn" id="carModeBtn">
+            <i class="fas fa-car"></i>
+        </button>
         
         <!-- Botão flutuante do vídeo (dinâmico) -->
         <button class="video-float-btn" id="videoFloatBtn">
@@ -487,6 +616,7 @@
         ];
         
         // DOM Elements
+        const app = document.getElementById('app');
         const musicPlayer = document.getElementById('musicPlayer');
         const backgroundAudio = document.getElementById('backgroundAudio');
         const voiceAdAudio = document.getElementById('voiceAdAudio');
@@ -509,6 +639,12 @@
         const genresModal = document.getElementById('genresModal');
         const audioIndicator = document.getElementById('audioIndicator');
         
+        // Modo Carro
+        const carModeBtn = document.getElementById('carModeBtn');
+        const carIndicator = document.getElementById('carIndicator');
+        const carModeVideo = document.getElementById('carModeVideo');
+        const carVideo = document.getElementById('carVideo');
+        
         // Elementos do anúncio em vídeo
         const videoAdContainer = document.getElementById('videoAdContainer');
         const adVideo = document.getElementById('adVideo');
@@ -528,17 +664,39 @@
         let voiceAdInterval = null;
         let adTimeout = null;
         let adInterval = null;
+        let isCarMode = false;
         
-        // ==================== ANÚNCIO EM VÍDEO ====================
+        // ========== MODO CARRO ==========
+        function toggleCarMode() {
+            isCarMode = !isCarMode;
+            
+            if (isCarMode) {
+                app.classList.add('car-mode-active');
+                carModeBtn.classList.add('active');
+                carIndicator.classList.add('show');
+                carModeVideo.style.display = 'block';
+                carVideo.play().catch(e => console.log('Vídeo carro:', e));
+                showNotification('🚗 MODO CARRO ATIVADO! Botões maiores e vídeo informativo.', 3000);
+            } else {
+                app.classList.remove('car-mode-active');
+                carModeBtn.classList.remove('active');
+                carIndicator.classList.remove('show');
+                carModeVideo.style.display = 'none';
+                carVideo.pause();
+                showNotification('🚗 Modo Carro desativado.', 2000);
+            }
+        }
+        
+        carModeBtn.addEventListener('click', toggleCarMode);
+        
+        // ========== ANÚNCIO EM VÍDEO ==========
         function mostrarAnuncio() {
             if (!videoAdContainer) return;
             
-            // Resetar o vídeo
             adVideo.currentTime = 0;
             videoAdContainer.style.display = 'block';
             adVideo.play().catch(e => console.log('Erro ao tocar anúncio:', e));
             
-            // Ocultar após 6 segundos
             if (adTimeout) clearTimeout(adTimeout);
             adTimeout = setTimeout(() => {
                 if (videoAdContainer) {
@@ -552,30 +710,28 @@
             if (adInterval) clearInterval(adInterval);
             adInterval = setInterval(() => {
                 mostrarAnuncio();
-            }, 30000); // 30 segundos
+            }, 30000);
             console.log('✅ Anúncio em vídeo programado a cada 30 segundos');
         }
         
-        // Fechar anúncio manualmente
         closeAdBtn.addEventListener('click', () => {
             videoAdContainer.style.display = 'none';
             adVideo.pause();
             if (adTimeout) clearTimeout(adTimeout);
         });
         
-        // Abrir link do WhatsApp ao clicar no anúncio
         videoAdContainer.addEventListener('click', (e) => {
             if (e.target !== closeAdBtn) {
                 window.open('https://wa.me/5512988461978', '_blank');
             }
         });
         
-        // ==================== VOLUME 90% ====================
+        // ========== VOLUME 90% ==========
         musicPlayer.volume = 0.9;
         backgroundAudio.volume = 0.001;
         voiceAdAudio.volume = 0.9;
         
-        // ==================== ANÚNCIO DE VOZ MP3 (30 MINUTOS) ====================
+        // ========== ANÚNCIO DE VOZ MP3 (30 MINUTOS) ==========
         const VOICE_AD_URL = "anuncio.mp3";
         
         function tocarAnuncioVoz() {
@@ -668,7 +824,7 @@
                 iniciarManutencaoConstante();
                 await solicitarWakeLock();
                 iniciarAnuncioVoz();
-                iniciarAnuncioPeriodico(); // Iniciar anúncio em vídeo
+                iniciarAnuncioPeriodico();
                 
                 return true;
                 
@@ -1006,7 +1162,6 @@
                 vidEl.play().catch(e => console.log("Vídeo:", e));
             }
             
-            // Atualizar botão flutuante com os dados do vídeo atual
             videoFloatIcon.className = `fas ${video.icone}`;
             videoFloatText.innerText = video.botaoTexto;
             videoFloatBtn.onclick = () => window.open(video.link, '_blank');
