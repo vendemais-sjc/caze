@@ -50,44 +50,34 @@
             height: 100px;
             font-size: 2.5rem;
         }
-        /* Botões transparentes no modo carro */
+        /* Botões flutuantes transparentes piscando no modo carro */
         .car-mode-active .menu-button,
         .car-mode-active .genre-button,
-        .car-mode-active .cta-button,
-        .car-mode-active .car-mode-btn {
-            opacity: 0.2;
+        .car-mode-active .cta-button {
+            opacity: 0.7;
+            animation: blinkFloat 1.2s ease-in-out infinite;
         }
         .car-mode-active .exit-car-btn {
             display: block;
         }
         
+        /* Animação de piscar para botões flutuantes */
+        @keyframes blinkFloat {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.95); }
+        }
+        
+        /* Botão modo carro no menu (3 pontinhos) - será exibido lá */
+        .car-mode-menu-btn {
+            background: linear-gradient(135deg, #1e3c72, #2a5298) !important;
+        }
+        .car-mode-menu-btn i {
+            color: #fff;
+        }
+        
+        /* Botão modo carro flutuante removido - agora só no menu */
         .car-mode-btn {
-            position: absolute;
-            bottom: 120px;
-            left: 15px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            cursor: pointer;
-            z-index: 27;
-            pointer-events: auto;
-            transition: 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        .car-mode-btn.active {
-            background: linear-gradient(135deg, #e63946, #ff6b6b);
-            animation: pulseCar 1s infinite;
-        }
-        @keyframes pulseCar {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(230,57,70,0.6); }
+            display: none;
         }
         
         .exit-car-btn {
@@ -104,6 +94,7 @@
             cursor: pointer;
             z-index: 102;
             display: none;
+            pointer-events: auto;
         }
         
         .car-indicator {
@@ -498,7 +489,8 @@
         <div class="audio-indicator" id="audioIndicator"><i class="fas fa-circle"></i> Aguardando</div>
         <div class="car-indicator" id="carIndicator"><i class="fas fa-car"></i> MODO CARRO ATIVO</div>
         
-        <button class="car-mode-btn" id="carModeBtn"><i class="fas fa-car"></i></button>
+        <!-- Botão modo carro removido da posição flutuante - agora apenas no menu -->
+        
         <button class="cta-button" id="ctaButton"><i class="fas fa-headset"></i> INFORMAÇÕES</button>
         <button class="genre-button" id="genreButton"><i class="fas fa-guitar"></i></button>
         <button class="exit-car-btn" id="exitCarBtn">✕ SAIR DO MODO CARRO</button>
@@ -534,6 +526,7 @@
     
     <div class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></div>
     <div class="menu-popup" id="menuPopup">
+        <button id="carModeMenuBtn"><i class="fas fa-car"></i> Modo Carro</button>
         <button id="fullscreenMenuBtn"><i class="fas fa-expand"></i> Tela cheia</button>
         <button id="shareMenuBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
@@ -625,8 +618,8 @@
         const audioIndicator = document.getElementById('audioIndicator');
         const ctaBtn = document.getElementById('ctaButton');
         
-        // Modo Carro
-        const carModeBtn = document.getElementById('carModeBtn');
+        // Modo Carro - novo elemento do menu
+        const carModeMenuBtn = document.getElementById('carModeMenuBtn');
         const exitCarBtn = document.getElementById('exitCarBtn');
         const carIndicator = document.getElementById('carIndicator');
         const carModeVideo = document.querySelector('.car-mode-video');
@@ -658,14 +651,14 @@
             
             if (isCarMode) {
                 app.classList.add('car-mode-active');
-                carModeBtn.classList.add('active');
+                carModeMenuBtn.style.background = "linear-gradient(135deg, #e63946, #ff6b6b)";
                 carIndicator.style.display = 'flex';
                 carModeVideo.style.display = 'block';
                 carVideo.play().catch(e => console.log('Vídeo carro:', e));
-                showNotification('🚗 MODO CARRO ATIVADO!');
+                showNotification('🚗 MODO CARRO ATIVADO! Botões transparentes piscando');
             } else {
                 app.classList.remove('car-mode-active');
-                carModeBtn.classList.remove('active');
+                carModeMenuBtn.style.background = "";
                 carIndicator.style.display = 'none';
                 carModeVideo.style.display = 'none';
                 carVideo.pause();
@@ -673,8 +666,14 @@
             }
         }
         
-        carModeBtn.addEventListener('click', toggleCarMode);
-        exitCarBtn.addEventListener('click', toggleCarMode);
+        carModeMenuBtn.addEventListener('click', () => {
+            toggleCarMode();
+            closeMenu();
+        });
+        
+        exitCarBtn.addEventListener('click', () => {
+            if (isCarMode) toggleCarMode();
+        });
         
         // ========== ANÚNCIO 728x90 ==========
         function mostrarAnuncio() {
