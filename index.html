@@ -37,37 +37,61 @@
             height: 100%;
             object-fit: cover;
         }
+        
+        /* Controles no modo carro - maiores e mais visíveis */
         .car-mode-active .bottom-controls {
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+            padding: 15px 20px;
         }
         .car-mode-active .control-btn {
-            width: 80px;
-            height: 80px;
-            font-size: 2rem;
+            width: 70px;
+            height: 70px;
+            font-size: 1.8rem;
+            background: rgba(0,0,0,0.6);
+            border: 2px solid rgba(255,255,255,0.3);
         }
         .car-mode-active .play-btn {
-            width: 100px;
-            height: 100px;
-            font-size: 2.5rem;
+            width: 85px;
+            height: 85px;
+            font-size: 2.2rem;
+            background: #e63946;
         }
-        /* Botões flutuantes transparentes piscando no modo carro */
+        .car-mode-active .track-info p {
+            font-size: 1rem;
+        }
+        .car-mode-active .progress-time {
+            font-size: 0.85rem;
+        }
+        .car-mode-active .progress-bar {
+            height: 5px;
+        }
+        
+        /* Botões flutuantes transparentes no modo carro */
         .car-mode-active .menu-button,
         .car-mode-active .genre-button,
         .car-mode-active .cta-button {
-            opacity: 0.7;
-            animation: blinkFloat 1.2s ease-in-out infinite;
+            background: rgba(255,255,255,0.15) !important;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
+        
+        .car-mode-active .menu-button i,
+        .car-mode-active .genre-button i,
+        .car-mode-active .cta-button i {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .car-mode-active .cta-button {
+            animation: none;
+        }
+        
         .car-mode-active .exit-car-btn {
             display: block;
         }
         
-        /* Animação de piscar para botões flutuantes */
-        @keyframes blinkFloat {
-            0%, 100% { opacity: 0.7; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(0.95); }
-        }
-        
-        /* Botão modo carro no menu (3 pontinhos) - será exibido lá */
+        /* Botão modo carro no menu */
         .car-mode-menu-btn {
             background: linear-gradient(135deg, #1e3c72, #2a5298) !important;
         }
@@ -75,7 +99,7 @@
             color: #fff;
         }
         
-        /* Botão modo carro flutuante removido - agora só no menu */
+        /* Botão modo carro flutuante removido */
         .car-mode-btn {
             display: none;
         }
@@ -489,8 +513,6 @@
         <div class="audio-indicator" id="audioIndicator"><i class="fas fa-circle"></i> Aguardando</div>
         <div class="car-indicator" id="carIndicator"><i class="fas fa-car"></i> MODO CARRO ATIVO</div>
         
-        <!-- Botão modo carro removido da posição flutuante - agora apenas no menu -->
-        
         <button class="cta-button" id="ctaButton"><i class="fas fa-headset"></i> INFORMAÇÕES</button>
         <button class="genre-button" id="genreButton"><i class="fas fa-guitar"></i></button>
         <button class="exit-car-btn" id="exitCarBtn">✕ SAIR DO MODO CARRO</button>
@@ -556,7 +578,7 @@
     </div>
     
     <script>
-        // PLAYLIST COM MÚLTIPLAS MÚSICAS (VGM trocado por VARIADAS, POP adicionado)
+        // PLAYLIST COM MÚLTIPLAS MÚSICAS
         const musicas = [
             { id: 1, title: "Panda_Corpo_Nu_muzzik.m4a", artist: "Panda", src: "Panda_Corpo_Nu_muzzik.m4a", genero: "SERTANEJO" },
             { id: 2, title: "Diego_Victor_Hugo_Infarto_muzzik.m4a", artist: "Diego_Victor_Hugo", src: "Diego_Victor_Hugo_Infarto_muzzik.m4a", genero: "SERTANEJO" },
@@ -583,7 +605,6 @@
             { id: 23, title: "VOCÊ VIROU MINHA CABEÇA", artist: "FERRO NA BONECA", src: "VOCÊ VIROU MINHA CABEÇA - FERRO NA BONECA.mp3", genero: "FORRÓ" },
             { id: 24, title: "P DO PECADO", artist: "FERRO NA BONECA", src: "P DO PECADO - FERRO NA BONECA.mp3", genero: "FORRÓ" },
             { id: 25, title: "Nova Namorada", artist: "Natãzinho Lima", src: "03 - Nova Namorada - De Bar em Bar 9.mp3", genero: "FORRÓ" },
-            // Músicas POP
             { id: 26, title: "Blinding Lights", artist: "The Weeknd", src: "blinding_lights.mp3", genero: "POP" },
             { id: 27, title: "Dance Monkey", artist: "Tones and I", src: "dance_monkey.mp3", genero: "POP" },
             { id: 28, title: "Shape of You", artist: "Ed Sheeran", src: "shape_of_you.mp3", genero: "POP" }
@@ -618,7 +639,7 @@
         const audioIndicator = document.getElementById('audioIndicator');
         const ctaBtn = document.getElementById('ctaButton');
         
-        // Modo Carro - novo elemento do menu
+        // Modo Carro
         const carModeMenuBtn = document.getElementById('carModeMenuBtn');
         const exitCarBtn = document.getElementById('exitCarBtn');
         const carIndicator = document.getElementById('carIndicator');
@@ -655,7 +676,7 @@
                 carIndicator.style.display = 'flex';
                 carModeVideo.style.display = 'block';
                 carVideo.play().catch(e => console.log('Vídeo carro:', e));
-                showNotification('🚗 MODO CARRO ATIVADO! Botões transparentes piscando');
+                showNotification('🚗 MODO CARRO ATIVADO! Controles maiores e botões transparentes');
             } else {
                 app.classList.remove('car-mode-active');
                 carModeMenuBtn.style.background = "";
@@ -700,7 +721,7 @@
             }
         });
         
-        // ========== FUNÇÕES ORIGINAIS ==========
+        // ========== FUNÇÕES ==========
         function showNotification(msg, duration = 3000) {
             if (notificationTimeout) clearTimeout(notificationTimeout);
             notificationMessage.innerText = msg;
@@ -928,7 +949,6 @@
                 iniciarManutencaoConstante();
                 await solicitarWakeLock();
                 
-                // Iniciar anúncio a cada 30 segundos
                 adInterval = setInterval(() => {
                     mostrarAnuncio();
                 }, 30000);
