@@ -16,29 +16,12 @@
         .controls-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
         
         /* ===== MODO CARRO ===== */
-        .car-mode-active .fullscreen-video-container {
-            display: none;
-        }
-        .car-mode-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 100;
-            background: #000;
-            display: none;
-        }
-        .car-mode-active .car-mode-video {
-            display: block;
-        }
-        .car-mode-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .car-mode-active .fullscreen-video-container { display: none; }
+        .car-mode-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: #000; display: none; }
+        .car-mode-active .car-mode-video { display: block; }
+        .car-mode-video video { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Botões flutuantes do modo carro - aparecem ao tocar e somem */
+        /* Botões flutuantes do modo carro */
         .car-overlay-controls {
             position: fixed;
             top: 0;
@@ -55,14 +38,8 @@
             background: rgba(0,0,0,0.5);
             backdrop-filter: blur(8px);
         }
-        .car-overlay-controls.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .car-mode-active .car-overlay-controls {
-            display: flex;
-        }
+        .car-overlay-controls.visible { opacity: 1; pointer-events: auto; }
+        .car-mode-active .car-overlay-controls { display: flex; }
         
         .car-buttons-container {
             display: flex;
@@ -89,21 +66,8 @@
             align-items: center;
             justify-content: center;
         }
-        
-        .car-overlay-btn:active {
-            transform: scale(0.92);
-            background: #e63946;
-            color: #000;
-        }
-        
-        .car-overlay-play {
-            background: #e63946;
-            width: 85px;
-            height: 85px;
-            font-size: 2.2rem;
-            border: none;
-            box-shadow: 0 0 20px rgba(230,57,70,0.5);
-        }
+        .car-overlay-btn:active { transform: scale(0.92); background: #e63946; color: #000; }
+        .car-overlay-play { background: #e63946; width: 85px; height: 85px; font-size: 2.2rem; border: none; box-shadow: 0 0 20px rgba(230,57,70,0.5); }
         
         /* Informações da música no modo carro */
         .car-track-overlay {
@@ -125,45 +89,14 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        .car-track-overlay.visible {
-            opacity: 1;
-        }
-        .car-mode-active .car-track-overlay {
-            display: block;
-        }
-        .car-track-overlay p {
-            color: white;
-            font-size: 0.9rem;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .car-track-overlay .car-progress-overlay {
-            margin-top: 8px;
-        }
-        .car-progress-bar-overlay {
-            height: 3px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .car-progress-fill-overlay {
-            height: 100%;
-            background: #e63946;
-            width: 0%;
-            border-radius: 3px;
-        }
-        .car-time-overlay {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.65rem;
-            color: #ccc;
-            margin-top: 4px;
-        }
+        .car-track-overlay.visible { opacity: 1; }
+        .car-mode-active .car-track-overlay { display: block; }
+        .car-track-overlay p { color: white; font-size: 0.9rem; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .car-progress-bar-overlay { height: 3px; background: rgba(255,255,255,0.3); border-radius: 3px; cursor: pointer; }
+        .car-progress-fill-overlay { height: 100%; background: #e63946; width: 0%; border-radius: 3px; }
+        .car-time-overlay { display: flex; justify-content: space-between; font-size: 0.65rem; color: #ccc; margin-top: 4px; }
         
-        /* BOTÃO ESTILOS MUSICAIS - POSIÇÃO: inferior direito, acima do CTA */
+        /* Botões flutuantes */
         .genre-button {
             position: fixed;
             bottom: 140px;
@@ -185,28 +118,16 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             animation: floatGenre 3s ease-in-out infinite, colorChange 5s ease-in-out infinite;
         }
-        
-        /* Animação de flutuação */
-        @keyframes floatGenre {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        /* Animação de mudança de cor */
+        @keyframes floatGenre { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         @keyframes colorChange {
-            0% { background: linear-gradient(135deg, #8E2DE2, #4A00E0); box-shadow: 0 4px 12px rgba(142,45,226,0.3); }
-            25% { background: linear-gradient(135deg, #e63946, #ff6b6b); box-shadow: 0 4px 12px rgba(230,57,70,0.3); }
-            50% { background: linear-gradient(135deg, #f39c12, #e74c3c); box-shadow: 0 4px 12px rgba(243,156,18,0.3); }
-            75% { background: linear-gradient(135deg, #2ecc71, #27ae60); box-shadow: 0 4px 12px rgba(46,204,113,0.3); }
-            100% { background: linear-gradient(135deg, #8E2DE2, #4A00E0); box-shadow: 0 4px 12px rgba(142,45,226,0.3); }
+            0% { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
+            25% { background: linear-gradient(135deg, #e63946, #ff6b6b); }
+            50% { background: linear-gradient(135deg, #f39c12, #e74c3c); }
+            75% { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+            100% { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
         }
+        .genre-button:active { transform: scale(0.9); }
         
-        .genre-button:active {
-            transform: scale(0.9);
-        }
-        
-        /* Botão CTA - POSIÇÃO: inferior direito, acima do botão de estilos */
-        /* Texto alternando cores */
         .cta-button {
             position: fixed;
             bottom: 210px;
@@ -230,67 +151,15 @@
             animation: floatCta 3s ease-in-out infinite, textColorChange 4s ease-in-out infinite;
             white-space: nowrap;
         }
-        
-        /* Animação de flutuação do botão CTA */
-        @keyframes floatCta {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-        
-        /* Animação do texto alternando cores */
+        @keyframes floatCta { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
         @keyframes textColorChange {
-            0% { color: #ffffff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
-            25% { color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.5); }
-            50% { color: #ff6600; text-shadow: 0 0 8px rgba(255,102,0,0.5); }
-            75% { color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.5); }
-            100% { color: #ffffff; text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            0% { color: #ffffff; }
+            25% { color: #ffd700; }
+            50% { color: #ff6600; }
+            75% { color: #ffd700; }
+            100% { color: #ffffff; }
         }
-        
-        .cta-button i {
-            animation: iconPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes iconPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .cta-button:active {
-            transform: scale(0.95);
-            background: rgba(255,255,255,0.3) !important;
-        }
-        
-        /* Botões flutuantes transparentes no modo carro - mantidos */
-        .car-mode-active .menu-button {
-            background: rgba(255,255,255,0.15) !important;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        
-        /* No modo carro, os botões mantêm suas animações */
-        .car-mode-active .genre-button {
-            background: linear-gradient(135deg, #8E2DE2, #4A00E0);
-            animation: floatGenre 3s ease-in-out infinite, colorChange 5s ease-in-out infinite;
-        }
-        
-        .car-mode-active .cta-button {
-            background: rgba(255,255,255,0.2) !important;
-            backdrop-filter: blur(10px);
-            animation: floatCta 3s ease-in-out infinite, textColorChange 4s ease-in-out infinite;
-        }
-        
-        .car-mode-active .exit-car-btn {
-            display: block;
-        }
-        
-        /* Esconder controles inferiores no modo carro */
-        .car-mode-active .bottom-controls {
-            display: none;
-        }
-        
-        .car-mode-menu-btn {
-            background: linear-gradient(135deg, #1e3c72, #2a5298) !important;
-        }
+        .cta-button:active { transform: scale(0.95); }
         
         .exit-car-btn {
             position: absolute;
@@ -307,14 +176,8 @@
             z-index: 102;
             display: none;
             pointer-events: auto;
-            backdrop-filter: blur(8px);
-            transition: all 0.2s ease;
         }
-        .exit-car-btn:active {
-            transform: scale(0.95);
-            background: #e63946;
-            color: #000;
-        }
+        .exit-car-btn:active { transform: scale(0.95); background: #e63946; color: #000; }
         
         .car-indicator {
             position: absolute;
@@ -331,11 +194,11 @@
             display: none;
             font-weight: bold;
         }
-        .car-mode-active .car-indicator {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+        .car-mode-active .car-indicator { display: flex; align-items: center; gap: 5px; }
+        .car-mode-active .bottom-controls { display: none; }
+        .car-mode-active .genre-button { animation: floatGenre 3s ease-in-out infinite, colorChange 5s ease-in-out infinite; }
+        .car-mode-active .cta-button { animation: floatCta 3s ease-in-out infinite, textColorChange 4s ease-in-out infinite; }
+        .car-mode-active .exit-car-btn { display: block; }
         
         .notification-top {
             position: absolute;
@@ -358,7 +221,6 @@
             font-size: 0.85rem;
             color: #fff;
             border-left: 3px solid #e63946;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
         
         .menu-button {
@@ -416,6 +278,127 @@
         .menu-popup button:active { background: #e63946; color: #000; }
         .menu-popup i { width: 24px; text-align: center; }
         
+        /* MANUAL MODAL - ESTILO BONITO E ACESSÍVEL */
+        .manual-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 5000;
+            display: none;
+            overflow-y: auto;
+            pointer-events: auto;
+            padding: 20px;
+        }
+        .manual-modal.open { display: block; }
+        
+        .manual-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 40px;
+            padding: 25px 20px 35px;
+            color: #fff;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid rgba(230,57,70,0.3);
+        }
+        .manual-container h1 {
+            text-align: center;
+            color: #e63946;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        .manual-container .subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+        .manual-container h2 {
+            background: rgba(230,57,70,0.2);
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin: 20px 0 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .manual-container h2 i { color: #e63946; font-size: 1.5rem; }
+        .manual-container h3 {
+            font-size: 1.1rem;
+            margin: 15px 0 8px;
+            color: #ffd700;
+        }
+        .manual-container p {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+        .manual-container .dica {
+            background: rgba(74,222,128,0.1);
+            border-left: 4px solid #4ade80;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 12px;
+        }
+        .manual-container .atencao {
+            background: rgba(255,100,0,0.1);
+            border-left: 4px solid #ff6600;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 12px;
+        }
+        .manual-container table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .manual-container td, .manual-container th {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem;
+        }
+        .manual-container .icon-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        .manual-container .icon-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        .manual-container .icon-item i { font-size: 1.2rem; }
+        .close-manual-btn {
+            width: 100%;
+            padding: 14px;
+            background: #e63946;
+            border: none;
+            border-radius: 40px;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.2s;
+        }
+        .close-manual-btn:active { transform: scale(0.98); background: #ff6b6b; }
+        
         .genres-modal {
             position: fixed;
             bottom: 0;
@@ -428,25 +411,15 @@
             transform: translateY(100%);
             transition: transform 0.3s ease;
             pointer-events: auto;
-            box-shadow: 0 -5px 30px rgba(0,0,0,0.3);
         }
         .genres-modal.open { transform: translateY(0); }
-        .genres-modal h3 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #1a1a2e;
-        }
-        .genres-modal h3 i { margin-right: 10px; color: #DD2475; }
-        
+        .genres-modal h3 { text-align: center; margin-bottom: 20px; font-size: 1.5rem; color: #1a1a2e; }
         .genres-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             margin-bottom: 20px;
         }
-        
         .genre-card {
             border-radius: 20px;
             padding: 20px 15px;
@@ -457,17 +430,14 @@
             border: 2px solid white;
         }
         .genre-card:active { transform: scale(0.96); }
-        
         .genre-card[data-genero="SERTANEJO"] { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
         .genre-card[data-genero="FORRÓ"] { background: linear-gradient(135deg, #f12711 0%, #f5af19 100%); }
         .genre-card[data-genero="SAMBA"] { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); }
         .genre-card[data-genero="POP"] { background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); }
         .genre-card[data-genero="VARIADAS"] { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
         .genre-card[data-genero="TODOS"] { background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); }
-        
-        .genre-card i { font-size: 2.8rem; display: block; margin-bottom: 12px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3)); }
-        .genre-card span { font-size: 1rem; font-weight: 800; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); letter-spacing: 1px; }
-        
+        .genre-card i { font-size: 2.8rem; display: block; margin-bottom: 12px; }
+        .genre-card span { font-size: 1rem; font-weight: 800; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
         .close-genres {
             width: 100%;
             padding: 14px;
@@ -477,7 +447,6 @@
             color: white;
             font-size: 1rem;
             cursor: pointer;
-            transition: 0.2s;
             font-weight: bold;
         }
         .close-genres:active { background: #DD2475; transform: scale(0.98); }
@@ -497,13 +466,13 @@
         }
         .bottom-controls.hide { transform: translateY(100%); opacity: 0; pointer-events: none; }
         .track-info { text-align: center; margin-bottom: 8px; }
-        .track-info p { font-size: 0.85rem; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
+        .track-info p { font-size: 0.85rem; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .progress-area { margin-bottom: 8px; }
         .progress-time { display: flex; justify-content: space-between; font-size: 0.7rem; color: #ccc; margin-bottom: 4px; }
         .progress-bar { height: 3px; background: rgba(255,255,255,0.3); cursor: pointer; border-radius: 3px; }
-        .progress-fill { height: 100%; background: #e63946; width: 0%; border-radius: 3px; box-shadow: 0 0 5px #e63946; }
+        .progress-fill { height: 100%; background: #e63946; width: 0%; border-radius: 3px; }
         .control-buttons { display: flex; align-items: center; justify-content: center; gap: 20px; }
-        .control-btn { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.2rem; width: 44px; height: 44px; cursor: pointer; border-radius: 50%; transition: 0.1s; display: flex; align-items: center; justify-content: center; }
+        .control-btn { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1.2rem; width: 44px; height: 44px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .control-btn:active { transform: scale(0.9); background: #e63946; color: #000; }
         .play-btn { font-size: 1.6rem; width: 54px; height: 54px; background: #e63946; color: #000; border: none; }
         
@@ -525,7 +494,7 @@
         .rating { display: flex; gap: 6px; margin: 8px 0; justify-content: center; }
         .star { color: #555; font-size: 1.3rem; cursor: pointer; }
         .star.active, .star.fas { color: #ffd700; }
-        .feedback-modal textarea { width: 100%; height: 60px; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; padding: 8px; color: #fff; margin-bottom: 8px; resize: none; }
+        .feedback-modal textarea { width: 100%; height: 60px; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; padding: 8px; color: #fff; resize: none; }
         .modal-btn { padding: 6px 12px; border-radius: 20px; cursor: pointer; background: #333; color: white; border: none; margin: 2px; }
         .modal-btn.send { background: #25D366; color: #000; font-weight: bold; }
         
@@ -554,7 +523,6 @@
             pointer-events: auto;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             border: none;
-            gap: 8px;
         }
         @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.03); } 100% { transform: translateX(-50%) scale(1); } }
         
@@ -590,10 +558,7 @@
             align-items: center;
             gap: 5px;
         }
-        .audio-indicator i { font-size: 0.6rem; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        /* EQUALIZADOR VISUAL */
         .visualizer {
             position: fixed;
             top: 70px;
@@ -609,15 +574,8 @@
             padding: 8px 12px;
             border-radius: 30px;
         }
-        .visualizer-bar {
-            width: 4px;
-            height: 20px;
-            background: linear-gradient(135deg, #e63946, #ff6b6b);
-            border-radius: 2px;
-            transition: height 0.05s ease;
-        }
+        .visualizer-bar { width: 4px; height: 20px; background: linear-gradient(135deg, #e63946, #ff6b6b); border-radius: 2px; transition: height 0.05s ease; }
         
-        /* LOADING SPINNER */
         .loading-spinner {
             position: fixed;
             top: 50%;
@@ -637,13 +595,7 @@
             border: 1px solid rgba(230,57,70,0.5);
             pointer-events: none;
         }
-        .loading-spinner i {
-            font-size: 1.2rem;
-            color: #e63946;
-        }
-        .loading-spinner.show {
-            display: flex;
-        }
+        .loading-spinner.show { display: flex; }
         
         .video-ad-container {
             position: fixed;
@@ -652,25 +604,14 @@
             transform: translateX(-50%);
             width: 728px;
             max-width: 90vw;
-            height: auto;
             z-index: 50;
             pointer-events: auto;
             cursor: pointer;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             display: none;
-            animation: slideUpAd 0.3s ease;
         }
-        @keyframes slideUpAd {
-            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            to { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-        .video-ad-container video {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .video-ad-container video { width: 100%; height: auto; display: block; }
         .close-ad {
             position: absolute;
             top: 5px;
@@ -686,11 +627,8 @@
             font-size: 12px;
             cursor: pointer;
             z-index: 51;
-            backdrop-filter: blur(4px);
         }
-        .car-mode-active .video-ad-container {
-            display: none !important;
-        }
+        .car-mode-active .video-ad-container { display: none !important; }
         
         .tap-instruction {
             position: fixed;
@@ -709,9 +647,7 @@
             transition: opacity 0.3s;
             white-space: nowrap;
         }
-        .car-mode-active .tap-instruction.visible {
-            opacity: 1;
-        }
+        .car-mode-active .tap-instruction.visible { opacity: 1; }
     </style>
 </head>
 <body>
@@ -720,19 +656,13 @@
     
     <div class="app">
         <div class="fullscreen-video-container">
-            <video id="mainVideo" autoplay loop muted playsinline>
-                <source src="Caze12.mp4" type="video/mp4">
-            </video>
+            <video id="mainVideo" autoplay loop muted playsinline><source src="Caze12.mp4" type="video/mp4"></video>
         </div>
         
-        <!-- Vídeo do Modo Carro -->
         <div class="car-mode-video">
-            <video id="carVideo" autoplay loop muted playsinline>
-                <source src="carro.mp4" type="video/mp4">
-            </video>
+            <video id="carVideo" autoplay loop muted playsinline><source src="carro.mp4" type="video/mp4"></video>
         </div>
         
-        <!-- Overlay de controles do modo carro (aparece ao tocar) -->
         <div class="car-overlay-controls" id="carOverlayControls">
             <div class="car-buttons-container">
                 <button class="car-overlay-btn" id="carOverlayPrev"><i class="fas fa-step-backward"></i></button>
@@ -741,7 +671,6 @@
             </div>
         </div>
         
-        <!-- Informações da música no modo carro -->
         <div class="car-track-overlay" id="carTrackOverlay">
             <p id="carTrackText">🎵 Carregando...</p>
             <div class="car-progress-overlay">
@@ -761,7 +690,6 @@
         <div class="audio-indicator" id="audioIndicator"><i class="fas fa-circle"></i> Aguardando</div>
         <div class="car-indicator" id="carIndicator"><i class="fas fa-car"></i> MODO CARRO ATIVO</div>
         
-        <!-- EQUALIZADOR VISUAL -->
         <div class="visualizer" id="visualizer">
             <div class="visualizer-bar" id="bar1"></div>
             <div class="visualizer-bar" id="bar2"></div>
@@ -769,18 +697,13 @@
             <div class="visualizer-bar" id="bar4"></div>
         </div>
         
-        <!-- LOADING SPINNER -->
         <div class="loading-spinner" id="loadingSpinner">
             <i class="fas fa-circle-notch fa-spin"></i>
             <span>Carregando música...</span>
         </div>
         
-        <!-- Botão CTA -->
         <button class="cta-button" id="ctaButton"><i class="fas fa-headset"></i> <span id="ctaText">INFORMAÇÕES</span></button>
-        
-        <!-- Botão estilos musicais -->
         <button class="genre-button" id="genreButton"><i class="fas fa-guitar"></i></button>
-        
         <button class="exit-car-btn" id="exitCarBtn">✕ SAIR DO MODO CARRO</button>
         
         <div id="notificationTop" class="notification-top">
@@ -789,9 +712,7 @@
         
         <div class="video-ad-container" id="videoAdContainer">
             <span class="close-ad" id="closeAdBtn">✕</span>
-            <video id="adVideo" autoplay muted playsinline>
-                <source src="anu.mp4" type="video/mp4">
-            </video>
+            <video id="adVideo" autoplay muted playsinline><source src="anu.mp4" type="video/mp4"></video>
         </div>
         
         <div class="controls-overlay">
@@ -816,7 +737,75 @@
         <button id="carModeMenuBtn"><i class="fas fa-car"></i> Modo Carro</button>
         <button id="fullscreenMenuBtn"><i class="fas fa-expand"></i> Tela cheia</button>
         <button id="shareMenuBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
+        <button id="manualMenuBtn"><i class="fas fa-book"></i> 📘 Manual</button>
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
+    </div>
+    
+    <!-- MANUAL DO USUÁRIO - MODAL -->
+    <div class="manual-modal" id="manualModal">
+        <div class="manual-container">
+            <h1>📘 CAZÉ PLAYLIST</h1>
+            <div class="subtitle">Sua rádio pessoal que toca com a tela bloqueada!</div>
+            
+            <h2><i class="fas fa-play-circle"></i> 1. Como começar</h2>
+            <p><strong>Passo 1:</strong> Abra o aplicativo</p>
+            <p><strong>Passo 2:</strong> Toque no botão laranja <span style="background:#ff6600; padding:2px 8px; border-radius:20px;">🎵 ATIVAR ÁUDIO</span></p>
+            <p><strong>Passo 3:</strong> A música começa automaticamente! 🎉</p>
+            <div class="dica">💡 <strong>Dica:</strong> Você pode bloquear a tela que a música continua tocando!</div>
+            
+            <h2><i class="fas fa-music"></i> 2. Controles da música</h2>
+            <div class="icon-grid">
+                <div class="icon-item"><i class="fas fa-backward"></i> Voltar música</div>
+                <div class="icon-item"><i class="fas fa-play"></i> Play / Pausa</div>
+                <div class="icon-item"><i class="fas fa-random"></i> Aleatório</div>
+                <div class="icon-item"><i class="fas fa-forward"></i> Próxima</div>
+            </div>
+            <p>👉 A <strong>barrinha branca</strong> mostra quanto da música já passou. Você pode arrastar o dedo nela para avançar ou voltar!</p>
+            
+            <h2><i class="fas fa-guitar"></i> 3. Escolher estilo musical</h2>
+            <p>Toque no botão <strong>🎸 (violão)</strong> no canto direito da tela. Escolha seu estilo favorito:</p>
+            <div class="icon-grid">
+                <div class="icon-item">🎸 SERTANEJO</div>
+                <div class="icon-item">🥁 FORRÓ</div>
+                <div class="icon-item">🥁 SAMBA</div>
+                <div class="icon-item">🎤 POP</div>
+                <div class="icon-item">🔀 VARIADAS</div>
+                <div class="icon-item">📋 TODOS</div>
+            </div>
+            
+            <h2><i class="fas fa-car"></i> 4. Modo Carro</h2>
+            <p>Ideal para dirigir! Os botões ficam GRANDES e fáceis de apertar.</p>
+            <p><strong>Como ativar:</strong> Menu (três pontinhos) → Modo Carro</p>
+            <p><strong>Como sair:</strong> Toque em <span style="background:#e63946; padding:2px 8px; border-radius:20px;">✕ SAIR DO MODO CARRO</span> no canto superior direito</p>
+            <div class="atencao">⚠️ <strong>Atenção:</strong> Use apenas com o celular no suporte do carro!</div>
+            
+            <h2><i class="fas fa-bars"></i> 5. Menu de opções</h2>
+            <p>Toque nos <strong>três pontinhos ≡</strong> no canto superior direito:</p>
+            <table>
+                <tr><th>Opção</th><th>O que faz</th></tr>
+                <tr><td>🚗 Modo Carro</td><td>Botões grandes para dirigir</td></tr>
+                <tr><td>🖥️ Tela cheia</td><td>Expande a imagem</td></tr>
+                <tr><td>📤 Compartilhar</td><td>Enviar link do app</td></tr>
+                <tr><td>📘 Manual</td><td>Este guia de instruções</td></tr>
+                <tr><td>💬 Feedback</td><td>Mandar sugestões via WhatsApp</td></tr>
+            </table>
+            
+            <h2><i class="fas fa-lightbulb"></i> 6. Dicas importantes</h2>
+            <div class="dica">🔊 <strong>Sem som?</strong> Aumente o volume do celular!</div>
+            <div class="dica">🎵 <strong>Música não começa?</strong> Verifique se apertou "ATIVAR ÁUDIO"</div>
+            <div class="dica">📱 <strong>Tela preta?</strong> Toque na tela que os controles aparecem</div>
+            <div class="dica">🔄 <strong>Quer música diferente?</strong> Aperte o botão de próximo (⏭️)</div>
+            
+            <h2><i class="fas fa-question-circle"></i> 7. Perguntas frequentes</h2>
+            <p><strong>❓ A música para quando bloqueio a tela?</strong><br>✅ NÃO! Esse app foi feito para continuar tocando com a tela bloqueada.</p>
+            <p><strong>❓ Gasta muita bateria?</strong><br>✅ Não. O app é leve e otimizado.</p>
+            <p><strong>❓ Posso usar no carro?</strong><br>✅ Sim! Use o Modo Carro.</p>
+            <p><strong>❓ Como sugerir músicas?</strong><br>✅ Menu → Feedback → WhatsApp</p>
+            
+            <div class="atencao">📞 <strong>Precisou de ajuda?</strong> Mande mensagem pelo WhatsApp no menu "Feedback"</div>
+            
+            <button class="close-manual-btn" id="closeManualBtn">✕ FECHAR MANUAL</button>
+        </div>
     </div>
     
     <div class="genres-modal" id="genresModal">
@@ -914,8 +903,10 @@
         const ctaBtn = document.getElementById('ctaButton');
         const ctaText = document.getElementById('ctaText');
         const loadingSpinner = document.getElementById('loadingSpinner');
+        const manualModal = document.getElementById('manualModal');
+        const manualMenuBtn = document.getElementById('manualMenuBtn');
+        const closeManualBtn = document.getElementById('closeManualBtn');
         
-        // Equalizador
         const bar1 = document.getElementById('bar1');
         const bar2 = document.getElementById('bar2');
         const bar3 = document.getElementById('bar3');
@@ -957,7 +948,14 @@
         musicPlayer.volume = 0.9;
         backgroundAudio.volume = 0.001;
         
-        // ========== FUNÇÃO PARA INICIAR COM GÊNERO E MÚSICAS ALEATÓRIAS ==========
+        // ========== MANUAL ==========
+        function openManual() { manualModal.classList.add('open'); closeMenu(); }
+        function closeManual() { manualModal.classList.remove('open'); }
+        manualMenuBtn.addEventListener('click', openManual);
+        closeManualBtn.addEventListener('click', closeManual);
+        manualModal.addEventListener('click', (e) => { if (e.target === manualModal) closeManual(); });
+        
+        // ========== FUNÇÃO PARA INICIAR COM GÊNERO ALEATÓRIO ==========
         function iniciarComGeneroAleatorio() {
             const generos = ["SERTANEJO", "FORRÓ", "SAMBA", "POP", "VARIADAS", "TODOS"];
             const generoAleatorio = generos[Math.floor(Math.random() * generos.length)];
@@ -972,7 +970,6 @@
                 updateGenreBadge(generoAleatorio);
             }
             
-            // Embaralhar completamente
             for (let i = novaPlaylist.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [novaPlaylist[i], novaPlaylist[j]] = [novaPlaylist[j], novaPlaylist[i]];
@@ -982,11 +979,8 @@
             currentIndex = 0;
             loadTrackUI(currentIndex);
             updateCarOverlayInfo();
-            
-            showNotification(`🎲 Hoje é dia de ${generoAleatorio === "TODOS" ? "TODOS OS ESTILOS" : generoAleatorio}! 🎵`, 3000);
         }
         
-        // ========== MODO CARRO CORRIGIDO ==========
         function toggleCarMode() {
             isCarMode = !isCarMode;
             if (isCarMode) {
@@ -1000,19 +994,13 @@
                 document.addEventListener('touchstart', showCarControls);
                 document.addEventListener('click', showCarControls);
             } else {
-                // SAIR DO MODO CARRO - VOLTAR PARA TELA INICIAL
                 app.classList.remove('car-mode-active');
                 carModeMenuBtn.style.background = "";
                 carIndicator.style.display = 'none';
                 carModeVideo.style.display = 'none';
-                if (carVideo) {
-                    carVideo.pause();
-                    carVideo.currentTime = 0;
-                }
+                if (carVideo) { carVideo.pause(); carVideo.currentTime = 0; }
                 hideCarControlsImmediately();
-                showNotification('🚗 Modo Carro desativado. Bem-vindo de volta!');
-                
-                // Remover event listeners
+                showNotification('🚗 Modo Carro desativado.');
                 document.removeEventListener('touchstart', showCarControls);
                 document.removeEventListener('click', showCarControls);
             }
@@ -1040,9 +1028,7 @@
         
         function updateCarOverlayInfo() {
             const track = filteredPlaylist[currentIndex];
-            if (track) {
-                carTrackText.textContent = `${track.title} - ${track.artist} [${track.genero}]`;
-            }
+            if (track) carTrackText.textContent = `${track.title} - ${track.artist} [${track.genero}]`;
             if (musicPlayer.duration) carTotalOverlay.textContent = formatTime(musicPlayer.duration);
         }
         
@@ -1062,30 +1048,20 @@
                 updateGenreBadge("MIX");
             } else {
                 novaPlaylist = musicas.filter(m => m.genero === genero);
-                if (novaPlaylist.length === 0) {
-                    showNotification(`⚠️ Nenhuma música encontrada para ${genero}`, 2000);
-                    return false;
-                }
+                if (novaPlaylist.length === 0) { showNotification(`⚠️ Nenhuma música encontrada`, 2000); return false; }
                 showNotification(`🎵 ${genero} ativado`, 2000);
                 updateGenreBadge(genero);
             }
-            
-            // Embaralhar para começar com músicas diferentes
             for (let i = novaPlaylist.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [novaPlaylist[i], novaPlaylist[j]] = [novaPlaylist[j], novaPlaylist[i]];
             }
-            
             filteredPlaylist = novaPlaylist;
             currentIndex = 0;
             loadTrackUI(currentIndex);
             updateCarOverlayInfo();
-            
-            if (isPlaying) {
-                playMusic().catch(e => console.log("Erro ao tocar após mudança de gênero"));
-            } else if (isBackgroundActive) {
-                playMusic().catch(e => console.log("Início automático após gênero"));
-            }
+            if (isPlaying) playMusic().catch(e => console.log);
+            else if (isBackgroundActive) playMusic().catch(e => console.log);
             return true;
         }
         
@@ -1096,10 +1072,7 @@
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
         
-        function stopTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = null;
-        }
+        function stopTimer() { if (timerInterval) clearInterval(timerInterval); timerInterval = null; }
         
         function startTimer() {
             stopTimer();
@@ -1114,10 +1087,7 @@
         }
         
         async function playMusic() {
-            if (!isBackgroundActive) {
-                showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
-                return false;
-            }
+            if (!isBackgroundActive) { showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000); return false; }
             if (filteredPlaylist.length === 0) return false;
             const track = filteredPlaylist[currentIndex];
             if (!track || !track.src) return false;
@@ -1159,14 +1129,7 @@
                             navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
                         }
                         resolve(true);
-                    } catch(e) { 
-                        hideLoading();
-                        console.error(e); 
-                        isPlaying = false; 
-                        playBtn.innerHTML = '<i class="fas fa-play"></i>'; 
-                        carOverlayPlay.innerHTML = '<i class="fas fa-play"></i>'; 
-                        resolve(false); 
-                    }
+                    } catch(e) { hideLoading(); console.error(e); isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; carOverlayPlay.innerHTML = '<i class="fas fa-play"></i>'; resolve(false); }
                 };
                 musicPlayer.onended = () => {
                     stopTimer();
@@ -1176,34 +1139,19 @@
                             const j = Math.floor(Math.random() * (i + 1));
                             [filteredPlaylist[i], filteredPlaylist[j]] = [filteredPlaylist[j], filteredPlaylist[i]];
                         }
-                        showNotification("🔄 Playlist renovada! Próximas músicas em nova ordem", 2000);
+                        showNotification("🔄 Playlist renovada!", 2000);
                     }
                     currentIndex = nextIndex;
                     loadTrackUI(currentIndex);
                     updateCarOverlayInfo();
                     setTimeout(() => playMusic(), 100);
                 };
-                musicPlayer.onerror = () => { 
-                    hideLoading();
-                    showNotification(`⚠️ Erro ao carregar música`, 2000); 
-                    setTimeout(() => nextTrack(), 1000); 
-                    resolve(false); 
-                };
+                musicPlayer.onerror = () => { hideLoading(); showNotification(`⚠️ Erro ao carregar música`, 2000); setTimeout(() => nextTrack(), 1000); resolve(false); };
             });
         }
         
-        function pauseMusic() { 
-            musicPlayer.pause(); 
-            isPlaying = false; 
-            playBtn.innerHTML = '<i class="fas fa-play"></i>'; 
-            carOverlayPlay.innerHTML = '<i class="fas fa-play"></i>'; 
-            stopTimer();
-            pararVisualizer();
-        }
-        
-        function togglePlayPause() { 
-            isPlaying ? pauseMusic() : playMusic(); 
-        }
+        function pauseMusic() { musicPlayer.pause(); isPlaying = false; playBtn.innerHTML = '<i class="fas fa-play"></i>'; carOverlayPlay.innerHTML = '<i class="fas fa-play"></i>'; stopTimer(); pararVisualizer(); }
+        function togglePlayPause() { isPlaying ? pauseMusic() : playMusic(); }
         
         function loadTrackUI(index) {
             if (index >= filteredPlaylist.length) index = 0;
@@ -1223,34 +1171,12 @@
             }
         }
         
-        async function nextTrack() {
-            stopTimer();
-            let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length;
-            currentIndex = nextIndex;
-            loadTrackUI(currentIndex);
-            updateCarOverlayInfo();
-            if (isPlaying) await playMusic();
-        }
-        
-        async function prevTrack() {
-            stopTimer();
-            let prevIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex - 1 + filteredPlaylist.length) % filteredPlaylist.length;
-            currentIndex = prevIndex;
-            loadTrackUI(currentIndex);
-            updateCarOverlayInfo();
-            if (isPlaying) await playMusic();
-        }
+        async function nextTrack() { stopTimer(); let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length; currentIndex = nextIndex; loadTrackUI(currentIndex); updateCarOverlayInfo(); if (isPlaying) await playMusic(); }
+        async function prevTrack() { stopTimer(); let prevIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex - 1 + filteredPlaylist.length) % filteredPlaylist.length; currentIndex = prevIndex; loadTrackUI(currentIndex); updateCarOverlayInfo(); if (isPlaying) await playMusic(); }
         
         function updateGenreBadge(genero) {
             let icon = "fa-music";
-            switch(genero) { 
-                case "SERTANEJO": icon = "fa-guitar"; break; 
-                case "FORRÓ": icon = "fa-drum"; break; 
-                case "SAMBA": icon = "fa-drumstick-bite"; break; 
-                case "POP": icon = "fa-microphone-alt"; break; 
-                case "VARIADAS": icon = "fa-random"; break; 
-                default: icon = "fa-headphones"; 
-            }
+            switch(genero) { case "SERTANEJO": icon = "fa-guitar"; break; case "FORRÓ": icon = "fa-drum"; break; case "SAMBA": icon = "fa-drumstick-bite"; break; case "POP": icon = "fa-microphone-alt"; break; case "VARIADAS": icon = "fa-random"; break; default: icon = "fa-headphones"; }
             genreBadge.innerHTML = `<i class="fas ${icon}"></i> ${genero === "MIX" ? "TODOS" : genero}`;
         }
         
@@ -1297,37 +1223,21 @@
         let currentVideoIndex = 0;
         function updateVideoAndButton(index) { const video = videosList[index]; const vidEl = document.getElementById('mainVideo'); if (vidEl) { vidEl.pause(); vidEl.src = video.src; vidEl.load(); vidEl.play().catch(e=>{}); ctaText.innerHTML = video.botaoTexto; ctaBtn.onclick = () => window.open(video.link, '_blank'); } }
         
-        // ========== EQUALIZADOR ==========
         function iniciarVisualizer() {
             if (visualizerInterval) clearInterval(visualizerInterval);
             visualizerInterval = setInterval(() => {
                 if (isPlaying && musicPlayer.duration && !musicPlayer.paused) {
-                    const alt1 = 12 + Math.random() * 28;
-                    const alt2 = 8 + Math.random() * 32;
-                    const alt3 = 15 + Math.random() * 25;
-                    const alt4 = 10 + Math.random() * 30;
-                    bar1.style.height = alt1 + 'px';
-                    bar2.style.height = alt2 + 'px';
-                    bar3.style.height = alt3 + 'px';
-                    bar4.style.height = alt4 + 'px';
+                    bar1.style.height = (12 + Math.random() * 28) + 'px';
+                    bar2.style.height = (8 + Math.random() * 32) + 'px';
+                    bar3.style.height = (15 + Math.random() * 25) + 'px';
+                    bar4.style.height = (10 + Math.random() * 30) + 'px';
                 } else {
-                    bar1.style.height = '4px';
-                    bar2.style.height = '4px';
-                    bar3.style.height = '4px';
-                    bar4.style.height = '4px';
+                    bar1.style.height = bar2.style.height = bar3.style.height = bar4.style.height = '4px';
                 }
             }, 100);
         }
         
-        function pararVisualizer() {
-            if (visualizerInterval) clearInterval(visualizerInterval);
-            visualizerInterval = null;
-            bar1.style.height = '4px';
-            bar2.style.height = '4px';
-            bar3.style.height = '4px';
-            bar4.style.height = '4px';
-        }
-        
+        function pararVisualizer() { if (visualizerInterval) clearInterval(visualizerInterval); visualizerInterval = null; bar1.style.height = bar2.style.height = bar3.style.height = bar4.style.height = '4px'; }
         function showLoading() { loadingSpinner.classList.add('show'); }
         function hideLoading() { loadingSpinner.classList.remove('show'); }
         
@@ -1365,52 +1275,18 @@
         
         updateVideoAndButton(0); setInterval(() => { currentVideoIndex = (currentVideoIndex + 1) % videosList.length; updateVideoAndButton(currentVideoIndex); }, 20000);
         
-        tapToStart.addEventListener('click', async (e) => { 
-            e.stopPropagation(); 
-            showNotification('🔊 Ativando áudio...', 2000); 
-            const audioOk = await ativarAudioBackground(); 
-            if (audioOk) { 
-                await playMusic(); 
-                tapToStart.style.display = 'none'; 
-                try { await document.documentElement.requestFullscreen(); } catch(err) {} 
-                showNotification('✅ Áudio ativado! Toque com tela bloqueada ✅', 3000);
-            } else { 
-                showNotification('❌ Falha ao ativar áudio.', 3000); 
-            } 
-        });
+        tapToStart.addEventListener('click', async (e) => { e.stopPropagation(); showNotification('🔊 Ativando áudio...', 2000); const audioOk = await ativarAudioBackground(); if (audioOk) { await playMusic(); tapToStart.style.display = 'none'; try { await document.documentElement.requestFullscreen(); } catch(err) {} showNotification('✅ Áudio ativado! Toque com tela bloqueada ✅', 3000); } else { showNotification('❌ Falha ao ativar áudio.', 3000); } });
         
         carModeMenuBtn.addEventListener('click', () => { toggleCarMode(); closeMenu(); });
-        
-        // CORREÇÃO: Botão SAIR DO MODO CARRO no celular
-        exitCarBtn.addEventListener('click', (e) => { 
-            e.stopPropagation();
-            if (isCarMode) {
-                toggleCarMode();
-                showNotification('✅ Voltando para tela inicial', 1500);
-            }
-        });
-        
-        // Duplo toque no botão como fallback (para garantir no celular)
-        exitCarBtn.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-            if (isCarMode) {
-                setTimeout(() => {
-                    if (isCarMode) toggleCarMode();
-                }, 50);
-            }
-        });
+        exitCarBtn.addEventListener('click', (e) => { e.stopPropagation(); if (isCarMode) toggleCarMode(); });
+        exitCarBtn.addEventListener('touchstart', (e) => { e.stopPropagation(); if (isCarMode) setTimeout(() => { if (isCarMode) toggleCarMode(); }, 50); });
         
         carOverlayPlay.addEventListener('click', (e) => { e.stopPropagation(); if (!isBackgroundActive) showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000); else { togglePlayPause(); carOverlayPlay.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>'; } showCarControls(); });
         carOverlayPrev.addEventListener('click', (e) => { e.stopPropagation(); prevTrack(); setTimeout(() => updateCarOverlayInfo(), 100); showCarControls(); });
         carOverlayNext.addEventListener('click', (e) => { e.stopPropagation(); nextTrack(); setTimeout(() => updateCarOverlayInfo(), 100); showCarControls(); });
         carProgressBarOverlay.addEventListener('click', (e) => { e.stopPropagation(); const rect = e.currentTarget.getBoundingClientRect(); const percent = (e.clientX - rect.left) / rect.width; if (musicPlayer.duration) musicPlayer.currentTime = percent * musicPlayer.duration; showCarControls(); });
         
-        // INICIAR COM GÊNERO E MÚSICAS ALEATÓRIAS (sensação AO VIVO)
-        window.addEventListener('load', () => { 
-            iniciarComGeneroAleatorio();
-            tapToStart.style.display = 'block';
-            iniciarVisualizer();
-        });
+        window.addEventListener('load', () => { iniciarComGeneroAleatorio(); tapToStart.style.display = 'block'; iniciarVisualizer(); });
     </script>
 </body>
 </html>
