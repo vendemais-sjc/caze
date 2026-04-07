@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Cazé Playlist • Toca com tela bloqueada</title>
+    <title>Cazé Playlist • Modo Carro</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -15,62 +15,23 @@
         .fullscreen-video-container video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
         .controls-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
         
-        /* ===== MODO CARRO ===== */
-        .car-mode-active .fullscreen-video-container {
-            display: none;
-        }
-        .car-mode-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 100;
-            background: #000;
-            display: none;
-        }
-        .car-mode-active .car-mode-video {
-            display: block;
-        }
-        .car-mode-video video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .car-mode-active .bottom-controls {
-            background: rgba(0,0,0,0.5);
-            z-index: 101;
-        }
-        .car-mode-active .control-btn {
-            width: 80px;
-            height: 80px;
-            font-size: 2rem;
-            background: rgba(0,0,0,0.6);
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-        .car-mode-active .play-btn {
-            width: 100px;
-            height: 100px;
-            font-size: 2.5rem;
-            background: #e63946;
-        }
-        .car-mode-active .track-info p {
-            font-size: 1.1rem;
-        }
-        .car-mode-active .progress-time span {
-            font-size: 0.9rem;
-        }
-        .car-mode-active .menu-button,
-        .car-mode-active .genre-button,
-        .car-mode-active .cta-button,
-        .car-mode-active .car-mode-btn {
-            opacity: 0.2;
-            transition: opacity 0.3s;
-        }
-        .car-mode-active .exit-car-btn {
-            display: block;
-            z-index: 102;
-        }
+        /* ===== MODO CARRO CORRIGIDO ===== */
+        .car-mode-active .fullscreen-video-container { display: none; }
+        .car-mode-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: #000; display: none; }
+        .car-mode-active .car-mode-video { display: block; }
+        .car-mode-video video { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* BOTÕES DE MÚSICA - VISÍVEIS E GIGANTES NO MODO CARRO */
+        .car-mode-active .bottom-controls { display: block !important; background: rgba(0,0,0,0.6) !important; z-index: 200 !important; transform: translateY(0) !important; opacity: 1 !important; }
+        .car-mode-active .control-btn { width: 80px !important; height: 80px !important; font-size: 2rem !important; background: rgba(0,0,0,0.7) !important; border: 2px solid white !important; }
+        .car-mode-active .play-btn { width: 100px !important; height: 100px !important; font-size: 2.5rem !important; background: #e63946 !important; border: none !important; }
+        .car-mode-active .track-info p { font-size: 1.2rem !important; }
+        .car-mode-active .progress-time span { font-size: 1rem !important; }
+        .car-mode-active .progress-bar { height: 5px !important; }
+        
+        /* Botões flutuantes transparentes */
+        .car-mode-active .menu-button, .car-mode-active .genre-button, .car-mode-active .cta-button, .car-mode-active .car-mode-btn { opacity: 0.2 !important; transition: opacity 0.3s !important; }
+        .car-mode-active .exit-car-btn { display: block !important; z-index: 201 !important; }
         
         .car-mode-btn {
             position: absolute;
@@ -92,14 +53,8 @@
             transition: 0.2s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        .car-mode-btn.active {
-            background: linear-gradient(135deg, #e63946, #ff6b6b);
-            animation: pulseCar 1s infinite;
-        }
-        @keyframes pulseCar {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(230,57,70,0.6); }
-        }
+        .car-mode-btn.active { background: linear-gradient(135deg, #e63946, #ff6b6b); animation: pulseCar 1s infinite; }
+        @keyframes pulseCar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(230,57,70,0.6); } }
         
         .exit-car-btn {
             position: absolute;
@@ -132,11 +87,7 @@
             display: none;
             font-weight: bold;
         }
-        .car-mode-active .car-indicator {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+        .car-mode-active .car-indicator { display: flex; align-items: center; gap: 5px; }
         
         /* Anúncio 728x90 */
         .video-ad-container {
@@ -155,11 +106,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             display: none;
         }
-        .video-ad-container video {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .video-ad-container video { width: 100%; height: auto; display: block; }
         .close-ad {
             position: absolute;
             top: 5px;
@@ -176,9 +123,7 @@
             cursor: pointer;
             z-index: 51;
         }
-        .car-mode-active .video-ad-container {
-            display: none !important;
-        }
+        .car-mode-active .video-ad-container { display: none !important; }
         
         .notification-top {
             position: absolute;
@@ -566,7 +511,7 @@
     </div>
     
     <script>
-        // PLAYLIST (VARIADAS no lugar de VGM, POP adicionado)
+        // PLAYLIST
         const musicas = [
             { id: 1, title: "Panda_Corpo_Nu_muzzik.m4a", artist: "Panda", src: "Panda_Corpo_Nu_muzzik.m4a", genero: "SERTANEJO" },
             { id: 2, title: "Diego_Victor_Hugo_Infarto_muzzik.m4a", artist: "Diego_Victor_Hugo", src: "Diego_Victor_Hugo_Infarto_muzzik.m4a", genero: "SERTANEJO" },
@@ -664,7 +609,7 @@
                 carIndicator.style.display = 'flex';
                 carModeVideo.style.display = 'block';
                 carVideo.play().catch(e => console.log('Vídeo carro:', e));
-                showNotification('🚗 MODO CARRO ATIVADO!', 2000);
+                showNotification('🚗 MODO CARRO ATIVADO! Botões gigantes na parte inferior.', 3000);
             } else {
                 app.classList.remove('car-mode-active');
                 carModeBtn.classList.remove('active');
@@ -877,7 +822,7 @@
             if (isPlaying) await playMusic();
         }
         
-        // ========== ÁUDIO BACKGROUND (TELA BLOQUEADA) ==========
+        // ========== ÁUDIO BACKGROUND ==========
         function createSilentAudio() {
             const sampleRate = 44100;
             const duration = 5;
@@ -931,10 +876,7 @@
                 iniciarManutencaoConstante();
                 await solicitarWakeLock();
                 
-                // Iniciar anúncio a cada 30 segundos
-                adInterval = setInterval(() => {
-                    mostrarAnuncio();
-                }, 30000);
+                adInterval = setInterval(() => { mostrarAnuncio(); }, 30000);
                 
                 return true;
             } catch (error) {
