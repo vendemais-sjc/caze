@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Cazé Playlist • Modo Carro</title>
+    <title>Cazé Playlist • Toca com tela bloqueada</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -15,46 +15,83 @@
         .fullscreen-video-container video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
         .controls-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
         
-        /* ===== MODO CARRO CORRIGIDO ===== */
-        .car-mode-active .fullscreen-video-container { display: none; }
-        .car-mode-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; background: #000; display: none; }
-        .car-mode-active .car-mode-video { display: block; }
-        .car-mode-video video { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* BOTÕES DE MÚSICA - VISÍVEIS E GIGANTES NO MODO CARRO */
-        .car-mode-active .bottom-controls { display: block !important; background: rgba(0,0,0,0.6) !important; z-index: 200 !important; transform: translateY(0) !important; opacity: 1 !important; }
-        .car-mode-active .control-btn { width: 80px !important; height: 80px !important; font-size: 2rem !important; background: rgba(0,0,0,0.7) !important; border: 2px solid white !important; }
-        .car-mode-active .play-btn { width: 100px !important; height: 100px !important; font-size: 2.5rem !important; background: #e63946 !important; border: none !important; }
-        .car-mode-active .track-info p { font-size: 1.2rem !important; }
-        .car-mode-active .progress-time span { font-size: 1rem !important; }
-        .car-mode-active .progress-bar { height: 5px !important; }
-        
-        /* Botões flutuantes transparentes */
-        .car-mode-active .menu-button, .car-mode-active .genre-button, .car-mode-active .cta-button, .car-mode-active .car-mode-btn { opacity: 0.2 !important; transition: opacity 0.3s !important; }
-        .car-mode-active .exit-car-btn { display: block !important; z-index: 201 !important; }
-        
-        .car-mode-btn {
-            position: absolute;
-            bottom: 120px;
-            left: 15px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            cursor: pointer;
-            z-index: 27;
-            pointer-events: auto;
-            transition: 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        /* ===== MODO CARRO ===== */
+        .car-mode-active .fullscreen-video-container {
+            display: none;
         }
-        .car-mode-btn.active { background: linear-gradient(135deg, #e63946, #ff6b6b); animation: pulseCar 1s infinite; }
-        @keyframes pulseCar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(230,57,70,0.6); } }
+        .car-mode-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            background: #000;
+            display: none;
+        }
+        .car-mode-active .car-mode-video {
+            display: block;
+        }
+        .car-mode-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Controles no modo carro - maiores e mais visíveis (mas sem player no meio) */
+        .car-mode-active .bottom-controls {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+            padding: 12px 20px;
+        }
+        .car-mode-active .control-btn {
+            width: 55px;
+            height: 55px;
+            font-size: 1.4rem;
+            background: rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .car-mode-active .play-btn {
+            width: 65px;
+            height: 65px;
+            font-size: 1.8rem;
+            background: #e63946;
+        }
+        .car-mode-active .track-info p {
+            font-size: 0.9rem;
+        }
+        
+        /* Botões flutuantes transparentes no modo carro */
+        .car-mode-active .menu-button,
+        .car-mode-active .genre-button,
+        .car-mode-active .cta-button {
+            background: rgba(255,255,255,0.15) !important;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .car-mode-active .menu-button i,
+        .car-mode-active .genre-button i,
+        .car-mode-active .cta-button i {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .car-mode-active .cta-button {
+            animation: none;
+        }
+        
+        .car-mode-active .exit-car-btn {
+            display: block;
+        }
+        
+        /* Botão modo carro no menu */
+        .car-mode-menu-btn {
+            background: linear-gradient(135deg, #1e3c72, #2a5298) !important;
+        }
+        .car-mode-menu-btn i {
+            color: #fff;
+        }
         
         .exit-car-btn {
             position: absolute;
@@ -63,13 +100,14 @@
             background: rgba(0,0,0,0.7);
             color: white;
             border: 2px solid #e63946;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 50px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: bold;
             cursor: pointer;
             z-index: 102;
             display: none;
+            pointer-events: auto;
         }
         
         .car-indicator {
@@ -87,43 +125,11 @@
             display: none;
             font-weight: bold;
         }
-        .car-mode-active .car-indicator { display: flex; align-items: center; gap: 5px; }
-        
-        /* Anúncio 728x90 */
-        .video-ad-container {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 728px;
-            max-width: 90vw;
-            height: auto;
-            z-index: 50;
-            pointer-events: auto;
-            cursor: pointer;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            display: none;
-        }
-        .video-ad-container video { width: 100%; height: auto; display: block; }
-        .close-ad {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
+        .car-mode-active .car-indicator {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            cursor: pointer;
-            z-index: 51;
+            gap: 5px;
         }
-        .car-mode-active .video-ad-container { display: none !important; }
         
         .notification-top {
             position: absolute;
@@ -273,7 +279,7 @@
         .genre-card[data-genero="SAMBA"] { background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%); }
         .genre-card[data-genero="POP"] { background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); }
         .genre-card[data-genero="VARIADAS"] { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
-        .genre-card[data-genero="TODOS"] { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .genre-card[data-genero="TODOS"] { background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%); }
         
         .genre-card i { font-size: 2.8rem; display: block; margin-bottom: 12px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3)); }
         .genre-card span { font-size: 1rem; font-weight: 800; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); letter-spacing: 1px; }
@@ -294,7 +300,7 @@
         
         .cta-button {
             position: absolute;
-            bottom: 120px;
+            bottom: 25%;
             right: 15px;
             background: linear-gradient(135deg, #ff6600, #ff3300);
             color: white;
@@ -306,11 +312,13 @@
             cursor: pointer;
             z-index: 25;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            animation: pulse-cta 1.5s infinite;
             display: flex;
             align-items: center;
             gap: 5px;
             pointer-events: auto;
         }
+        @keyframes pulse-cta { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         
         .bottom-controls {
             position: absolute;
@@ -422,6 +430,54 @@
         }
         .audio-indicator i { font-size: 0.6rem; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        /* Anúncio 728x90 */
+        .video-ad-container {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 728px;
+            max-width: 90vw;
+            height: auto;
+            z-index: 50;
+            pointer-events: auto;
+            cursor: pointer;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            display: none;
+            animation: slideUpAd 0.3s ease;
+        }
+        @keyframes slideUpAd {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .video-ad-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .close-ad {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 51;
+            backdrop-filter: blur(4px);
+        }
+        .car-mode-active .video-ad-container {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -446,7 +502,6 @@
         <div class="audio-indicator" id="audioIndicator"><i class="fas fa-circle"></i> Aguardando</div>
         <div class="car-indicator" id="carIndicator"><i class="fas fa-car"></i> MODO CARRO ATIVO</div>
         
-        <button class="car-mode-btn" id="carModeBtn"><i class="fas fa-car"></i></button>
         <button class="cta-button" id="ctaButton"><i class="fas fa-headset"></i> INFORMAÇÕES</button>
         <button class="genre-button" id="genreButton"><i class="fas fa-guitar"></i></button>
         <button class="exit-car-btn" id="exitCarBtn">✕ SAIR DO MODO CARRO</button>
@@ -482,6 +537,7 @@
     
     <div class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></div>
     <div class="menu-popup" id="menuPopup">
+        <button id="carModeMenuBtn"><i class="fas fa-car"></i> Modo Carro</button>
         <button id="fullscreenMenuBtn"><i class="fas fa-expand"></i> Tela cheia</button>
         <button id="shareMenuBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
@@ -511,7 +567,7 @@
     </div>
     
     <script>
-        // PLAYLIST
+        // PLAYLIST COM MÚLTIPLAS MÚSICAS
         const musicas = [
             { id: 1, title: "Panda_Corpo_Nu_muzzik.m4a", artist: "Panda", src: "Panda_Corpo_Nu_muzzik.m4a", genero: "SERTANEJO" },
             { id: 2, title: "Diego_Victor_Hugo_Infarto_muzzik.m4a", artist: "Diego_Victor_Hugo", src: "Diego_Victor_Hugo_Infarto_muzzik.m4a", genero: "SERTANEJO" },
@@ -573,7 +629,7 @@
         const ctaBtn = document.getElementById('ctaButton');
         
         // Modo Carro
-        const carModeBtn = document.getElementById('carModeBtn');
+        const carModeMenuBtn = document.getElementById('carModeMenuBtn');
         const exitCarBtn = document.getElementById('exitCarBtn');
         const carIndicator = document.getElementById('carIndicator');
         const carModeVideo = document.querySelector('.car-mode-video');
@@ -605,23 +661,29 @@
             
             if (isCarMode) {
                 app.classList.add('car-mode-active');
-                carModeBtn.classList.add('active');
+                carModeMenuBtn.style.background = "linear-gradient(135deg, #e63946, #ff6b6b)";
                 carIndicator.style.display = 'flex';
                 carModeVideo.style.display = 'block';
                 carVideo.play().catch(e => console.log('Vídeo carro:', e));
-                showNotification('🚗 MODO CARRO ATIVADO! Botões gigantes na parte inferior.', 3000);
+                showNotification('🚗 MODO CARRO ATIVADO! Botões transparentes');
             } else {
                 app.classList.remove('car-mode-active');
-                carModeBtn.classList.remove('active');
+                carModeMenuBtn.style.background = "";
                 carIndicator.style.display = 'none';
                 carModeVideo.style.display = 'none';
                 carVideo.pause();
-                showNotification('🚗 Modo Carro desativado.', 2000);
+                showNotification('🚗 Modo Carro desativado.');
             }
         }
         
-        carModeBtn.addEventListener('click', toggleCarMode);
-        exitCarBtn.addEventListener('click', toggleCarMode);
+        carModeMenuBtn.addEventListener('click', () => {
+            toggleCarMode();
+            closeMenu();
+        });
+        
+        exitCarBtn.addEventListener('click', () => {
+            if (isCarMode) toggleCarMode();
+        });
         
         // ========== ANÚNCIO 728x90 ==========
         function mostrarAnuncio() {
@@ -648,7 +710,7 @@
             }
         });
         
-        // ========== FUNÇÕES PRINCIPAIS ==========
+        // ========== FUNÇÕES ORIGINAIS ==========
         function showNotification(msg, duration = 3000) {
             if (notificationTimeout) clearTimeout(notificationTimeout);
             notificationMessage.innerText = msg;
@@ -876,7 +938,9 @@
                 iniciarManutencaoConstante();
                 await solicitarWakeLock();
                 
-                adInterval = setInterval(() => { mostrarAnuncio(); }, 30000);
+                adInterval = setInterval(() => {
+                    mostrarAnuncio();
+                }, 30000);
                 
                 return true;
             } catch (error) {
