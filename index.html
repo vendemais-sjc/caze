@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Cazé Playlist • Toca com Tela Bloqueada</title>
+    <title>Cazé Playlist • IA que aprende suas preferidas</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -118,47 +118,9 @@
         @keyframes floatGenre { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
         .genre-button:active { transform: scale(0.9); }
         
-        /* BOTÃO VOLUME - MAIS VISÍVEL */
-        .volume-control {
-            position: fixed;
-            bottom: 210px;
-            right: 20px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(12px);
-            padding: 12px 16px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 27;
-            cursor: pointer;
-            border: 1px solid rgba(230,57,70,0.5);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .volume-control i { color: #e63946; font-size: 1.2rem; }
-        .volume-control input { 
-            width: 100px; 
-            cursor: pointer;
-            background: #333;
-            height: 4px;
-            border-radius: 5px;
-            -webkit-appearance: none;
-        }
-        .volume-control input:focus { outline: none; }
-        .volume-control input::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #e63946;
-            cursor: pointer;
-        }
-        .volume-control span { color: white; font-size: 0.7rem; min-width: 35px; text-align: center; }
-        
         .cta-button {
             position: fixed;
-            bottom: 280px;
+            bottom: 210px;
             right: 20px;
             background: rgba(255,255,255,0.2) !important;
             backdrop-filter: blur(10px);
@@ -217,7 +179,6 @@
         .car-mode-active .bottom-controls { display: none; }
         .car-mode-active .genre-button { animation: floatGenre 3s ease-in-out infinite; }
         .car-mode-active .cta-button { display: none; }
-        .car-mode-active .volume-control { display: none; }
         .car-mode-active .exit-car-btn { display: block; }
         
         .notification-top {
@@ -297,6 +258,32 @@
         }
         .menu-popup button:active { background: #e63946; color: #000; }
         .menu-popup i { width: 24px; text-align: center; }
+        
+        /* NOVO: Modal de Preferências da IA */
+        .ai-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 30px;
+            padding: 25px;
+            z-index: 5003;
+            display: none;
+            max-width: 90vw;
+            width: 350px;
+            border: 2px solid #e63946;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .ai-modal.open { display: block; }
+        .ai-modal h3 { color: #e63946; text-align: center; margin-bottom: 20px; }
+        .ai-modal .ai-stat { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); color: white; }
+        .favorite-song-item { background: rgba(230,57,70,0.2); padding: 10px; margin: 5px 0; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .favorite-song-item button { background: #e63946; border: none; padding: 5px 10px; border-radius: 20px; color: white; cursor: pointer; }
+        .close-ai { width: 100%; padding: 10px; background: #e63946; border: none; border-radius: 20px; color: white; margin-top: 15px; cursor: pointer; }
+        .like-btn { background: rgba(74,222,128,0.3); border: none; border-radius: 20px; padding: 5px 10px; margin-left: 10px; color: #4ade80; cursor: pointer; }
+        .dislike-btn { background: rgba(239,68,68,0.3); border: none; border-radius: 20px; padding: 5px 10px; margin-left: 5px; color: #ef4444; cursor: pointer; }
         
         .manual-modal {
             position: fixed;
@@ -387,6 +374,33 @@
         .control-btn:active { transform: scale(0.9); background: #e63946; color: #000; }
         .play-btn { font-size: 1.6rem; width: 54px; height: 54px; background: #e63946; color: #000; border: none; }
         
+        /* Botões de Like/Dislike na tela */
+        .feedback-buttons {
+            position: fixed;
+            bottom: 140px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 27;
+        }
+        .feedback-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s ease;
+        }
+        .feedback-btn.like { color: #4ade80; }
+        .feedback-btn.dislike { color: #ef4444; }
+        .feedback-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+        
         .stats-modal {
             position: fixed;
             top: 50%;
@@ -462,20 +476,20 @@
             transform: translateX(-50%);
             background: linear-gradient(135deg, #ff6600, #ff3300);
             color: white;
-            padding: 14px 28px;
-            border-radius: 50px;
+            padding: 10px 20px;
+            border-radius: 40px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.85rem;
             z-index: 10000;
             cursor: pointer;
             display: none;
             animation: btnPulse 1.5s infinite;
             white-space: nowrap;
             pointer-events: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
             border: none;
         }
-        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
+        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.03); } 100% { transform: translateX(-50%) scale(1); } }
         
         .genre-badge {
             position: absolute;
@@ -618,8 +632,8 @@
     </style>
 </head>
 <body>
-    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>Cazé Playlist</h1><p>🎵 Toca com a tela BLOQUEADA!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão laranja para ativar</p></div></div>
-    <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO (Toca com tela bloqueada)</div>
+    <div id="splash"><div class="splash-content"><i class="fas fa-brain"></i><h1>Cazé Playlist IA</h1><p>🎵 A IA aprende suas preferidas!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão laranja para ativar</p></div></div>
+    <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
     
     <div class="app">
         <div class="fullscreen-video-container">
@@ -664,11 +678,10 @@
             <div class="visualizer-bar" id="bar4"></div>
         </div>
         
-        <!-- BOTÃO VOLUME - MAIS VISÍVEL -->
-        <div class="volume-control" id="volumeControl">
-            <i class="fas fa-volume-up"></i>
-            <input type="range" id="volumeSlider" min="0" max="100" value="90">
-            <span id="volumePercent">90%</span>
+        <!-- Botões de Like/Dislike -->
+        <div class="feedback-buttons">
+            <button class="feedback-btn like" id="likeBtn"><i class="fas fa-thumbs-up"></i></button>
+            <button class="feedback-btn dislike" id="dislikeBtn"><i class="fas fa-thumbs-down"></i></button>
         </div>
         
         <div class="loading-spinner" id="loadingSpinner">
@@ -713,8 +726,20 @@
         <button id="shareMenuBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
         <button id="manualMenuBtn"><i class="fas fa-book"></i> 📘 Manual</button>
         <button id="statsMenuBtn"><i class="fas fa-chart-line"></i> 📊 Estatísticas</button>
+        <button id="aiMenuBtn"><i class="fas fa-brain"></i> 🤖 IA Preferências</button>
         <button id="equalizerMenuBtn"><i class="fas fa-sliders-h"></i> 🎚️ Equalizador</button>
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
+    </div>
+    
+    <!-- NOVO: Modal da IA -->
+    <div class="ai-modal" id="aiModal">
+        <h3><i class="fas fa-brain"></i> Inteligência Artificial</h3>
+        <div class="ai-stat"><span>🎯 Músicas que você curtiu:</span><span class="stat-value" id="aiLikedCount">0</span></div>
+        <div class="ai-stat"><span>👎 Músicas que não curtiu:</span><span class="stat-value" id="aiDislikedCount">0</span></div>
+        <div class="ai-stat"><span>⭐ Gênero favorito:</span><span class="stat-value" id="aiTopGenre">-</span></div>
+        <div class="ai-stat"><span>🎵 Top 5 preferidas:</span></div>
+        <div id="aiTopSongs"></div>
+        <button class="close-ai" id="closeAiBtn">Fechar</button>
     </div>
     
     <div class="stats-modal" id="statsModal">
@@ -736,37 +761,27 @@
     
     <div class="manual-modal" id="manualModal">
         <div class="manual-container">
-            <h1>📘 CAZÉ PLAYLIST</h1>
-            <div class="subtitle">Sua rádio pessoal que toca com a tela BLOQUEADA!</div>
+            <h1>📘 CAZÉ PLAYLIST COM IA</h1>
+            <div class="subtitle">A Inteligência Artificial aprende suas músicas preferidas!</div>
             
-            <h2><i class="fas fa-play-circle"></i> 1. Como começar</h2>
-            <p><strong>Passo 1:</strong> Abra o aplicativo</p>
-            <p><strong>Passo 2:</strong> Toque no botão laranja <span style="background:#ff6600; padding:2px 8px; border-radius:20px;">🎵 ATIVAR ÁUDIO</span></p>
-            <p><strong>Passo 3:</strong> A música começa automaticamente e NÃO PARA quando bloquear a tela! 🎉</p>
-            <div class="dica">💡 <strong>Dica importante:</strong> Este app foi feito para tocar com a tela bloqueada! Teste você mesmo!</div>
+            <h2><i class="fas fa-brain"></i> 1. Como a IA aprende</h2>
+            <p>✅ <strong>Curtir uma música:</strong> Aperte o botão 👍 - a IA aprende que você gostou</p>
+            <p>❌ <strong>Não gostou:</strong> Aperte o botão 👎 - a IA evita tocar músicas parecidas</p>
+            <div class="dica">💡 Quanto mais você avalia, mais inteligente fica a playlist!</div>
             
-            <h2><i class="fas fa-music"></i> 2. Controles da música</h2>
-            <div class="icon-grid">
-                <div class="icon-item"><i class="fas fa-backward"></i> Voltar música</div>
-                <div class="icon-item"><i class="fas fa-play"></i> Play / Pausa</div>
-                <div class="icon-item"><i class="fas fa-random"></i> Aleatório</div>
-                <div class="icon-item"><i class="fas fa-forward"></i> Próxima</div>
-            </div>
+            <h2><i class="fas fa-magic"></i> 2. Algoritmo de recomendação</h2>
+            <p>O sistema analisa:</p>
+            <p>• Músicas que você ouviu até o fim</p>
+            <p>• Seu gênero musical favorito</p>
+            <p>• Artistas que você mais curtiu</p>
+            <p>• Músicas similares às suas preferidas</p>
             
-            <h2><i class="fas fa-volume-up"></i> 3. Controle de Volume</h2>
-            <p>Botão com ícone de alto-falante 🔈 no canto direito - ajuste o volume facilmente!</p>
+            <h2><i class="fas fa-chart-line"></i> 3. Ver suas preferências</h2>
+            <p>Menu → 🤖 IA Preferências → Veja seu Top 5 músicas favoritas!</p>
             
-            <h2><i class="fas fa-guitar"></i> 4. Escolher estilo musical</h2>
-            <p>Toque no botão <strong>🎸 (violão)</strong> no canto direito da tela.</p>
-            
-            <h2><i class="fas fa-car"></i> 5. Modo Carro</h2>
-            <p>Ideal para dirigir! Botões GRANDES e fáceis de apertar.</p>
-            
-            <h2><i class="fas fa-hand-peace"></i> 6. Gestos</h2>
+            <h2><i class="fas fa-hand-peace"></i> 4. Gestos</h2>
             <p>👉 Deslize para esquerda/direita = próxima/anterior música</p>
             <p>👆 Toque duplo = pausa/play</p>
-            
-            <div class="atencao">📞 <strong>Precisou de ajuda?</strong> Mande mensagem pelo WhatsApp no menu "Feedback"</div>
             
             <button class="close-manual-btn" id="closeManualBtn">✕ FECHAR MANUAL</button>
         </div>
@@ -860,6 +875,210 @@
             { id: 58, title: "Another Day In Paradise", artist: "Ivan Barreto", src: "Ivan_Barreto_Another_Day_In_Paradise_.m4a", genero: "POP" },
             { id: 59, title: "Sorri Sou Rei", artist: "Natiruts", src: "Natiruts_Sorri_Sou_Rei_.m4a", genero: "POP" },
         ];
+        
+        // ==================== ALGORITMO DE IA ====================
+        // Estrutura de dados para preferências do usuário
+        let userPreferences = {
+            likedSongs: [],      // IDs das músicas curtidas
+            dislikedSongs: [],   // IDs das músicas que não gostou
+            songPlays: {},       // Quantas vezes ouviu cada música
+            songComplete: {},    // Se ouviu até o fim (true/false)
+            genrePreference: {}, // Preferência por gênero (peso)
+            lastPlayed: null
+        };
+        
+        // Carregar preferências salvas
+        function loadPreferences() {
+            const saved = localStorage.getItem('caze_ai_preferences');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    userPreferences = { ...userPreferences, ...parsed };
+                } catch(e) {}
+            }
+        }
+        
+        // Salvar preferências
+        function savePreferences() {
+            localStorage.setItem('caze_ai_preferences', JSON.stringify(userPreferences));
+        }
+        
+        // Registrar que o usuário curtiu a música atual
+        function likeCurrentSong() {
+            const track = filteredPlaylist[currentIndex];
+            if (!track) return;
+            
+            if (!userPreferences.likedSongs.includes(track.id)) {
+                userPreferences.likedSongs.push(track.id);
+                // Remove de disliked se existir
+                userPreferences.dislikedSongs = userPreferences.dislikedSongs.filter(id => id !== track.id);
+                savePreferences();
+                showNotification(`👍 Você curtiu "${track.title}"! A IA vai tocar mais músicas assim!`, 2500);
+                updateAIModal();
+            } else {
+                showNotification(`❤️ Você já curtiu "${track.title}" antes!`, 1500);
+            }
+        }
+        
+        // Registrar que o usuário NÃO curtiu a música atual
+        function dislikeCurrentSong() {
+            const track = filteredPlaylist[currentIndex];
+            if (!track) return;
+            
+            if (!userPreferences.dislikedSongs.includes(track.id)) {
+                userPreferences.dislikedSongs.push(track.id);
+                // Remove de liked se existir
+                userPreferences.likedSongs = userPreferences.likedSongs.filter(id => id !== track.id);
+                savePreferences();
+                showNotification(`👎 Você não curtiu "${track.title}". A IA vai evitar músicas parecidas.`, 2500);
+                
+                // Pula para próxima música automaticamente
+                setTimeout(() => {
+                    nextTrack();
+                }, 500);
+                updateAIModal();
+            } else {
+                showNotification(`👎 Você já marcou "${track.title}" como não curtida`, 1500);
+            }
+        }
+        
+        // Registrar que ouviu uma música completamente
+        function registerCompleteListen(trackId) {
+            userPreferences.songComplete[trackId] = true;
+            userPreferences.songPlays[trackId] = (userPreferences.songPlays[trackId] || 0) + 1;
+            
+            // Atualizar preferência de gênero
+            const track = musicas.find(m => m.id === trackId);
+            if (track) {
+                userPreferences.genrePreference[track.genero] = (userPreferences.genrePreference[track.genero] || 0) + 1;
+            }
+            savePreferences();
+        }
+        
+        // Calcular peso de uma música baseado nas preferências
+        function calculateSongWeight(song) {
+            let weight = 1.0; // Peso base
+            
+            // Música curtida: peso muito alto
+            if (userPreferences.likedSongs.includes(song.id)) {
+                weight += 10;
+            }
+            
+            // Música não curtida: peso muito baixo (quase nunca toca)
+            if (userPreferences.dislikedSongs.includes(song.id)) {
+                weight -= 20;
+            }
+            
+            // Já ouviu várias vezes? reduz um pouco para variar
+            const playCount = userPreferences.songPlays[song.id] || 0;
+            weight -= playCount * 0.3;
+            
+            // Gênero favorito: aumenta peso
+            const genreScore = userPreferences.genrePreference[song.genero] || 0;
+            weight += genreScore * 0.5;
+            
+            // Música que ouviu até o fim: reforço positivo
+            if (userPreferences.songComplete[song.id]) {
+                weight += 2;
+            }
+            
+            return Math.max(0.1, weight); // Nunca fica negativo
+        }
+        
+        // Gerar playlist inteligente baseada nas preferências
+        function generateSmartPlaylist() {
+            // Calcular peso para todas as músicas
+            const scoredSongs = musicas.map(song => ({
+                ...song,
+                weight: calculateSongWeight(song)
+            }));
+            
+            // Ordenar por peso (maior primeiro)
+            scoredSongs.sort((a, b) => b.weight - a.weight);
+            
+            // Pegar as 30 músicas com maior peso
+            let topSongs = scoredSongs.slice(0, 30);
+            
+            // Se não houver preferências suficientes, misturar um pouco
+            if (userPreferences.likedSongs.length < 3) {
+                // Adicionar algumas músicas aleatórias para descobrir gostos
+                const randomSongs = [...musicas];
+                for (let i = randomSongs.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [randomSongs[i], randomSongs[j]] = [randomSongs[j], randomSongs[i]];
+                }
+                const newOnes = randomSongs.slice(0, 10);
+                topSongs = [...new Set([...topSongs, ...newOnes])];
+            }
+            
+            // Embaralhar levemente para não ficar previsível
+            for (let i = topSongs.length - 1; i > 0; i--) {
+                if (Math.random() > 0.7) { // 30% de chance de trocar
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [topSongs[i], topSongs[j]] = [topSongs[j], topSongs[i]];
+                }
+            }
+            
+            return topSongs;
+        }
+        
+        // Atualizar o modal da IA
+        function updateAIModal() {
+            document.getElementById('aiLikedCount').textContent = userPreferences.likedSongs.length;
+            document.getElementById('aiDislikedCount').textContent = userPreferences.dislikedSongs.length;
+            
+            // Top gênero
+            let topGenre = "Nenhum";
+            let maxCount = 0;
+            for (const [genre, count] of Object.entries(userPreferences.genrePreference)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    topGenre = genre;
+                }
+            }
+            document.getElementById('aiTopGenre').textContent = topGenre;
+            
+            // Top 5 músicas favoritas
+            const likedSongsList = userPreferences.likedSongs.map(id => musicas.find(m => m.id === id)).filter(s => s);
+            const top5 = likedSongsList.slice(0, 5);
+            
+            const topSongsDiv = document.getElementById('aiTopSongs');
+            topSongsDiv.innerHTML = '';
+            if (top5.length === 0) {
+                topSongsDiv.innerHTML = '<div style="color:#aaa; text-align:center; padding:10px;">Curti algumas músicas para aparecerem aqui! 👍</div>';
+            } else {
+                top5.forEach(song => {
+                    const div = document.createElement('div');
+                    div.className = 'favorite-song-item';
+                    div.innerHTML = `
+                        <span>🎵 ${song.title} - ${song.artist}</span>
+                        <button onclick="removeLike(${song.id})">Remover</button>
+                    `;
+                    topSongsDiv.appendChild(div);
+                });
+            }
+        }
+        
+        // Remover like de uma música
+        window.removeLike = function(songId) {
+            userPreferences.likedSongs = userPreferences.likedSongs.filter(id => id !== songId);
+            savePreferences();
+            updateAIModal();
+            showNotification(`👍 Removido dos favoritos`, 1500);
+            // Recriar playlist com novas preferências
+            recreatePlaylistFromAI();
+        };
+        
+        // Recriar playlist baseada na IA
+        function recreatePlaylistFromAI() {
+            const smartPlaylist = generateSmartPlaylist();
+            filteredPlaylist = smartPlaylist;
+            currentIndex = 0;
+            loadTrackUI(currentIndex);
+            if (isCarMode) updateCarOverlayInfo();
+            if (isPlaying) playMusic().catch(e => console.log);
+            showNotification(`🧠 IA gerou playlist baseada nas suas preferências!`, 3000);
+        }
         
         // ==================== ESTATÍSTICAS ====================
         let stats = {
@@ -968,20 +1187,6 @@
             document.getElementById('trebleVal').textContent = document.getElementById('eqTreble').value;
         }
         
-        // ==================== VOLUME ====================
-        const volumeSlider = document.getElementById('volumeSlider');
-        const volumePercent = document.getElementById('volumePercent');
-        
-        volumeSlider.addEventListener('input', (e) => {
-            const vol = e.target.value / 100;
-            musicPlayerEl.volume = vol;
-            volumePercent.textContent = e.target.value + '%';
-            const icon = document.querySelector('#volumeControl i');
-            if (vol === 0) icon.className = 'fas fa-volume-mute';
-            else if (vol < 0.3) icon.className = 'fas fa-volume-down';
-            else icon.className = 'fas fa-volume-up';
-        });
-        
         // ==================== GESTOS TOUCH ====================
         let touchStartX = 0;
         let lastTap = 0;
@@ -1064,6 +1269,7 @@
         let trackStartTime = 0;
         let isLoadingTrack = false;
         
+        // Volume fixo em 90%
         musicPlayerEl.volume = 0.9;
         
         function formatTime(sec) {
@@ -1216,7 +1422,7 @@
                             navigator.mediaSession.metadata = new MediaMetadata({ 
                                 title: track.title, 
                                 artist: track.artist + ' • ' + track.genero, 
-                                album: 'Cazé Playlist' 
+                                album: 'Cazé Playlist IA' 
                             });
                             navigator.mediaSession.setActionHandler('play', () => playMusic());
                             navigator.mediaSession.setActionHandler('pause', () => pauseMusic());
@@ -1253,17 +1459,43 @@
                 musicPlayerEl.onended = () => {
                     if (trackStartTime) {
                         const durationSec = Math.floor((Date.now() - trackStartTime) / 1000);
-                        if (durationSec > 0 && durationSec < 600) updateTimeStats(durationSec);
+                        if (durationSec > 0 && durationSec < 600) {
+                            updateTimeStats(durationSec);
+                            // Se ouviu mais de 70% da música, considera que gostou
+                            const trackDuration = musicPlayerEl.duration;
+                            if (durationSec > trackDuration * 0.7) {
+                                registerCompleteListen(track.id);
+                            }
+                        }
                     }
                     
                     stopTimer();
-                    let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length;
-                    if (nextIndex === 0 && !shuffleMode && filteredPlaylist.length > 0) {
-                        for (let i = filteredPlaylist.length - 1; i > 0; i--) {
-                            const j = Math.floor(Math.random() * (i + 1));
-                            [filteredPlaylist[i], filteredPlaylist[j]] = [filteredPlaylist[j], filteredPlaylist[i]];
+                    
+                    // Usar IA para escolher próxima música
+                    let nextIndex;
+                    if (shuffleMode) {
+                        // IA + shuffle: pega uma música com peso alto aleatoriamente
+                        const weightedSongs = filteredPlaylist.map((song, idx) => ({ idx, weight: calculateSongWeight(song) }));
+                        const totalWeight = weightedSongs.reduce((sum, s) => sum + s.weight, 0);
+                        let random = Math.random() * totalWeight;
+                        let accumulated = 0;
+                        for (const song of weightedSongs) {
+                            accumulated += song.weight;
+                            if (random <= accumulated) {
+                                nextIndex = song.idx;
+                                break;
+                            }
                         }
-                        showNotification("🔄 Playlist renovada!", 2000);
+                        if (nextIndex === undefined) nextIndex = 0;
+                    } else {
+                        nextIndex = (currentIndex + 1) % filteredPlaylist.length;
+                    }
+                    
+                    if (nextIndex === 0 && !shuffleMode && filteredPlaylist.length > 0) {
+                        // Renovar playlist com IA quando chegar ao fim
+                        const smartPlaylist = generateSmartPlaylist();
+                        filteredPlaylist = smartPlaylist;
+                        showNotification("🧠 IA renovou a playlist com base nas suas preferências!", 3000);
                     }
                     currentIndex = nextIndex;
                     loadTrackUI(currentIndex);
@@ -1294,7 +1526,26 @@
         async function nextTrack() { 
             if (isLoadingTrack) return;
             stopTimer(); 
-            let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length; 
+            
+            let nextIndex;
+            if (shuffleMode) {
+                // IA + shuffle: escolhe baseado no peso
+                const weightedSongs = filteredPlaylist.map((song, idx) => ({ idx, weight: calculateSongWeight(song) }));
+                const totalWeight = weightedSongs.reduce((sum, s) => sum + s.weight, 0);
+                let random = Math.random() * totalWeight;
+                let accumulated = 0;
+                for (const song of weightedSongs) {
+                    accumulated += song.weight;
+                    if (random <= accumulated) {
+                        nextIndex = song.idx;
+                        break;
+                    }
+                }
+                if (nextIndex === undefined) nextIndex = 0;
+            } else {
+                nextIndex = (currentIndex + 1) % filteredPlaylist.length;
+            }
+            
             currentIndex = nextIndex; 
             loadTrackUI(currentIndex); 
             if (isCarMode) updateCarOverlayInfo(); 
@@ -1314,19 +1565,18 @@
         function filterByGenre(genero) {
             let novaPlaylist = [];
             if (genero === "TODOS") {
-                novaPlaylist = [...musicas];
-                showNotification("🎵 Tocando todos os gêneros!", 2000);
+                novaPlaylist = generateSmartPlaylist(); // Usa IA mesmo para todos
+                showNotification("🎵 IA escolhendo as melhores para você!", 2000);
                 updateGenreBadge("MIX");
             } else {
                 novaPlaylist = musicas.filter(m => m.genero === genero);
+                // Aplica pesos da IA dentro do gênero
+                novaPlaylist.sort((a, b) => calculateSongWeight(b) - calculateSongWeight(a));
                 if (novaPlaylist.length === 0) { showNotification(`⚠️ Nenhuma música encontrada`, 2000); return false; }
-                showNotification(`🎵 ${genero} ativado`, 2000);
+                showNotification(`🎵 ${genero} ativado - IA priorizando suas favoritas`, 2000);
                 updateGenreBadge(genero);
             }
-            for (let i = novaPlaylist.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [novaPlaylist[i], novaPlaylist[j]] = [novaPlaylist[j], novaPlaylist[i]];
-            }
+            
             filteredPlaylist = novaPlaylist;
             currentIndex = 0;
             loadTrackUI(currentIndex);
@@ -1337,28 +1587,12 @@
         }
         
         function iniciarComGeneroAleatorio() {
-            const generos = ["SERTANEJO", "FORRÓ", "SAMBA", "POP", "VARIADAS", "TODOS"];
-            const generoAleatorio = generos[Math.floor(Math.random() * generos.length)];
-            
-            let novaPlaylist = [];
-            if (generoAleatorio === "TODOS") {
-                novaPlaylist = [...musicas];
-                updateGenreBadge("MIX");
-            } else {
-                novaPlaylist = musicas.filter(m => m.genero === generoAleatorio);
-                if (novaPlaylist.length === 0) novaPlaylist = [...musicas];
-                updateGenreBadge(generoAleatorio);
-            }
-            
-            for (let i = novaPlaylist.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [novaPlaylist[i], novaPlaylist[j]] = [novaPlaylist[j], novaPlaylist[i]];
-            }
-            
-            filteredPlaylist = novaPlaylist;
+            // Inicia com playlist inteligente
+            filteredPlaylist = generateSmartPlaylist();
             currentIndex = 0;
             loadTrackUI(currentIndex);
             if (isCarMode) updateCarOverlayInfo();
+            updateGenreBadge("IA");
         }
         
         // ==================== MODO CARRO ====================
@@ -1456,11 +1690,10 @@
                 backgroundAudio.volume = 0.001;
                 await backgroundAudio.play();
                 isBackgroundActive = true;
-                audioIndicator.innerHTML = '<i class="fas fa-circle"></i> Áudio Ativo (tela bloqueada OK)';
+                audioIndicator.innerHTML = '<i class="fas fa-brain"></i> IA Ativa | Tela Bloqueada OK';
                 audioIndicator.style.color = '#4ade80';
                 iniciarManutencaoConstante();
                 
-                // Wake Lock para manter tela ativa se quiser
                 if ('wakeLock' in navigator) {
                     try {
                         const wl = await navigator.wakeLock.request('screen');
@@ -1482,11 +1715,9 @@
             if (backgroundInterval) clearInterval(backgroundInterval);
             backgroundInterval = setInterval(async () => {
                 try {
-                    // Mantém o áudio de fundo rodando (essencial para tocar com tela bloqueada)
                     if (backgroundAudio.paused && isBackgroundActive) {
                         await backgroundAudio.play().catch(e=>{});
                     }
-                    // Mantém a música principal rodando
                     if (isPlaying && musicPlayerEl.paused && !musicPlayerEl.ended) {
                         await musicPlayerEl.play().catch(e=>{});
                     }
@@ -1515,9 +1746,13 @@
         nextBtn.addEventListener('click', () => { nextTrack(); resetHideTimer(); });
         shuffleBtn.addEventListener('click', () => { 
             shuffleMode = !shuffleMode; 
-            showNotification(shuffleMode ? '🔀 Aleatório ON' : '➡️ Sequencial', 1500); 
+            showNotification(shuffleMode ? '🔀 Aleatório INTELIGENTE ON (IA escolhe as melhores)' : '➡️ Sequencial', 2000); 
             resetHideTimer(); 
         });
+        
+        // Botões Like/Dislike
+        document.getElementById('likeBtn').addEventListener('click', () => { likeCurrentSong(); resetHideTimer(); });
+        document.getElementById('dislikeBtn').addEventListener('click', () => { dislikeCurrentSong(); resetHideTimer(); });
         
         function openGenresModal() { genresModal.classList.add('open'); }
         function closeGenresModal() { genresModal.classList.remove('open'); }
@@ -1534,7 +1769,7 @@
         document.addEventListener('click', (e) => { if (!menuButton.contains(e.target) && !menuPopup.contains(e.target)) closeMenu(); });
         document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { document.documentElement.requestFullscreen(); closeMenu(); });
         document.getElementById('shareMenuBtn').addEventListener('click', () => { 
-            if (navigator.share) navigator.share({ title: 'Cazé Playlist' }); 
+            if (navigator.share) navigator.share({ title: 'Cazé Playlist IA' }); 
             else { navigator.clipboard.writeText(location.href); showNotification('Link copiado!', 2000); } 
             closeMenu(); 
         });
@@ -1546,6 +1781,14 @@
         document.getElementById('eqBass').addEventListener('input', updateEQ);
         document.getElementById('eqMid').addEventListener('input', updateEQ);
         document.getElementById('eqTreble').addEventListener('input', updateEQ);
+        
+        // IA Menu
+        document.getElementById('aiMenuBtn').addEventListener('click', () => { 
+            updateAIModal(); 
+            document.getElementById('aiModal').classList.add('open'); 
+            closeMenu(); 
+        });
+        document.getElementById('closeAiBtn').addEventListener('click', () => { document.getElementById('aiModal').classList.remove('open'); });
         
         function openManual() { manualModal.classList.add('open'); closeMenu(); }
         function closeManual() { manualModal.classList.remove('open'); }
@@ -1571,7 +1814,7 @@
         });
         document.getElementById('sendFeedback').addEventListener('click', () => { 
             if (currentRating === 0) { showNotification('⭐ Selecione uma nota', 2000); return; } 
-            let msg = `🎵 *Cazé Playlist*\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5 - currentRating)}\n`; 
+            let msg = `🎵 *Cazé Playlist IA*\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5 - currentRating)}\n`; 
             if (document.getElementById('feedbackText').value.trim()) msg += `💬 ${document.getElementById('feedbackText').value.trim()}\n`; 
             window.open(`https://wa.me/5512988461978?text=${encodeURIComponent(msg)}`, '_blank'); 
             showNotification('✅ WhatsApp aberto!', 2000); 
@@ -1606,13 +1849,13 @@
         
         tapToStart.addEventListener('click', async (e) => { 
             e.stopPropagation(); 
-            showNotification('🔊 Ativando áudio para tocar com tela bloqueada...', 2000); 
+            showNotification('🧠 Ativando IA e áudio para tocar com tela bloqueada...', 2000); 
             const audioOk = await ativarAudioBackground(); 
             if (audioOk) { 
                 await playMusic(); 
                 tapToStart.style.display = 'none'; 
                 try { await document.documentElement.requestFullscreen(); } catch(err) {} 
-                showNotification('✅ Áudio ativado! AGORA TOCA COM TELA BLOQUEADA! ✅', 4000); 
+                showNotification('✅ IA ativada! A playlist vai aprender suas preferidas! ✅', 4000); 
             } else { 
                 showNotification('❌ Falha ao ativar áudio.', 3000); 
             } 
@@ -1636,6 +1879,7 @@
             showCarControls(); 
         });
         
+        loadPreferences();
         loadStats();
         window.addEventListener('load', () => { 
             iniciarComGeneroAleatorio(); 
