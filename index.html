@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Cazé Playlist • Música com Tela Bloqueada</title>
+    <title>Cazé Playlist • Toca com Tela Bloqueada</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -113,21 +113,52 @@
             pointer-events: auto;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            animation: floatGenre 3s ease-in-out infinite, colorChange 5s ease-in-out infinite;
+            animation: floatGenre 3s ease-in-out infinite;
         }
         @keyframes floatGenre { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        @keyframes colorChange {
-            0% { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
-            25% { background: linear-gradient(135deg, #e63946, #ff6b6b); }
-            50% { background: linear-gradient(135deg, #f39c12, #e74c3c); }
-            75% { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-            100% { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
-        }
         .genre-button:active { transform: scale(0.9); }
+        
+        /* BOTÃO VOLUME - MAIS VISÍVEL */
+        .volume-control {
+            position: fixed;
+            bottom: 210px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(12px);
+            padding: 12px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 27;
+            cursor: pointer;
+            border: 1px solid rgba(230,57,70,0.5);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .volume-control i { color: #e63946; font-size: 1.2rem; }
+        .volume-control input { 
+            width: 100px; 
+            cursor: pointer;
+            background: #333;
+            height: 4px;
+            border-radius: 5px;
+            -webkit-appearance: none;
+        }
+        .volume-control input:focus { outline: none; }
+        .volume-control input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e63946;
+            cursor: pointer;
+        }
+        .volume-control span { color: white; font-size: 0.7rem; min-width: 35px; text-align: center; }
         
         .cta-button {
             position: fixed;
-            bottom: 210px;
+            bottom: 280px;
             right: 20px;
             background: rgba(255,255,255,0.2) !important;
             backdrop-filter: blur(10px);
@@ -145,16 +176,7 @@
             gap: 8px;
             pointer-events: auto;
             transition: all 0.3s ease;
-            animation: floatCta 3s ease-in-out infinite, textColorChange 4s ease-in-out infinite;
             white-space: nowrap;
-        }
-        @keyframes floatCta { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
-        @keyframes textColorChange {
-            0% { color: #ffffff; }
-            25% { color: #ffd700; }
-            50% { color: #ff6600; }
-            75% { color: #ffd700; }
-            100% { color: #ffffff; }
         }
         .cta-button:active { transform: scale(0.95); }
         
@@ -193,8 +215,9 @@
         }
         .car-mode-active .car-indicator { display: flex; align-items: center; gap: 5px; }
         .car-mode-active .bottom-controls { display: none; }
-        .car-mode-active .genre-button { animation: floatGenre 3s ease-in-out infinite, colorChange 5s ease-in-out infinite; }
-        .car-mode-active .cta-button { animation: floatCta 3s ease-in-out infinite, textColorChange 4s ease-in-out infinite; }
+        .car-mode-active .genre-button { animation: floatGenre 3s ease-in-out infinite; }
+        .car-mode-active .cta-button { display: none; }
+        .car-mode-active .volume-control { display: none; }
         .car-mode-active .exit-car-btn { display: block; }
         
         .notification-top {
@@ -307,10 +330,6 @@
         .manual-container p { font-size: 0.95rem; line-height: 1.4; color: #ddd; margin-bottom: 10px; }
         .manual-container .dica { background: rgba(74,222,128,0.1); border-left: 4px solid #4ade80; padding: 12px; margin: 15px 0; border-radius: 12px; }
         .manual-container .atencao { background: rgba(255,100,0,0.1); border-left: 4px solid #ff6600; padding: 12px; margin: 15px 0; border-radius: 12px; }
-        .manual-container table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.05); border-radius: 16px; overflow: hidden; margin: 15px 0; }
-        .manual-container td, .manual-container th { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; }
-        .manual-container .icon-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 15px 0; }
-        .manual-container .icon-item { background: rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 40px; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
         .close-manual-btn { width: 100%; padding: 14px; background: #e63946; border: none; border-radius: 40px; color: white; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 25px; transition: 0.2s; }
         .close-manual-btn:active { transform: scale(0.98); background: #ff6b6b; }
         
@@ -368,7 +387,6 @@
         .control-btn:active { transform: scale(0.9); background: #e63946; color: #000; }
         .play-btn { font-size: 1.6rem; width: 54px; height: 54px; background: #e63946; color: #000; border: none; }
         
-        /* NOVO: Modal de Estatísticas */
         .stats-modal {
             position: fixed;
             top: 50%;
@@ -389,7 +407,6 @@
         .stats-modal .stat-value { font-weight: bold; color: #ffd700; }
         .close-stats { width: 100%; padding: 10px; background: #e63946; border: none; border-radius: 20px; color: white; margin-top: 15px; cursor: pointer; }
         
-        /* NOVO: Equalizador */
         .equalizer-modal {
             position: fixed;
             bottom: 0;
@@ -432,24 +449,6 @@
         .modal-btn { padding: 6px 12px; border-radius: 20px; cursor: pointer; background: #333; color: white; border: none; margin: 2px; }
         .modal-btn.send { background: #25D366; color: #000; font-weight: bold; }
         
-        .volume-slider {
-            position: fixed;
-            bottom: 280px;
-            right: 20px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            padding: 10px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 26;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .volume-slider input { width: 80px; cursor: pointer; }
-        .volume-slider i { color: white; font-size: 1rem; }
-        
         #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s; }
         #splash.hidden { opacity: 0; pointer-events: none; }
         .splash-content { text-align: center; color: #fff; }
@@ -463,10 +462,10 @@
             transform: translateX(-50%);
             background: linear-gradient(135deg, #ff6600, #ff3300);
             color: white;
-            padding: 10px 24px;
-            border-radius: 40px;
+            padding: 14px 28px;
+            border-radius: 50px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 1rem;
             z-index: 10000;
             cursor: pointer;
             display: none;
@@ -476,7 +475,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             border: none;
         }
-        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.03); } 100% { transform: translateX(-50%) scale(1); } }
+        @keyframes btnPulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
         
         .genre-badge {
             position: absolute;
@@ -533,7 +532,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             backdrop-filter: blur(12px);
             padding: 15px 25px;
             border-radius: 50px;
@@ -601,7 +600,6 @@
         }
         .car-mode-active .tap-instruction.visible { opacity: 1; }
         
-        /* Gestos touch */
         .swipe-indicator {
             position: fixed;
             top: 50%;
@@ -620,8 +618,8 @@
     </style>
 </head>
 <body>
-    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>Cazé Playlist 2.0</h1><p>🎵 Toque com tela bloqueada!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão para ativar</p></div></div>
-    <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
+    <div id="splash"><div class="splash-content"><i class="fas fa-headphones-alt"></i><h1>Cazé Playlist</h1><p>🎵 Toca com a tela BLOQUEADA!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão laranja para ativar</p></div></div>
+    <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO (Toca com tela bloqueada)</div>
     
     <div class="app">
         <div class="fullscreen-video-container">
@@ -666,10 +664,11 @@
             <div class="visualizer-bar" id="bar4"></div>
         </div>
         
-        <!-- NOVO: Controle de Volume -->
-        <div class="volume-slider" id="volumeSlider">
+        <!-- BOTÃO VOLUME - MAIS VISÍVEL -->
+        <div class="volume-control" id="volumeControl">
             <i class="fas fa-volume-up"></i>
-            <input type="range" id="volumeControl" min="0" max="100" value="90">
+            <input type="range" id="volumeSlider" min="0" max="100" value="90">
+            <span id="volumePercent">90%</span>
         </div>
         
         <div class="loading-spinner" id="loadingSpinner">
@@ -718,36 +717,33 @@
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
     </div>
     
-    <!-- NOVO: Modal de Estatísticas -->
     <div class="stats-modal" id="statsModal">
         <h3><i class="fas fa-chart-line"></i> Suas Estatísticas</h3>
         <div class="stat-item"><span>🎵 Músicas ouvidas:</span><span class="stat-value" id="statTotalPlayed">0</span></div>
         <div class="stat-item"><span>⏱️ Tempo total:</span><span class="stat-value" id="statTotalTime">0h 0m</span></div>
         <div class="stat-item"><span>⭐ Gênero fav:</span><span class="stat-value" id="statTopGenre">-</span></div>
         <div class="stat-item"><span>🔥 Sequência atual:</span><span class="stat-value" id="statStreak">0</span></div>
-        <div class="stat-item"><span>📅 Sessão de hoje:</span><span class="stat-value" id="statTodayTime">0m</span></div>
         <button class="close-stats" id="closeStatsBtn">Fechar</button>
     </div>
     
-    <!-- NOVO: Equalizador -->
     <div class="equalizer-modal" id="equalizerModal">
         <h3><i class="fas fa-sliders-h"></i> Equalizador</h3>
-        <div class="eq-band"><label>🔊 Bass <span id="bassVal">0</span>dB</label><input type="range" id="eqBass" min="-12" max="12" value="0" step="1"></div>
-        <div class="eq-band"><label>🎵 Mid <span id="midVal">0</span>dB</label><input type="range" id="eqMid" min="-12" max="12" value="0" step="1"></div>
-        <div class="eq-band"><label>🎤 Treble <span id="trebleVal">0</span>dB</label><input type="range" id="eqTreble" min="-12" max="12" value="0" step="1"></div>
+        <div class="eq-band"><label>🔊 Graves <span id="bassVal">0</span>dB</label><input type="range" id="eqBass" min="-12" max="12" value="0" step="1"></div>
+        <div class="eq-band"><label>🎵 Médios <span id="midVal">0</span>dB</label><input type="range" id="eqMid" min="-12" max="12" value="0" step="1"></div>
+        <div class="eq-band"><label>🎤 Agudos <span id="trebleVal">0</span>dB</label><input type="range" id="eqTreble" min="-12" max="12" value="0" step="1"></div>
         <button class="close-eq" id="closeEqBtn">Fechar</button>
     </div>
     
     <div class="manual-modal" id="manualModal">
         <div class="manual-container">
-            <h1>📘 CAZÉ PLAYLIST 2.0</h1>
-            <div class="subtitle">Sua rádio pessoal que toca com a tela bloqueada!</div>
+            <h1>📘 CAZÉ PLAYLIST</h1>
+            <div class="subtitle">Sua rádio pessoal que toca com a tela BLOQUEADA!</div>
             
             <h2><i class="fas fa-play-circle"></i> 1. Como começar</h2>
             <p><strong>Passo 1:</strong> Abra o aplicativo</p>
             <p><strong>Passo 2:</strong> Toque no botão laranja <span style="background:#ff6600; padding:2px 8px; border-radius:20px;">🎵 ATIVAR ÁUDIO</span></p>
-            <p><strong>Passo 3:</strong> A música começa automaticamente! 🎉</p>
-            <div class="dica">💡 <strong>Dica:</strong> Você pode bloquear a tela que a música continua tocando!</div>
+            <p><strong>Passo 3:</strong> A música começa automaticamente e NÃO PARA quando bloquear a tela! 🎉</p>
+            <div class="dica">💡 <strong>Dica importante:</strong> Este app foi feito para tocar com a tela bloqueada! Teste você mesmo!</div>
             
             <h2><i class="fas fa-music"></i> 2. Controles da música</h2>
             <div class="icon-grid">
@@ -756,23 +752,21 @@
                 <div class="icon-item"><i class="fas fa-random"></i> Aleatório</div>
                 <div class="icon-item"><i class="fas fa-forward"></i> Próxima</div>
             </div>
-            <p>👉 A <strong>barrinha branca</strong> mostra quanto da música já passou. Você pode arrastar o dedo nela para avançar ou voltar!</p>
             
-            <h2><i class="fas fa-guitar"></i> 3. Escolher estilo musical</h2>
+            <h2><i class="fas fa-volume-up"></i> 3. Controle de Volume</h2>
+            <p>Botão com ícone de alto-falante 🔈 no canto direito - ajuste o volume facilmente!</p>
+            
+            <h2><i class="fas fa-guitar"></i> 4. Escolher estilo musical</h2>
             <p>Toque no botão <strong>🎸 (violão)</strong> no canto direito da tela.</p>
             
-            <h2><i class="fas fa-car"></i> 4. Modo Carro</h2>
-            <p>Ideal para dirigir! Os botões ficam GRANDES e fáceis de apertar.</p>
+            <h2><i class="fas fa-car"></i> 5. Modo Carro</h2>
+            <p>Ideal para dirigir! Botões GRANDES e fáceis de apertar.</p>
             
-            <h2><i class="fas fa-chart-line"></i> 5. Estatísticas</h2>
-            <p>Veja quantas músicas já ouviu, tempo total e seu gênero favorito!</p>
-            
-            <h2><i class="fas fa-sliders-h"></i> 6. Equalizador</h2>
-            <p>Personalize o som com graves, médios e agudos!</p>
-            
-            <h2><i class="fas fa-hand-peace"></i> 7. Gestos</h2>
+            <h2><i class="fas fa-hand-peace"></i> 6. Gestos</h2>
             <p>👉 Deslize para esquerda/direita = próxima/anterior música</p>
             <p>👆 Toque duplo = pausa/play</p>
+            
+            <div class="atencao">📞 <strong>Precisou de ajuda?</strong> Mande mensagem pelo WhatsApp no menu "Feedback"</div>
             
             <button class="close-manual-btn" id="closeManualBtn">✕ FECHAR MANUAL</button>
         </div>
@@ -804,7 +798,7 @@
     <div class="swipe-indicator" id="swipeIndicator">👉 Deslize para próxima música</div>
     
     <script>
-        // ==================== PLAYLIST CORRIGIDA ====================
+        // ==================== PLAYLIST ====================
         const musicas = [
             { id: 1, title: "Corpo Nu", artist: "Panda", src: "Panda_Corpo_Nu_muzzik.m4a", genero: "SERTANEJO" },
             { id: 2, title: "Infarto", artist: "Diego & Victor Hugo", src: "Diego_Victor_Hugo_Infarto_muzzik.m4a", genero: "SERTANEJO" },
@@ -872,9 +866,7 @@
             totalPlayed: 0,
             totalSeconds: 0,
             genreCount: { SERTANEJO: 0, FORRÓ: 0, SAMBA: 0, POP: 0, VARIADAS: 0 },
-            currentStreak: 0,
-            todaySeconds: 0,
-            lastPlayDate: new Date().toDateString()
+            currentStreak: 0
         };
         
         function loadStats() {
@@ -883,10 +875,6 @@
                 try {
                     const parsed = JSON.parse(saved);
                     stats = { ...stats, ...parsed };
-                    if (stats.lastPlayDate !== new Date().toDateString()) {
-                        stats.todaySeconds = 0;
-                        stats.lastPlayDate = new Date().toDateString();
-                    }
                 } catch(e) {}
             }
         }
@@ -904,7 +892,6 @@
         
         function updateTimeStats(seconds) {
             stats.totalSeconds += seconds;
-            stats.todaySeconds += seconds;
             saveStats();
         }
         
@@ -928,46 +915,43 @@
             document.getElementById('statTotalTime').textContent = formatTotalTime(stats.totalSeconds);
             document.getElementById('statTopGenre').textContent = getTopGenre();
             document.getElementById('statStreak').textContent = stats.currentStreak;
-            document.getElementById('statTodayTime').textContent = `${Math.floor(stats.todaySeconds / 60)}m`;
             document.getElementById('statsModal').classList.add('open');
         }
         
         // ==================== EQUALIZADOR ====================
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let audioContext = null;
         let sourceNode = null;
         let gainNodes = { bass: null, mid: null, treble: null };
         let eqInitialized = false;
         
         function initEqualizer() {
-            if (eqInitialized || !musicPlayer.src) return;
+            if (eqInitialized || !musicPlayerEl.src || !musicPlayerEl.src.length) return;
             
             try {
-                const context = audioContext;
-                if (context.state === 'suspended') {
-                    document.addEventListener('click', () => context.resume(), { once: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === 'suspended') {
+                    document.addEventListener('click', () => audioContext.resume(), { once: true });
                 }
                 
-                sourceNode = context.createMediaElementSource(musicPlayer);
+                sourceNode = audioContext.createMediaElementSource(musicPlayerEl);
                 
-                // Filtros
-                gainNodes.bass = context.createBiquadFilter();
+                gainNodes.bass = audioContext.createBiquadFilter();
                 gainNodes.bass.type = 'lowshelf';
                 gainNodes.bass.frequency.value = 200;
                 
-                gainNodes.mid = context.createBiquadFilter();
+                gainNodes.mid = audioContext.createBiquadFilter();
                 gainNodes.mid.type = 'peaking';
                 gainNodes.mid.frequency.value = 1000;
                 gainNodes.mid.Q.value = 1;
                 
-                gainNodes.treble = context.createBiquadFilter();
+                gainNodes.treble = audioContext.createBiquadFilter();
                 gainNodes.treble.type = 'highshelf';
                 gainNodes.treble.frequency.value = 4000;
                 
-                // Conectar
                 sourceNode.connect(gainNodes.bass);
                 gainNodes.bass.connect(gainNodes.mid);
                 gainNodes.mid.connect(gainNodes.treble);
-                gainNodes.treble.connect(context.destination);
+                gainNodes.treble.connect(audioContext.destination);
                 
                 eqInitialized = true;
             } catch(e) { console.warn("Equalizador não suportado:", e); }
@@ -985,14 +969,21 @@
         }
         
         // ==================== VOLUME ====================
-        document.getElementById('volumeControl').addEventListener('input', (e) => {
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumePercent = document.getElementById('volumePercent');
+        
+        volumeSlider.addEventListener('input', (e) => {
             const vol = e.target.value / 100;
-            musicPlayer.volume = vol;
+            musicPlayerEl.volume = vol;
+            volumePercent.textContent = e.target.value + '%';
+            const icon = document.querySelector('#volumeControl i');
+            if (vol === 0) icon.className = 'fas fa-volume-mute';
+            else if (vol < 0.3) icon.className = 'fas fa-volume-down';
+            else icon.className = 'fas fa-volume-up';
         });
         
         // ==================== GESTOS TOUCH ====================
         let touchStartX = 0;
-        let touchEndX = 0;
         let lastTap = 0;
         
         document.addEventListener('touchstart', (e) => {
@@ -1008,7 +999,7 @@
         });
         
         document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
+            const touchEndX = e.changedTouches[0].screenX;
             const diff = touchEndX - touchStartX;
             if (Math.abs(diff) > 50) {
                 if (diff > 0) {
@@ -1071,6 +1062,7 @@
         let hideControlsTimeout = null;
         let visualizerInterval = null;
         let trackStartTime = 0;
+        let isLoadingTrack = false;
         
         musicPlayerEl.volume = 0.9;
         
@@ -1161,10 +1153,18 @@
         async function playMusic() {
             if (!isBackgroundActive) { showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000); return false; }
             if (filteredPlaylist.length === 0) return false;
-            const track = filteredPlaylist[currentIndex];
-            if (!track || !track.src) return false;
+            if (isLoadingTrack) return false;
             
+            isLoadingTrack = true;
             showLoading();
+            
+            const track = filteredPlaylist[currentIndex];
+            if (!track || !track.src) {
+                hideLoading();
+                isLoadingTrack = false;
+                return false;
+            }
+            
             musicPlayerEl.pause();
             musicPlayerEl.src = track.src;
             musicPlayerEl.load();
@@ -1172,8 +1172,18 @@
             if (isCarMode) updateCarOverlayInfo();
             
             return new Promise((resolve) => {
-                musicPlayerEl.oncanplaythrough = async () => {
+                const timeoutId = setTimeout(() => {
                     hideLoading();
+                    isLoadingTrack = false;
+                    showNotification(`⚠️ Tempo excedido: "${track.title}"`, 2000);
+                    nextTrack();
+                    resolve(false);
+                }, 8000);
+                
+                musicPlayerEl.oncanplaythrough = async () => {
+                    clearTimeout(timeoutId);
+                    hideLoading();
+                    isLoadingTrack = false;
                     try {
                         await musicPlayerEl.play();
                         isPlaying = true;
@@ -1185,7 +1195,6 @@
                         initEqualizer();
                         updateEQ();
                         
-                        // Estatísticas
                         updateStats(track);
                         trackStartTime = Date.now();
                         
@@ -1216,7 +1225,9 @@
                         }
                         resolve(true);
                     } catch(e) { 
-                        hideLoading(); 
+                        clearTimeout(timeoutId);
+                        hideLoading();
+                        isLoadingTrack = false;
                         console.error(e); 
                         isPlaying = false; 
                         playBtn.innerHTML = '<i class="fas fa-play"></i>'; 
@@ -1226,8 +1237,20 @@
                     }
                 };
                 
+                musicPlayerEl.onerror = () => { 
+                    clearTimeout(timeoutId);
+                    hideLoading();
+                    isLoadingTrack = false;
+                    showNotification(`⚠️ Erro ao carregar "${track.title}"`, 2000); 
+                    setTimeout(() => {
+                        currentIndex = (currentIndex + 1) % filteredPlaylist.length;
+                        loadTrackUI(currentIndex);
+                        playMusic();
+                    }, 500);
+                    resolve(false); 
+                };
+                
                 musicPlayerEl.onended = () => {
-                    // Registrar tempo da música
                     if (trackStartTime) {
                         const durationSec = Math.floor((Date.now() - trackStartTime) / 1000);
                         if (durationSec > 0 && durationSec < 600) updateTimeStats(durationSec);
@@ -1247,17 +1270,6 @@
                     if (isCarMode) updateCarOverlayInfo();
                     setTimeout(() => playMusic(), 100);
                 };
-                
-                musicPlayerEl.onerror = () => { 
-                    hideLoading(); 
-                    showNotification(`⚠️ Erro ao carregar "${track.title}", pulando...`, 2000); 
-                    setTimeout(() => {
-                        currentIndex = (currentIndex + 1) % filteredPlaylist.length;
-                        loadTrackUI(currentIndex);
-                        playMusic();
-                    }, 1000);
-                    resolve(false); 
-                };
             });
         }
         
@@ -1271,9 +1283,16 @@
             pararVisualizer(); 
         }
         
-        function togglePlayPause() { isPlaying ? pauseMusic() : playMusic(); }
+        function togglePlayPause() { 
+            if (!isBackgroundActive) {
+                showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000);
+                return;
+            }
+            isPlaying ? pauseMusic() : playMusic(); 
+        }
         
         async function nextTrack() { 
+            if (isLoadingTrack) return;
             stopTimer(); 
             let nextIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex + 1) % filteredPlaylist.length; 
             currentIndex = nextIndex; 
@@ -1283,6 +1302,7 @@
         }
         
         async function prevTrack() { 
+            if (isLoadingTrack) return;
             stopTimer(); 
             let prevIndex = shuffleMode ? Math.floor(Math.random() * filteredPlaylist.length) : (currentIndex - 1 + filteredPlaylist.length) % filteredPlaylist.length; 
             currentIndex = prevIndex; 
@@ -1411,7 +1431,7 @@
             }
         }
         
-        // ==================== ÁUDIO BACKGROUND ====================
+        // ==================== ÁUDIO BACKGROUND (TELA BLOQUEADA) ====================
         function createSilentAudio() {
             const sampleRate = 44100, duration = 5, numSamples = sampleRate * duration;
             const buffer = new ArrayBuffer(44 + numSamples * 2);
@@ -1436,24 +1456,20 @@
                 backgroundAudio.volume = 0.001;
                 await backgroundAudio.play();
                 isBackgroundActive = true;
-                audioIndicator.innerHTML = '<i class="fas fa-circle"></i> Áudio Ativo';
+                audioIndicator.innerHTML = '<i class="fas fa-circle"></i> Áudio Ativo (tela bloqueada OK)';
                 audioIndicator.style.color = '#4ade80';
                 iniciarManutencaoConstante();
+                
+                // Wake Lock para manter tela ativa se quiser
                 if ('wakeLock' in navigator) {
-                    const wl = await navigator.wakeLock.request('screen');
-                    document.addEventListener('visibilitychange', async () => {
-                        if (document.visibilityState === 'visible') await navigator.wakeLock.request('screen');
-                    });
+                    try {
+                        const wl = await navigator.wakeLock.request('screen');
+                        document.addEventListener('visibilitychange', async () => {
+                            if (document.visibilityState === 'visible') await navigator.wakeLock.request('screen');
+                        });
+                    } catch(e) {}
                 }
-                // Anúncios a cada 5 músicas em vez de 30s
-                let adCounter = 0;
-                adInterval = setInterval(() => {
-                    adCounter++;
-                    if (adCounter >= 5 && !isCarMode) {
-                        adCounter = 0;
-                        mostrarAnuncio();
-                    }
-                }, 10000);
+                
                 return true;
             } catch (error) {
                 audioIndicator.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro';
@@ -1466,25 +1482,19 @@
             if (backgroundInterval) clearInterval(backgroundInterval);
             backgroundInterval = setInterval(async () => {
                 try {
-                    if (backgroundAudio.paused && isBackgroundActive) await backgroundAudio.play().catch(e=>{});
-                    if (isPlaying && musicPlayerEl.paused && !musicPlayerEl.ended) await musicPlayerEl.play().catch(e=>{});
-                    if (musicPlayerEl.ended && isPlaying) nextTrack();
+                    // Mantém o áudio de fundo rodando (essencial para tocar com tela bloqueada)
+                    if (backgroundAudio.paused && isBackgroundActive) {
+                        await backgroundAudio.play().catch(e=>{});
+                    }
+                    // Mantém a música principal rodando
+                    if (isPlaying && musicPlayerEl.paused && !musicPlayerEl.ended) {
+                        await musicPlayerEl.play().catch(e=>{});
+                    }
+                    if (musicPlayerEl.ended && isPlaying) {
+                        nextTrack();
+                    }
                 } catch(e) {}
-            }, 1500);
-        }
-        
-        function mostrarAnuncio() {
-            const adContainer = document.getElementById('videoAdContainer');
-            const adVideoEl = document.getElementById('adVideo');
-            if (!adContainer || isCarMode) return;
-            adVideoEl.currentTime = 0;
-            adContainer.style.display = 'block';
-            adVideoEl.play().catch(e=>{});
-            if (adTimeout) clearTimeout(adTimeout);
-            adTimeout = setTimeout(() => {
-                adContainer.style.display = 'none';
-                adVideoEl.pause();
-            }, 6000);
+            }, 1000);
         }
         
         // ==================== EVENTOS E INICIALIZAÇÃO ====================
@@ -1561,7 +1571,7 @@
         });
         document.getElementById('sendFeedback').addEventListener('click', () => { 
             if (currentRating === 0) { showNotification('⭐ Selecione uma nota', 2000); return; } 
-            let msg = `🎵 *Cazé Playlist 2.0*\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5 - currentRating)}\n`; 
+            let msg = `🎵 *Cazé Playlist*\n⭐ Nota: ${'★'.repeat(currentRating)}${'☆'.repeat(5 - currentRating)}\n`; 
             if (document.getElementById('feedbackText').value.trim()) msg += `💬 ${document.getElementById('feedbackText').value.trim()}\n`; 
             window.open(`https://wa.me/5512988461978?text=${encodeURIComponent(msg)}`, '_blank'); 
             showNotification('✅ WhatsApp aberto!', 2000); 
@@ -1596,13 +1606,13 @@
         
         tapToStart.addEventListener('click', async (e) => { 
             e.stopPropagation(); 
-            showNotification('🔊 Ativando áudio...', 2000); 
+            showNotification('🔊 Ativando áudio para tocar com tela bloqueada...', 2000); 
             const audioOk = await ativarAudioBackground(); 
             if (audioOk) { 
                 await playMusic(); 
                 tapToStart.style.display = 'none'; 
                 try { await document.documentElement.requestFullscreen(); } catch(err) {} 
-                showNotification('✅ Áudio ativado! Toque com tela bloqueada ✅', 3000); 
+                showNotification('✅ Áudio ativado! AGORA TOCA COM TELA BLOQUEADA! ✅', 4000); 
             } else { 
                 showNotification('❌ Falha ao ativar áudio.', 3000); 
             } 
