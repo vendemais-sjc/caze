@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Cazé Playlist IA • Com Anúncio</title>
+    <title>Cazé Playlist IA • Com Anúncios</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -559,6 +559,45 @@
         }
         .loading-spinner.show { display: flex; }
         
+        /* ANÚNCIO EM VÍDEO */
+        .video-ad-container {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            max-width: 90vw;
+            z-index: 1000;
+            pointer-events: auto;
+            cursor: pointer;
+            border-radius: 16px;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 2px solid #e63946;
+        }
+        .video-ad-container video { width: 100%; height: auto; display: block; }
+        .close-ad {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 1001;
+            font-weight: bold;
+            border: 1px solid white;
+        }
+        .close-ad:active { background: #e63946; transform: scale(0.9); }
+        .car-mode-active .video-ad-container { display: none !important; }
+        
         /* ANÚNCIO EM ÁUDIO */
         .audio-ad-container {
             position: fixed;
@@ -623,28 +662,18 @@
     </style>
 </head>
 <body>
-    <!-- SPLASH SCREEN -->
-    <div id="splash"><div class="splash-content"><i class="fas fa-brain"></i><h1>Cazé Playlist IA</h1><p>🎵 Com anúncio a cada 20 músicas!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão laranja para ativar</p></div></div>
-    
-    <!-- BOTÃO ATIVAR ÁUDIO -->
+    <div id="splash"><div class="splash-content"><i class="fas fa-brain"></i><h1>Cazé Playlist IA</h1><p>🎵 Com anúncios em vídeo e áudio!</p><p style="font-size:0.8rem; margin-top:10px;">Clique no botão laranja para ativar</p></div></div>
     <div id="tap-to-start"><i class="fas fa-play-circle"></i> 🎵 ATIVAR ÁUDIO</div>
     
     <div class="app">
-        <!-- VÍDEO PRINCIPAL -->
         <div class="fullscreen-video-container">
-            <video id="mainVideo" autoplay loop muted playsinline>
-                <source src="Caze12.mp4" type="video/mp4">
-            </video>
+            <video id="mainVideo" autoplay loop muted playsinline><source src="Caze12.mp4" type="video/mp4"></video>
         </div>
         
-        <!-- VÍDEO DO MODO CARRO -->
         <div class="car-mode-video">
-            <video id="carVideo" autoplay loop muted playsinline>
-                <source src="carro.mp4" type="video/mp4">
-            </video>
+            <video id="carVideo" autoplay loop muted playsinline><source src="carro.mp4" type="video/mp4"></video>
         </div>
         
-        <!-- CONTROLES DO MODO CARRO -->
         <div class="car-overlay-controls" id="carOverlayControls">
             <div class="car-buttons-container">
                 <button class="car-overlay-btn" id="carOverlayPrev"><i class="fas fa-step-backward"></i></button>
@@ -698,7 +727,15 @@
             <div class="message" id="notificationMessage"></div>
         </div>
         
-        <!-- ANÚNCIO DE ÁUDIO -->
+        <!-- ANÚNCIO EM VÍDEO (anu.mp4) -->
+        <div class="video-ad-container" id="videoAdContainer">
+            <span class="close-ad" id="closeAdBtn">✕</span>
+            <video id="adVideo" autoplay muted playsinline>
+                <source src="anu.mp4" type="video/mp4">
+            </video>
+        </div>
+        
+        <!-- ANÚNCIO EM ÁUDIO (zzvc.mp3) -->
         <audio id="adAudio" preload="auto" style="display: none;"></audio>
         <div class="audio-ad-container" id="audioAdToast">
             <i class="fas fa-volume-up"></i>
@@ -722,7 +759,6 @@
         </div>
     </div>
     
-    <!-- MENU POPUP -->
     <div class="menu-button" id="menuButton"><i class="fas fa-ellipsis-v"></i></div>
     <div class="menu-popup" id="menuPopup">
         <button id="carModeMenuBtn"><i class="fas fa-car"></i> Modo Carro</button>
@@ -735,7 +771,6 @@
         <button id="feedbackMenuBtn"><i class="fab fa-whatsapp"></i> Feedback</button>
     </div>
     
-    <!-- MODAL DA IA -->
     <div class="ai-modal" id="aiModal">
         <h3><i class="fas fa-brain"></i> Inteligência Artificial</h3>
         <div class="ai-stat"><span>🎯 Músicas que você curtiu:</span><span class="stat-value" id="aiLikedCount">0</span></div>
@@ -746,7 +781,6 @@
         <button class="close-ai" id="closeAiBtn">Fechar</button>
     </div>
     
-    <!-- MODAL DE ESTATÍSTICAS -->
     <div class="stats-modal" id="statsModal">
         <h3><i class="fas fa-chart-line"></i> Suas Estatísticas</h3>
         <div class="stat-item"><span>🎵 Músicas ouvidas:</span><span class="stat-value" id="statTotalPlayed">0</span></div>
@@ -756,7 +790,6 @@
         <button class="close-stats" id="closeStatsBtn">Fechar</button>
     </div>
     
-    <!-- MODAL DO EQUALIZADOR -->
     <div class="equalizer-modal" id="equalizerModal">
         <h3><i class="fas fa-sliders-h"></i> Equalizador</h3>
         <div class="eq-band"><label>🔊 Graves <span id="bassVal">0</span>dB</label><input type="range" id="eqBass" min="-12" max="12" value="0" step="1"></div>
@@ -765,7 +798,6 @@
         <button class="close-eq" id="closeEqBtn">Fechar</button>
     </div>
     
-    <!-- MODAL DO MANUAL -->
     <div class="manual-modal" id="manualModal">
         <div class="manual-container">
             <h1>📘 CAZÉ PLAYLIST COM IA</h1>
@@ -776,9 +808,9 @@
             <p>❌ <strong>Não gostou:</strong> Aperte o botão 👎 - a IA evita tocar músicas parecidas</p>
             <div class="dica">💡 Quanto mais você avalia, mais inteligente fica a playlist!</div>
             
-            <h2><i class="fas fa-music"></i> 2. Anúncio</h2>
-            <p>🎵 <strong>Anúncio em áudio</strong> a cada 20 músicas!</p>
-            <p>📁 Arquivo do anúncio: <strong>zzvc.mp3</strong> (edite no início do código)</p>
+            <h2><i class="fas fa-video"></i> 2. Anúncios</h2>
+            <p>📹 <strong>Anúncio em vídeo (anu.mp4)</strong> - aparece a cada 20 músicas</p>
+            <p>🎵 <strong>Anúncio em áudio (zzvc.mp3)</strong> - também a cada 20 músicas (alternando)</p>
             
             <h2><i class="fas fa-hand-peace"></i> 3. Gestos</h2>
             <p>👉 Deslize para esquerda/direita = próxima/anterior música</p>
@@ -788,7 +820,6 @@
         </div>
     </div>
     
-    <!-- MODAL DE GÊNEROS MUSICAIS -->
     <div class="genres-modal" id="genresModal">
         <h3><i class="fas fa-music"></i> Escolha seu Estilo Musical</h3>
         <div class="genres-grid">
@@ -818,25 +849,25 @@
         // ============================================================================
         // ==================== CONFIGURAÇÕES EDITÁVEIS ===============================
         // ============================================================================
-        // ★★★ MUDE SOMENTE ESTES VALORES ★★★
         
-        // NOME DO ARQUIVO DO SEU ANÚNCIO (coloque o nome exato do seu arquivo .mp3)
-        const ARQUIVO_ANUNCIO = "zzcv.mp3";  // ← TROQUE AQUI pelo nome do seu arquivo!
+        // ARQUIVOS DOS ANÚNCIOS
+        const ARQUIVO_ANUNCIO_VIDEO = "anu.mp4";   // ← Anúncio em vídeo
+        const ARQUIVO_ANUNCIO_AUDIO = "zzvc.mp3";  // ← Anúncio em áudio
         
         // QUANTAS MÚSICAS PARA TOCAR O ANÚNCIO
-        const QUANTIDADE_MUSICAS_ANUNCIO = 20;  // ← MUDE AQUI (ex: 10, 15, 20, 30)
+        const QUANTIDADE_MUSICAS_ANUNCIO = 20;
         
-        // MENSAGEM QUE APARECE NA TELA DURANTE O ANÚNCIO
-        const MENSAGEM_ANUNCIO = "🎧 Obrigado por usar o Cazé Playlist!";
+        // MENSAGEM DO ANÚNCIO DE ÁUDIO
+        const MENSAGEM_ANUNCIO_AUDIO = "🎧 Obrigado por usar o Cazé Playlist!";
         
         // VOLUME DO PLAYER (0 a 1)
-        const VOLUME_PLAYER = 0.9;  // 0.9 = 90%
+        const VOLUME_PLAYER = 0.9;
         
-        // MODO ALEATÓRIO PADRÃO (true = ligado, false = desligado)
+        // MODO ALEATÓRIO PADRÃO
         const MODO_ALEATORIO_PADRAO = false;
         
         // INTERVALO PARA TROCAR O VÍDEO DE FUNDO (em milissegundos)
-        const INTERVALO_TROCA_VIDEO = 20000;  // 20 segundos
+        const INTERVALO_TROCA_VIDEO = 20000;
         
         // NÚMERO DO WHATSAPP PARA FEEDBACK
         const NUMERO_WHATSAPP = "5512988461978";
@@ -845,7 +876,7 @@
         // ==================== FIM DAS CONFIGURAÇÕES =================================
         // ============================================================================
         
-        // ==================== PLAYLIST COMPLETA ====================
+        // ==================== PLAYLIST ====================
         const musicas = [
             { id: 1, title: "Corpo Nu", artist: "Panda", src: "Panda_Corpo_Nu_muzzik.m4a", genero: "SERTANEJO" },
             { id: 2, title: "Infarto", artist: "Diego & Victor Hugo", src: "Diego_Victor_Hugo_Infarto_muzzik.m4a", genero: "SERTANEJO" },
@@ -1047,16 +1078,64 @@
             showNotification(`🧠 IA gerou playlist baseada nas suas preferências!`, 3000);
         }
         
-        // ==================== ANÚNCIO ====================
+        // ==================== ANÚNCIOS ====================
         let musicCounter = 0;
         let adAudioPlaying = false;
+        let adVideoPlaying = false;
+        let adTimeout = null;
+        
         const adAudio = document.getElementById('adAudio');
+        const adVideo = document.getElementById('adVideo');
+        const videoAdContainer = document.getElementById('videoAdContainer');
+        
+        function playVideoAd() {
+            if (isCarMode) return;
+            if (adVideoPlaying) return;
+            
+            console.log("🎬 Tocando anúncio em vídeo:", ARQUIVO_ANUNCIO_VIDEO);
+            
+            const wasPlaying = isPlaying;
+            if (wasPlaying) {
+                musicPlayerEl.pause();
+                isPlaying = false;
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                if (document.getElementById('carOverlayPlay')) 
+                    document.getElementById('carOverlayPlay').innerHTML = '<i class="fas fa-play"></i>';
+                stopTimer();
+                pararVisualizer();
+            }
+            
+            adVideoPlaying = true;
+            adVideo.currentTime = 0;
+            videoAdContainer.style.display = 'block';
+            
+            adVideo.play().catch(e => {
+                console.log('Erro no vídeo:', e);
+                finishVideoAd(wasPlaying);
+            });
+            
+            if (adTimeout) clearTimeout(adTimeout);
+            adTimeout = setTimeout(() => {
+                finishVideoAd(wasPlaying);
+            }, 8000);
+        }
+        
+        function finishVideoAd(wasPlaying) {
+            adVideoPlaying = false;
+            videoAdContainer.style.display = 'none';
+            adVideo.pause();
+            if (adTimeout) clearTimeout(adTimeout);
+            
+            if (wasPlaying) {
+                playMusic().catch(e => console.log);
+            }
+        }
         
         function playAudioAd() {
             if (isCarMode) return;
             if (adAudioPlaying) return;
             
-            console.log("🎵 Tocando anúncio:", ARQUIVO_ANUNCIO);
+            console.log("🎵 Tocando anúncio em áudio:", ARQUIVO_ANUNCIO_AUDIO);
             
             const wasPlaying = isPlaying;
             if (wasPlaying) {
@@ -1070,32 +1149,30 @@
             }
             
             adAudioPlaying = true;
-            adAudio.src = ARQUIVO_ANUNCIO;
+            adAudio.src = ARQUIVO_ANUNCIO_AUDIO;
             adAudio.load();
             
             const toast = document.getElementById('audioAdToast');
             const textSpan = document.getElementById('audioAdText');
-            textSpan.innerHTML = `<i class="fas fa-volume-up"></i> ${MENSAGEM_ANUNCIO}`;
+            textSpan.innerHTML = `<i class="fas fa-volume-up"></i> ${MENSAGEM_ANUNCIO_AUDIO}`;
             toast.classList.add('show');
             
             adAudio.play().catch(e => {
-                console.log('Erro no anúncio:', e);
-                showNotification(`⚠️ Erro ao carregar anúncio: ${ARQUIVO_ANUNCIO}`, 3000);
-                finishAd(wasPlaying);
+                console.log('Erro no anúncio de áudio:', e);
+                finishAudioAd(wasPlaying);
             });
             
             adAudio.onended = () => {
-                finishAd(wasPlaying);
+                finishAudioAd(wasPlaying);
             };
             
             adAudio.onerror = () => {
-                console.log('Erro: arquivo de anúncio não encontrado:', ARQUIVO_ANUNCIO);
-                showNotification(`⚠️ Arquivo de anúncio não encontrado: ${ARQUIVO_ANUNCIO}`, 3000);
-                finishAd(wasPlaying);
+                console.log('Erro: arquivo de áudio não encontrado:', ARQUIVO_ANUNCIO_AUDIO);
+                finishAudioAd(wasPlaying);
             };
         }
         
-        function finishAd(wasPlaying) {
+        function finishAudioAd(wasPlaying) {
             adAudioPlaying = false;
             const toast = document.getElementById('audioAdToast');
             toast.classList.remove('show');
@@ -1105,12 +1182,24 @@
             }
         }
         
+        // Alterna entre anúncio de vídeo e áudio
+        let adType = 0; // 0 = vídeo, 1 = áudio
+        function showNextAd() {
+            if (adType === 0) {
+                playVideoAd();
+                adType = 1;
+            } else {
+                playAudioAd();
+                adType = 0;
+            }
+        }
+        
         function incrementMusicCounter() {
             musicCounter++;
             console.log(`Música contada: ${musicCounter}/${QUANTIDADE_MUSICAS_ANUNCIO}`);
             if (musicCounter >= QUANTIDADE_MUSICAS_ANUNCIO) {
                 musicCounter = 0;
-                playAudioAd();
+                showNextAd();
             }
             const audioIndicatorEl = document.getElementById('audioIndicator');
             if (audioIndicatorEl) {
@@ -1123,6 +1212,20 @@
                 }, 3000);
             }
         }
+        
+        // Fechar anúncio de vídeo manualmente
+        document.getElementById('closeAdBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const wasPlaying = !musicPlayerEl.paused;
+            finishVideoAd(wasPlaying);
+        });
+        
+        // Clique no vídeo do anúncio para abrir link (exemplo)
+        videoAdContainer.addEventListener('click', (e) => {
+            if (e.target !== document.getElementById('closeAdBtn')) {
+                window.open('https://wa.me/' + NUMERO_WHATSAPP + '?text=Vi%20o%20anúncio%20no%20Cazé%20Playlist!', '_blank');
+            }
+        });
         
         // ==================== ESTATÍSTICAS ====================
         let stats = {
@@ -1149,7 +1252,7 @@
             stats.genreCount[track.genero] = (stats.genreCount[track.genero] || 0) + 1;
             stats.currentStreak++;
             saveStats();
-            incrementMusicCounter(); // ← AQUI É ONDE O ANÚNCIO É CONTADO!
+            incrementMusicCounter();
         }
         
         function updateTimeStats(seconds) { stats.totalSeconds += seconds; saveStats(); }
@@ -1845,7 +1948,7 @@
                 await playMusic(); 
                 tapToStart.style.display = 'none'; 
                 try { await document.documentElement.requestFullscreen(); } catch(err) {} 
-                showNotification('✅ Áudio ativado! Anúncio a cada ' + QUANTIDADE_MUSICAS_ANUNCIO + ' músicas! ✅', 4000); 
+                showNotification('✅ Áudio ativado! Anúncios a cada ' + QUANTIDADE_MUSICAS_ANUNCIO + ' músicas! ✅', 4000); 
             } else { 
                 showNotification('❌ Falha ao ativar áudio.', 3000); 
             } 
@@ -1875,8 +1978,10 @@
             iniciarComGeneroAleatorio(); 
             tapToStart.style.display = 'block'; 
             iniciarVisualizer(); 
-            console.log("🎵 App iniciado! Anúncio configurado para:", ARQUIVO_ANUNCIO);
-            console.log("📊 Anúncio tocará a cada", QUANTIDADE_MUSICAS_ANUNCIO, "músicas");
+            console.log("🎬 Anúncios configurados:");
+            console.log("   Vídeo:", ARQUIVO_ANUNCIO_VIDEO);
+            console.log("   Áudio:", ARQUIVO_ANUNCIO_AUDIO);
+            console.log("📊 Anúncios tocarão a cada", QUANTIDADE_MUSICAS_ANUNCIO, "músicas (alternando)");
         });
     </script>
 </body>
