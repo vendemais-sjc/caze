@@ -559,8 +559,8 @@
         }
         .loading-spinner.show { display: flex; }
         
-        /* ANÚNCIO EM VÍDEO */
-        .video-ad-container {
+        /* ANÚNCIO EM VÍDEO (sobreposição - NÃO pausa a música) */
+        .video-ad-overlay {
             position: fixed;
             bottom: 100px;
             left: 50%;
@@ -575,9 +575,10 @@
             display: none;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             border: 2px solid #e63946;
+            opacity: 0.95;
         }
-        .video-ad-container video { width: 100%; height: auto; display: block; }
-        .close-ad {
+        .video-ad-overlay video { width: 100%; height: auto; display: block; }
+        .close-video-ad {
             position: absolute;
             top: 5px;
             right: 5px;
@@ -595,10 +596,10 @@
             font-weight: bold;
             border: 1px solid white;
         }
-        .close-ad:active { background: #e63946; transform: scale(0.9); }
-        .car-mode-active .video-ad-container { display: none !important; }
+        .close-video-ad:active { background: #e63946; transform: scale(0.9); }
+        .car-mode-active .video-ad-overlay { display: none !important; }
         
-        /* ANÚNCIO EM ÁUDIO */
+        /* ANÚNCIO EM ÁUDIO (pausa a música) */
         .audio-ad-container {
             position: fixed;
             bottom: 30%;
@@ -727,15 +728,15 @@
             <div class="message" id="notificationMessage"></div>
         </div>
         
-        <!-- ANÚNCIO EM VÍDEO (anu.mp4) -->
-        <div class="video-ad-container" id="videoAdContainer">
-            <span class="close-ad" id="closeAdBtn">✕</span>
-            <video id="adVideo" autoplay muted playsinline>
+        <!-- ANÚNCIO EM VÍDEO (sobreposição - NÃO pausa a música) -->
+        <div class="video-ad-overlay" id="videoAdOverlay">
+            <span class="close-video-ad" id="closeVideoAdBtn">✕</span>
+            <video id="adVideo" autoplay muted playsinline loop>
                 <source src="anu.mp4" type="video/mp4">
             </video>
         </div>
         
-        <!-- ANÚNCIO EM ÁUDIO (zzvc.mp3) -->
+        <!-- ANÚNCIO EM ÁUDIO (pausa a música) -->
         <audio id="adAudio" preload="auto" style="display: none;"></audio>
         <div class="audio-ad-container" id="audioAdToast">
             <i class="fas fa-volume-up"></i>
@@ -809,8 +810,8 @@
             <div class="dica">💡 Quanto mais você avalia, mais inteligente fica a playlist!</div>
             
             <h2><i class="fas fa-video"></i> 2. Anúncios</h2>
-            <p>📹 <strong>Anúncio em vídeo (anu.mp4)</strong> - aparece a cada 20 músicas</p>
-            <p>🎵 <strong>Anúncio em áudio (zzvc.mp3)</strong> - também a cada 20 músicas (alternando)</p>
+            <p>📹 <strong>Anúncio em vídeo (anu.mp4)</strong> - aparece a cada 30 segundos (NÃO interrompe a música)</p>
+            <p>🎵 <strong>Anúncio em áudio (zzvc.mp3)</strong> - a cada 20 músicas (pausa a música, toca e volta)</p>
             
             <h2><i class="fas fa-hand-peace"></i> 3. Gestos</h2>
             <p>👉 Deslize para esquerda/direita = próxima/anterior música</p>
@@ -851,14 +852,18 @@
         // ============================================================================
         
         // ARQUIVOS DOS ANÚNCIOS
-        const ARQUIVO_ANUNCIO_VIDEO = "anu.mp4";   // ← Anúncio em vídeo
-        const ARQUIVO_ANUNCIO_AUDIO = "zzvc.mp3";  // ← Anúncio em áudio
+        const ARQUIVO_ANUNCIO_VIDEO = "anu.mp4";   // ← Anúncio em vídeo (sobreposição)
+        const ARQUIVO_ANUNCIO_AUDIO = "zzvc.mp3";  // ← Anúncio em áudio (pausa a música)
         
-        // QUANTAS MÚSICAS PARA TOCAR O ANÚNCIO
-        const QUANTIDADE_MUSICAS_ANUNCIO = 20;
+        // CONFIGURAÇÕES DOS ANÚNCIOS
+        const INTERVALO_VIDEO_MS = 30000;           // ← Vídeo a cada 30 segundos
+        const QUANTIDADE_MUSICAS_AUDIO = 20;        // ← Áudio a cada 20 músicas
         
         // MENSAGEM DO ANÚNCIO DE ÁUDIO
         const MENSAGEM_ANUNCIO_AUDIO = "🎧 Obrigado por usar o Cazé Playlist!";
+        
+        // VOLUME DO ANÚNCIO DE ÁUDIO (0 a 1)
+        const VOLUME_ANUNCIO_AUDIO = 0.9;
         
         // VOLUME DO PLAYER (0 a 1)
         const VOLUME_PLAYER = 0.9;
@@ -871,6 +876,9 @@
         
         // NÚMERO DO WHATSAPP PARA FEEDBACK
         const NUMERO_WHATSAPP = "5512988461978";
+        
+        // LINK DO SITE PARA COMPARTILHAR
+        const LINK_DO_SITE = window.location.href;  // ← Pega o link atual automaticamente
         
         // ============================================================================
         // ==================== FIM DAS CONFIGURAÇÕES =================================
@@ -1079,57 +1087,66 @@
         }
         
         // ==================== ANÚNCIOS ====================
-        let musicCounter = 0;
-        let adAudioPlaying = false;
+        // ANÚNCIO DE VÍDEO (sobreposição - NÃO pausa a música)
+        let videoAdInterval = null;
         let adVideoPlaying = false;
-        let adTimeout = null;
         
-        const adAudio = document.getElementById('adAudio');
         const adVideo = document.getElementById('adVideo');
-        const videoAdContainer = document.getElementById('videoAdContainer');
+        const videoAdOverlay = document.getElementById('videoAdOverlay');
         
-        function playVideoAd() {
+        function iniciarVideoAd() {
             if (isCarMode) return;
             if (adVideoPlaying) return;
             
-            console.log("🎬 Tocando anúncio em vídeo:", ARQUIVO_ANUNCIO_VIDEO);
-            
-            const wasPlaying = isPlaying;
-            if (wasPlaying) {
-                musicPlayerEl.pause();
-                isPlaying = false;
-                playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                if (document.getElementById('carOverlayPlay')) 
-                    document.getElementById('carOverlayPlay').innerHTML = '<i class="fas fa-play"></i>';
-                stopTimer();
-                pararVisualizer();
-            }
-            
             adVideoPlaying = true;
             adVideo.currentTime = 0;
-            videoAdContainer.style.display = 'block';
+            videoAdOverlay.style.display = 'block';
             
+            // Força o vídeo a tocar sem pausar a música
             adVideo.play().catch(e => {
                 console.log('Erro no vídeo:', e);
-                finishVideoAd(wasPlaying);
+                setTimeout(() => {
+                    videoAdOverlay.style.display = 'none';
+                    adVideoPlaying = false;
+                }, 500);
             });
             
-            if (adTimeout) clearTimeout(adTimeout);
-            adTimeout = setTimeout(() => {
-                finishVideoAd(wasPlaying);
+            // Auto-fechar após 8 segundos
+            setTimeout(() => {
+                if (adVideoPlaying) {
+                    videoAdOverlay.style.display = 'none';
+                    adVideo.pause();
+                    adVideoPlaying = false;
+                }
             }, 8000);
         }
         
-        function finishVideoAd(wasPlaying) {
-            adVideoPlaying = false;
-            videoAdContainer.style.display = 'none';
-            adVideo.pause();
-            if (adTimeout) clearTimeout(adTimeout);
-            
-            if (wasPlaying) {
-                playMusic().catch(e => console.log);
+        function pararVideoAd() {
+            if (videoAdOverlay) {
+                videoAdOverlay.style.display = 'none';
+                adVideo.pause();
+                adVideoPlaying = false;
             }
         }
+        
+        // Fechar anúncio de vídeo manualmente
+        document.getElementById('closeVideoAdBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            pararVideoAd();
+        });
+        
+        // Clique no vídeo para abrir link
+        videoAdOverlay.addEventListener('click', (e) => {
+            if (e.target !== document.getElementById('closeVideoAdBtn')) {
+                window.open('https://wa.me/' + NUMERO_WHATSAPP + '?text=Vi%20o%20anúncio%20no%20Cazé%20Playlist!', '_blank');
+            }
+        });
+        
+        // ANÚNCIO DE ÁUDIO (pausa a música)
+        let musicCounter = 0;
+        let adAudioPlaying = false;
+        let adTimeout = null;
+        const adAudio = document.getElementById('adAudio');
         
         function playAudioAd() {
             if (isCarMode) return;
@@ -1150,6 +1167,7 @@
             
             adAudioPlaying = true;
             adAudio.src = ARQUIVO_ANUNCIO_AUDIO;
+            adAudio.volume = VOLUME_ANUNCIO_AUDIO;
             adAudio.load();
             
             const toast = document.getElementById('audioAdToast');
@@ -1159,6 +1177,7 @@
             
             adAudio.play().catch(e => {
                 console.log('Erro no anúncio de áudio:', e);
+                showNotification(`⚠️ Erro ao carregar anúncio: ${ARQUIVO_ANUNCIO_AUDIO}`, 3000);
                 finishAudioAd(wasPlaying);
             });
             
@@ -1168,6 +1187,7 @@
             
             adAudio.onerror = () => {
                 console.log('Erro: arquivo de áudio não encontrado:', ARQUIVO_ANUNCIO_AUDIO);
+                showNotification(`⚠️ Arquivo não encontrado: ${ARQUIVO_ANUNCIO_AUDIO}`, 3000);
                 finishAudioAd(wasPlaying);
             };
         }
@@ -1182,50 +1202,24 @@
             }
         }
         
-        // Alterna entre anúncio de vídeo e áudio
-        let adType = 0; // 0 = vídeo, 1 = áudio
-        function showNextAd() {
-            if (adType === 0) {
-                playVideoAd();
-                adType = 1;
-            } else {
-                playAudioAd();
-                adType = 0;
-            }
-        }
-        
         function incrementMusicCounter() {
             musicCounter++;
-            console.log(`Música contada: ${musicCounter}/${QUANTIDADE_MUSICAS_ANUNCIO}`);
-            if (musicCounter >= QUANTIDADE_MUSICAS_ANUNCIO) {
+            console.log(`Música contada: ${musicCounter}/${QUANTIDADE_MUSICAS_AUDIO}`);
+            if (musicCounter >= QUANTIDADE_MUSICAS_AUDIO) {
                 musicCounter = 0;
-                showNextAd();
+                playAudioAd();
             }
             const audioIndicatorEl = document.getElementById('audioIndicator');
             if (audioIndicatorEl) {
-                const remaining = QUANTIDADE_MUSICAS_ANUNCIO - musicCounter;
-                audioIndicatorEl.innerHTML = `<i class="fas fa-brain"></i> IA | Anúncio em ${remaining} músicas`;
+                const remaining = QUANTIDADE_MUSICAS_AUDIO - musicCounter;
+                audioIndicatorEl.innerHTML = `<i class="fas fa-brain"></i> IA | Áudio em ${remaining} músicas`;
                 setTimeout(() => {
-                    if (audioIndicatorEl.innerHTML.includes('Anúncio em')) {
+                    if (audioIndicatorEl.innerHTML.includes('Áudio em')) {
                         audioIndicatorEl.innerHTML = '<i class="fas fa-brain"></i> IA Ativa | Tela Bloqueada OK';
                     }
                 }, 3000);
             }
         }
-        
-        // Fechar anúncio de vídeo manualmente
-        document.getElementById('closeAdBtn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            const wasPlaying = !musicPlayerEl.paused;
-            finishVideoAd(wasPlaying);
-        });
-        
-        // Clique no vídeo do anúncio para abrir link (exemplo)
-        videoAdContainer.addEventListener('click', (e) => {
-            if (e.target !== document.getElementById('closeAdBtn')) {
-                window.open('https://wa.me/' + NUMERO_WHATSAPP + '?text=Vi%20o%20anúncio%20no%20Cazé%20Playlist!', '_blank');
-            }
-        });
         
         // ==================== ESTATÍSTICAS ====================
         let stats = {
@@ -1252,7 +1246,7 @@
             stats.genreCount[track.genero] = (stats.genreCount[track.genero] || 0) + 1;
             stats.currentStreak++;
             saveStats();
-            incrementMusicCounter();
+            incrementMusicCounter(); // Conta para o anúncio de áudio
         }
         
         function updateTimeStats(seconds) { stats.totalSeconds += seconds; saveStats(); }
@@ -1718,6 +1712,8 @@
                 showNotification('🚗 MODO CARRO ATIVADO! Toque na tela para controles');
                 document.addEventListener('touchstart', showCarControls);
                 document.addEventListener('click', showCarControls);
+                // Para o anúncio de vídeo quando entrar no modo carro
+                if (videoAdInterval) clearInterval(videoAdInterval);
             } else {
                 appEl.classList.remove('car-mode-active');
                 document.getElementById('carModeMenuBtn').style.background = "";
@@ -1728,6 +1724,9 @@
                 showNotification('🚗 Modo Carro desativado.');
                 document.removeEventListener('touchstart', showCarControls);
                 document.removeEventListener('click', showCarControls);
+                // Reinicia o anúncio de vídeo
+                if (videoAdInterval) clearInterval(videoAdInterval);
+                videoAdInterval = setInterval(() => iniciarVideoAd(), INTERVALO_VIDEO_MS);
             }
         }
         
@@ -1800,6 +1799,9 @@
                 document.getElementById('audioIndicator').style.color = '#4ade80';
                 iniciarManutencaoConstante();
                 
+                // Inicia anúncio de vídeo a cada 30 segundos
+                videoAdInterval = setInterval(() => iniciarVideoAd(), INTERVALO_VIDEO_MS);
+                
                 if ('wakeLock' in navigator) {
                     try {
                         await navigator.wakeLock.request('screen');
@@ -1866,11 +1868,23 @@
         menuButton.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
         document.addEventListener('click', (e) => { if (!menuButton.contains(e.target) && !menuPopup.contains(e.target)) closeMenu(); });
         document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { document.documentElement.requestFullscreen(); closeMenu(); });
+        
+        // BOTÃO COMPARTILHAR - Compartilha o link do site
         document.getElementById('shareMenuBtn').addEventListener('click', () => { 
-            if (navigator.share) navigator.share({ title: 'Cazé Playlist IA' }); 
-            else { navigator.clipboard.writeText(location.href); showNotification('Link copiado!', 2000); } 
+            const linkParaCompartilhar = LINK_DO_SITE;
+            if (navigator.share) {
+                navigator.share({ 
+                    title: 'Cazé Playlist IA', 
+                    text: '🎵 Ouça músicas com IA que aprende seu gosto! Toca com tela bloqueada!', 
+                    url: linkParaCompartilhar 
+                }).catch(e => console.log('Erro ao compartilhar:', e));
+            } else {
+                navigator.clipboard.writeText(linkParaCompartilhar);
+                showNotification('🔗 Link copiado! Compartilhe com seus amigos!', 3000);
+            }
             closeMenu(); 
         });
+        
         document.getElementById('feedbackMenuBtn').addEventListener('click', () => { document.getElementById('feedbackModal').classList.toggle('open'); closeMenu(); });
         document.getElementById('statsMenuBtn').addEventListener('click', () => { showStatsModal(); closeMenu(); });
         document.getElementById('closeStatsBtn').addEventListener('click', () => { document.getElementById('statsModal').classList.remove('open'); });
@@ -1948,7 +1962,7 @@
                 await playMusic(); 
                 tapToStart.style.display = 'none'; 
                 try { await document.documentElement.requestFullscreen(); } catch(err) {} 
-                showNotification('✅ Áudio ativado! Anúncios a cada ' + QUANTIDADE_MUSICAS_ANUNCIO + ' músicas! ✅', 4000); 
+                showNotification('✅ Áudio ativado! Anúncio em vídeo a cada 30s e áudio a cada ' + QUANTIDADE_MUSICAS_AUDIO + ' músicas! ✅', 5000); 
             } else { 
                 showNotification('❌ Falha ao ativar áudio.', 3000); 
             } 
@@ -1979,9 +1993,9 @@
             tapToStart.style.display = 'block'; 
             iniciarVisualizer(); 
             console.log("🎬 Anúncios configurados:");
-            console.log("   Vídeo:", ARQUIVO_ANUNCIO_VIDEO);
-            console.log("   Áudio:", ARQUIVO_ANUNCIO_AUDIO);
-            console.log("📊 Anúncios tocarão a cada", QUANTIDADE_MUSICAS_ANUNCIO, "músicas (alternando)");
+            console.log("   Vídeo (sobreposição):", ARQUIVO_ANUNCIO_VIDEO, "- a cada", INTERVALO_VIDEO_MS/1000, "segundos");
+            console.log("   Áudio (pausa música):", ARQUIVO_ANUNCIO_AUDIO, "- a cada", QUANTIDADE_MUSICAS_AUDIO, "músicas");
+            console.log("🔗 Link para compartilhar:", LINK_DO_SITE);
         });
     </script>
 </body>
