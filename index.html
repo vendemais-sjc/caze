@@ -143,20 +143,23 @@
         .cta-button:active { transform: scale(0.95); }
         
         .exit-car-btn {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
             color: white;
             border: 2px solid #e63946;
-            padding: 10px 18px;
+            padding: 15px 25px;
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             z-index: 102;
             display: none;
-            pointer-events: auto;
+            pointer-events: auto !important;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
         .exit-car-btn:active { transform: scale(0.95); background: #e63946; color: #000; }
         
@@ -180,7 +183,7 @@
         .car-mode-active .genre-button { animation: floatGenre 3s ease-in-out infinite; }
         .car-mode-active .cta-button { display: none; }
         .car-mode-active .feedback-buttons { display: none; }
-        .car-mode-active .exit-car-btn { display: block; }
+        .car-mode-active .exit-car-btn { display: block !important; }
         
         .notification-top {
             position: absolute;
@@ -562,41 +565,22 @@
         /* ANÚNCIO EM VÍDEO (sobreposição - NÃO pausa a música) */
         .video-ad-overlay {
             position: fixed;
-            bottom: 100px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 320px;
-            max-width: 90vw;
+            width: 300px;
+            max-width: 85vw;
             z-index: 1000;
             pointer-events: auto;
             cursor: pointer;
             border-radius: 16px;
             overflow: hidden;
             display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
             border: 2px solid #e63946;
             opacity: 0.95;
         }
         .video-ad-overlay video { width: 100%; height: auto; display: block; }
-        .close-video-ad {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            cursor: pointer;
-            z-index: 1001;
-            font-weight: bold;
-            border: 1px solid white;
-        }
-        .close-video-ad:active { background: #e63946; transform: scale(0.9); }
         .car-mode-active .video-ad-overlay { display: none !important; }
         
         /* ANÚNCIO EM ÁUDIO (pausa a música) */
@@ -722,7 +706,7 @@
         <button class="cta-button" id="ctaButton"><i class="fas fa-headset"></i> <span id="ctaText">INFORMAÇÕES</span></button>
         <button class="genre-button" id="genreButton"><i class="fas fa-guitar"></i></button>
         
-        <button class="exit-car-btn" id="exitCarBtn">✕ SAIR DO MODO CARRO</button>
+        <button class="exit-car-btn" id="exitCarBtn"><i class="fas fa-car"></i> SAIR DO MODO CARRO</button>
         
         <div id="notificationTop" class="notification-top">
             <div class="message" id="notificationMessage"></div>
@@ -730,7 +714,6 @@
         
         <!-- ANÚNCIO EM VÍDEO (sobreposição - NÃO pausa a música) -->
         <div class="video-ad-overlay" id="videoAdOverlay">
-            <span class="close-video-ad" id="closeVideoAdBtn">✕</span>
             <video id="adVideo" autoplay muted playsinline loop>
                 <source src="anu.mp4" type="video/mp4">
             </video>
@@ -948,10 +931,6 @@
             { id: 60, title: "Seu-Matruz", artist: "Seu-Matruz-França", src: "Seu-Matruz-França.m4a", genero: "FORRÓ" },
             { id: 61, title: "Laco Aberto", artist: "Cafe Coado", src: " 04 - Cafe Coado  Laco Aberto.mp3 ", genero: "FORRÓ" },
               { id: 62, title: " NÃO ERA EU NO BOLÃO", artist: "Tarcio", src: "01 - NÃO ERA EU NO BOLÃO.mp3", genero: "FORRÓ" },
-
-
-
-         
         ];
         
         // ==================== ALGORITMO DE IA ====================
@@ -1094,7 +1073,6 @@
         }
         
         // ==================== ANÚNCIOS ====================
-        // ANÚNCIO DE VÍDEO (sobreposição - NÃO pausa a música)
         let videoAdInterval = null;
         let adVideoPlaying = false;
         
@@ -1109,7 +1087,6 @@
             adVideo.currentTime = 0;
             videoAdOverlay.style.display = 'block';
             
-            // Força o vídeo a tocar sem pausar a música
             adVideo.play().catch(e => {
                 console.log('Erro no vídeo:', e);
                 setTimeout(() => {
@@ -1118,7 +1095,6 @@
                 }, 500);
             });
             
-            // Auto-fechar após 8 segundos
             setTimeout(() => {
                 if (adVideoPlaying) {
                     videoAdOverlay.style.display = 'none';
@@ -1136,30 +1112,13 @@
             }
         }
         
-        // Fechar anúncio de vídeo manualmente
-        document.getElementById('closeVideoAdBtn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            pararVideoAd();
-        });
-        
-        // Clique no vídeo para abrir link
-        videoAdOverlay.addEventListener('click', (e) => {
-            if (e.target !== document.getElementById('closeVideoAdBtn')) {
-                window.open('https://wa.me/' + NUMERO_WHATSAPP + '?text=Vi%20o%20anúncio%20no%20Cazé%20Playlist!', '_blank');
-            }
-        });
-        
-        // ANÚNCIO DE ÁUDIO (pausa a música)
         let musicCounter = 0;
         let adAudioPlaying = false;
-        let adTimeout = null;
         const adAudio = document.getElementById('adAudio');
         
         function playAudioAd() {
             if (isCarMode) return;
             if (adAudioPlaying) return;
-            
-            console.log("🎵 Tocando anúncio em áudio:", ARQUIVO_ANUNCIO_AUDIO);
             
             const wasPlaying = isPlaying;
             if (wasPlaying) {
@@ -1203,15 +1162,11 @@
             adAudioPlaying = false;
             const toast = document.getElementById('audioAdToast');
             toast.classList.remove('show');
-            
-            if (wasPlaying) {
-                playMusic().catch(e => console.log);
-            }
+            if (wasPlaying) playMusic().catch(e => console.log);
         }
         
         function incrementMusicCounter() {
             musicCounter++;
-            console.log(`Música contada: ${musicCounter}/${QUANTIDADE_MUSICAS_AUDIO}`);
             if (musicCounter >= QUANTIDADE_MUSICAS_AUDIO) {
                 musicCounter = 0;
                 playAudioAd();
@@ -1222,7 +1177,7 @@
                 audioIndicatorEl.innerHTML = `<i class="fas fa-brain"></i> IA | Áudio em ${remaining} músicas`;
                 setTimeout(() => {
                     if (audioIndicatorEl.innerHTML.includes('Áudio em')) {
-                        audioIndicatorEl.innerHTML = '<i class="fas fa-brain"></i> IA Ativa | Tela Bloqueada OK';
+                        audioIndicatorEl.innerHTML = '<i class="fas fa-brain"></i> IA Ativa';
                     }
                 }, 3000);
             }
@@ -1253,7 +1208,7 @@
             stats.genreCount[track.genero] = (stats.genreCount[track.genero] || 0) + 1;
             stats.currentStreak++;
             saveStats();
-            incrementMusicCounter(); // Conta para o anúncio de áudio
+            incrementMusicCounter();
         }
         
         function updateTimeStats(seconds) { stats.totalSeconds += seconds; saveStats(); }
@@ -1702,38 +1657,59 @@
             updateGenreBadge("IA");
         }
         
-        // ==================== MODO CARRO ====================
+        // ==================== MODO CARRO CORRIGIDO ====================
         function toggleCarMode() {
-            isCarMode = !isCarMode;
             const appEl = document.querySelector('.app');
             const carModeVideoDiv = document.querySelector('.car-mode-video');
             const carVideoEl = document.getElementById('carVideo');
+            const exitBtn = document.getElementById('exitCarBtn');
+            const carOverlay = document.getElementById('carOverlayControls');
+            const carTrack = document.getElementById('carTrackOverlay');
             
-            if (isCarMode) {
+            if (!isCarMode) {
+                // ATIVAR MODO CARRO
+                isCarMode = true;
                 appEl.classList.add('car-mode-active');
+                document.body.classList.add('car-mode-active');
                 document.getElementById('carModeMenuBtn').style.background = "linear-gradient(135deg, #e63946, #ff6b6b)";
                 document.getElementById('carIndicator').style.display = 'flex';
                 carModeVideoDiv.style.display = 'block';
                 carVideoEl.play().catch(e => console.log('Vídeo carro:', e));
                 updateCarOverlayInfo();
-                showNotification('🚗 MODO CARRO ATIVADO! Toque na tela para controles');
+                showNotification('🚗 MODO CARRO ATIVADO! Toque na tela para controles', 3000);
                 document.addEventListener('touchstart', showCarControls);
                 document.addEventListener('click', showCarControls);
-                // Para o anúncio de vídeo quando entrar no modo carro
                 if (videoAdInterval) clearInterval(videoAdInterval);
+                pararVideoAd();
+                if (exitBtn) exitBtn.style.display = 'block';
+                if (carOverlay) carOverlay.classList.remove('visible');
+                if (carTrack) carTrack.classList.remove('visible');
+                console.log("✅ Modo Carro ATIVADO");
             } else {
+                // DESATIVAR MODO CARRO
+                isCarMode = false;
                 appEl.classList.remove('car-mode-active');
+                document.body.classList.remove('car-mode-active');
                 document.getElementById('carModeMenuBtn').style.background = "";
                 document.getElementById('carIndicator').style.display = 'none';
                 carModeVideoDiv.style.display = 'none';
                 if (carVideoEl) { carVideoEl.pause(); carVideoEl.currentTime = 0; }
-                hideCarControlsImmediately();
-                showNotification('🚗 Modo Carro desativado.');
+                if (carOverlay) {
+                    carOverlay.classList.remove('visible');
+                    carOverlay.style.opacity = '0';
+                    carOverlay.style.pointerEvents = 'none';
+                }
+                if (carTrack) {
+                    carTrack.classList.remove('visible');
+                    carTrack.style.opacity = '0';
+                }
+                document.getElementById('tapInstruction').classList.remove('visible');
+                showNotification('🚗 Modo Carro desativado.', 2000);
                 document.removeEventListener('touchstart', showCarControls);
                 document.removeEventListener('click', showCarControls);
-                // Reinicia o anúncio de vídeo
-                if (videoAdInterval) clearInterval(videoAdInterval);
                 videoAdInterval = setInterval(() => iniciarVideoAd(), INTERVALO_VIDEO_MS);
+                if (exitBtn) exitBtn.style.display = 'none';
+                console.log("✅ Modo Carro DESATIVADO");
             }
         }
         
@@ -1802,11 +1778,10 @@
                 backgroundAudio.volume = 0.001;
                 await backgroundAudio.play();
                 isBackgroundActive = true;
-                document.getElementById('audioIndicator').innerHTML = '<i class="fas fa-brain"></i> IA Ativa | Tela Bloqueada OK';
+                document.getElementById('audioIndicator').innerHTML = '<i class="fas fa-brain"></i> IA Ativa';
                 document.getElementById('audioIndicator').style.color = '#4ade80';
                 iniciarManutencaoConstante();
                 
-                // Inicia anúncio de vídeo a cada 30 segundos
                 videoAdInterval = setInterval(() => iniciarVideoAd(), INTERVALO_VIDEO_MS);
                 
                 if ('wakeLock' in navigator) {
@@ -1876,7 +1851,6 @@
         document.addEventListener('click', (e) => { if (!menuButton.contains(e.target) && !menuPopup.contains(e.target)) closeMenu(); });
         document.getElementById('fullscreenMenuBtn').addEventListener('click', () => { document.documentElement.requestFullscreen(); closeMenu(); });
         
-        // BOTÃO COMPARTILHAR - Compartilha o link do site
         document.getElementById('shareMenuBtn').addEventListener('click', () => { 
             const linkParaCompartilhar = LINK_DO_SITE;
             if (navigator.share) {
@@ -1976,7 +1950,22 @@
         });
         
         document.getElementById('carModeMenuBtn').addEventListener('click', () => { toggleCarMode(); closeMenu(); });
-        document.getElementById('exitCarBtn').addEventListener('click', (e) => { e.stopPropagation(); if (isCarMode) toggleCarMode(); });
+        
+        // BOTÃO SAIR DO MODO CARRO - CORRIGIDO (click + touchstart)
+        const exitCarBtnElement = document.getElementById('exitCarBtn');
+        if (exitCarBtnElement) {
+            const sairHandler = function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                console.log("🔘 Botão SAIR acionado! Modo Carro ativo:", isCarMode);
+                if (isCarMode) {
+                    toggleCarMode();
+                }
+            };
+            exitCarBtnElement.addEventListener('click', sairHandler);
+            exitCarBtnElement.addEventListener('touchstart', sairHandler);
+        }
+        
         document.getElementById('carOverlayPlay').addEventListener('click', (e) => { 
             e.stopPropagation(); 
             if (!isBackgroundActive) showNotification('⚠️ Clique em "ATIVAR ÁUDIO" primeiro!', 3000); 
@@ -1999,9 +1988,11 @@
             iniciarComGeneroAleatorio(); 
             tapToStart.style.display = 'block'; 
             iniciarVisualizer(); 
-            console.log("🎬 Anúncios configurados:");
-            console.log("   Vídeo (sobreposição):", ARQUIVO_ANUNCIO_VIDEO, "- a cada", INTERVALO_VIDEO_MS/1000, "segundos");
-            console.log("   Áudio (pausa música):", ARQUIVO_ANUNCIO_AUDIO, "- a cada", QUANTIDADE_MUSICAS_AUDIO, "músicas");
+            console.log("🎬 Cazé Playlist IA - CORREÇÕES APLICADAS:");
+            console.log("   ✅ Botão SAIR DO MODO CARRO corrigido (click + touchstart)");
+            console.log("   ✅ X do anúncio de vídeo REMOVIDO");
+            console.log("   ✅ Overlay fosco removido ao sair do modo carro");
+            console.log("   ✅ Anúncio em vídeo movido para bottom: 20px");
             console.log("🔗 Link para compartilhar:", LINK_DO_SITE);
         });
     </script>
